@@ -1,0 +1,337 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { PageShell } from '@/components/layout/PageShell';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import type { Showcase } from '@/lib/db/types';
+import {
+    ACCENTS,
+    vibeColor, vibeText, vibeRaw,
+    randomShuffle, GRID_CLASSES,
+} from '@/lib/vibe';
+
+type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav';
+
+interface Tile {
+    id: string;
+    colSpan: string;
+    variant: TileVariant;
+    href?: string;
+    showcase?: Showcase;
+}
+
+interface FormState {
+    title: string;
+    description: string;
+    url: string;
+    source_url: string;
+    post_url: string;
+    tags: string;
+    status: 'published' | 'draft';
+}
+
+const EMPTY_FORM: FormState = { title: '', description: '', url: '', source_url: '', post_url: '', tags: '', status: 'draft' };
+
+function buildTiles(showcases: Showcase[], username?: string): Tile[] {
+    const tiles: Tile[] = [
+        { id: 'artode', colSpan: 'col-span-1', variant: 'artode' },
+        { id: 'title', colSpan: 'col-span-2 md:col-span-2', variant: 'title' },
+        { id: 'counter', colSpan: 'col-span-1', variant: 'counter' },
+        { id: 'form-url', colSpan: 'col-span-2 md:col-span-2', variant: 'form-url' },
+        { id: 'form-links', colSpan: 'col-span-2 md:col-span-2', variant: 'form-links' },
+        { id: 'form-details', colSpan: 'col-span-2 md:col-span-2', variant: 'form-details' },
+        { id: 'form-action', colSpan: 'col-span-1', variant: 'form-action' },
+        { id: 'signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
+        { id: 'filler', colSpan: 'col-span-1', variant: 'filler' },
+    ];
+    if (username) tiles.push({ id: 'nav-public', colSpan: 'col-span-1', variant: 'nav', href: `/m/${username}` });
+
+    const showcaseTiles: Tile[] = showcases.map(s => ({
+        id: s.id, colSpan: 'col-span-2 md:col-span-2', variant: 'showcase' as const, showcase: s,
+    }));
+    if (showcases.length === 0) showcaseTiles.push({ id: 'empty', colSpan: 'col-span-2 md:col-span-2', variant: 'empty' });
+
+    return [...tiles, ...showcaseTiles];
+}
+
+export default function ManagerPage() {
+    const { data: session, status } = useSession();
+    const router = useRouter();
+    const [showcases, setShowcases] = useState<Showcase[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [editing, setEditing] = useState<string | null>(null);
+    const [form, setForm] = useState<FormState>(EMPTY_FORM);
+    const [saving, setSaving] = useState(false);
+    const [fetchingOG, setFetchingOG] = useState(false);
+    const [vibeLocked, setVibeLocked] = useState(false);
+    const [hovered, setHovered] = useState(false);
+    const isVibe = vibeLocked || hovered;
+    const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
+    const [shuffledTiles, setShuffledTiles] = useState<Tile[]>([]);
+    const [username, setUsername] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            router.push('/login');
+        }
+    }, [status, router]);
+
+    useEffect(() => {
+        if (status !== 'authenticated') return;
+        fetch('/api/marketplace/showcases')
+            .then(r => r.ok ? r.json() : { showcases: [] })
+            .then(d => {
+                setShowcases(d.showcases || []);
+                if (d.username) setUsername(d.username);
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    }, [status]);
+
+    useEffect(() => {
+        if (!loading) setShuffledTiles(randomShuffle(buildTiles(showcases, username)));
+    }, [showcases, loading, username]);
+
+    const fetchOG = async (url: string) => {
+        if (!url) return;
+        setFetchingOG(true);
+        try {
+            const res = await fetch('/api/marketplace/og', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+            if (res.ok) { const d = await res.json(); setForm(prev => ({ ...prev, title: prev.title || d.title || '', description: prev.description || d.description || '' })); }
+        } catch {}
+        setFetchingOG(false);
+    };
+
+    const handleSave = async () => {
+        setSaving(true);
+        const body = { ...(editing ? { id: editing } : {}), title: form.title, description: form.description, url: form.url, source_url: form.source_url, post_url: form.post_url, tags: form.tags.split(',').map(t => t.trim()).filter(Boolean), status: form.status };
+        const method = editing ? 'PUT' : 'POST';
+        const res = await fetch('/api/marketplace/showcases', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (res.ok) {
+            const data = await res.json();
+            if (editing) setShowcases(prev => prev.map(s => s.id === editing ? data.showcase : s));
+            else setShowcases(prev => [...prev, data.showcase]);
+            setForm(EMPTY_FORM); setEditing(null);
+        }
+        setSaving(false);
+    };
+
+    const handleDelete = async (id: string) => {
+        const res = await fetch(`/api/marketplace/showcases?id=${id}`, { method: 'DELETE' });
+        if (res.ok) setShowcases(prev => prev.filter(s => s.id !== id));
+    };
+
+    const startEdit = (s: Showcase) => {
+        setEditing(s.id);
+        setForm({ title: s.title, description: s.description, url: s.url, source_url: s.source_url || '', post_url: s.post_url || '', tags: s.tags.join(', '), status: s.status === 'archived' ? 'draft' : s.status });
+    };
+
+    const breadcrumbs = (
+        <div className="flex items-center gap-2 text-[#9b9a97]">
+            <Link href="/" className="flex items-center gap-2 hover:text-[#37352f] transition-colors font-medium">
+                <div className="w-3 h-3 bg-brand-red rounded-[2px]" />
+                <span>VibeCoder</span>
+            </Link>
+            <span className="text-[#d5d5d3]">/</span>
+            <span className="text-[#37352f] font-medium">manager</span>
+        </div>
+    );
+
+    function renderTile(tile: Tile, index: number) {
+        const vt = vibeText(index);
+        const bg = isVibe ? vibeColor(index) : 'white';
+
+        switch (tile.variant) {
+            case 'artode':
+                return (
+                    <div
+                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                        onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
+                    >
+                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-white'}`} />
+                    </div>
+                );
+            case 'title':
+                return (
+                    <div className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? vibeColor(index) : '#242423' }}>
+                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? vt + ' opacity-60' : 'text-white/40'}`}>Manager</span>
+                        <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? vt : 'text-white'}`}>Your Showcases</span>
+                    </div>
+                );
+            case 'counter':
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{showcases.length}</span>
+                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Total</span>
+                    </div>
+                );
+            case 'form-url':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[0] }}>{editing ? 'Ed' : 'New'}</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[0]}20` }} />
+                            {fetchingOG && <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider animate-pulse">Fetching…</span>}
+                        </div>
+                        <div className="space-y-2">
+                            <input type="url" placeholder="Paste URL (GitHub, CodeSandbox, etc.)" value={form.url}
+                                onChange={e => setForm(prev => ({ ...prev, url: e.target.value }))} onBlur={() => fetchOG(form.url)}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-sm font-serif text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-serif outline-none pb-1 transition-colors" />
+                            <input type="text" placeholder="Title" value={form.title}
+                                onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-sm font-serif text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-serif outline-none pb-1 transition-colors" />
+                        </div>
+                    </div>
+                );
+            case 'form-links':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[2] }}>Links</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[2]}20` }} />
+                        </div>
+                        <div className="space-y-2">
+                            <input type="url" placeholder="Source code URL (GitHub, GitLab, etc.)" value={form.source_url}
+                                onChange={e => setForm(prev => ({ ...prev, source_url: e.target.value }))}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none pb-1 transition-colors" />
+                            <input type="url" placeholder="Blog post / article URL" value={form.post_url}
+                                onChange={e => setForm(prev => ({ ...prev, post_url: e.target.value }))}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none pb-1 transition-colors" />
+                        </div>
+                    </div>
+                );
+            case 'form-details':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[1] }}>Info</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[1]}20` }} />
+                        </div>
+                        <div className="space-y-2">
+                            <input type="text" placeholder="Description" value={form.description}
+                                onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-serif text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-serif outline-none pb-1 transition-colors" />
+                            <input type="text" placeholder="Tags (comma-separated)" value={form.tags}
+                                onChange={e => setForm(prev => ({ ...prev, tags: e.target.value }))}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none pb-1 transition-colors" />
+                        </div>
+                    </div>
+                );
+            case 'form-action':
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <button onClick={() => setForm(prev => ({ ...prev, status: prev.status === 'published' ? 'draft' : 'published' }))}
+                            className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-colors duration-300 mb-3 ${isVibe ? vt : form.status === 'published' ? 'text-brand-red' : 'text-[#9b9a97]'}`}>
+                            {form.status === 'published' ? 'Live' : 'Draft'}
+                        </button>
+                        <button onClick={handleSave} disabled={saving || !form.title || !form.url}
+                            className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 disabled:opacity-30 ${isVibe ? vt : 'text-[#37352f] hover:text-brand-red'}`}>
+                            {saving ? 'Saving…' : editing ? 'Update ↑' : 'Add ↑'}
+                        </button>
+                        {editing && (
+                            <button onClick={() => { setEditing(null); setForm(EMPTY_FORM); }}
+                                className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-2 hover:text-[#37352f] transition-colors">Cancel</button>
+                        )}
+                    </div>
+                );
+            case 'signature':
+                return (
+                    <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-4">
+                            <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? vibeRaw(index) : 'rgba(216,0,24,0.3)' }} />
+                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>
+                                {username ? `vibecoder.dev/m/${username}` : 'Your marketplace'}
+                            </span>
+                        </div>
+                    </div>
+                );
+            case 'filler':
+                return (
+                    <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${vibeRaw(index)}1A` : '#f0f0ef' }} />
+                );
+            case 'nav':
+                return (
+                    <div className={`${tile.colSpan} p-5 flex flex-col justify-between min-h-[100px] group transition-all duration-300`} style={{ background: bg }}>
+                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em]">Public</span>
+                        <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] group-hover:text-brand-red'}`}>View Page ↗</span>
+                    </div>
+                );
+            case 'empty':
+                return (
+                    <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
+                        <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] opacity-70'}`}>
+                            No showcases yet. Paste a URL above to get started.
+                        </p>
+                    </div>
+                );
+            case 'showcase': {
+                const s = tile.showcase!;
+                const si = showcases.indexOf(s);
+                const numStr = String(si + 1).padStart(2, '0');
+                const accent = ACCENTS[si % ACCENTS.length];
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] group transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : accent }}>{numStr}</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${accent}20` }} />
+                            <span className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : s.status === 'published' ? 'text-brand-red' : 'text-[#9b9a97]'}`}>{s.status}</span>
+                        </div>
+                        <div>
+                            <h3 className={`text-base font-serif mb-1 transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] group-hover:text-brand-red'} ${tile.colSpan.includes('col-span-2') ? 'md:text-lg' : ''}`}>{s.title}</h3>
+                            <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>{s.description}</p>
+                            {s.tags.length > 0 && (
+                                <div className="flex items-center gap-2 mt-2">
+                                    <div className="w-4 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${accent}20` }} />
+                                    <span className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-40` : 'text-[#9b9a97]'}`}>{s.tags.join(' · ')}</span>
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-3 mt-3">
+                            <button onClick={() => startEdit(s)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Edit</button>
+                            <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : '#ededeb' }} />
+                            <button onClick={() => handleDelete(s.id)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-brand-red'}`}>Remove</button>
+                            <div className="flex-1" />
+                            {s.source_url && (
+                                <a href={s.source_url} target="_blank" rel="noopener noreferrer" className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Source ↗</a>
+                            )}
+                            {s.post_url && (
+                                <a href={s.post_url} target="_blank" rel="noopener noreferrer" className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Post ↗</a>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+        }
+    }
+
+    return (
+        <PageShell>
+            <Header breadcrumbs={breadcrumbs} />
+            <section className="flex-1">
+                <div
+                    className={GRID_CLASSES}
+                >
+                    {loading ? (
+                        <div className="col-span-2 md:col-span-4 flex items-center justify-center py-32 bg-white">
+                            <div className="w-6 h-6 border-2 border-[#ededeb] border-t-[#37352f] rounded-full animate-spin" />
+                        </div>
+                    ) : shuffledTiles.map((tile, i) => {
+                        const rendered = renderTile(tile, i);
+                        return tile.href ? (
+                            <Link key={tile.id} href={tile.href} target={tile.variant === 'nav' ? '_blank' : undefined} className="contents">{rendered}</Link>
+                        ) : (
+                            <div key={tile.id} className="contents">{rendered}</div>
+                        );
+                    })}
+                </div>
+            </section>
+            <Footer />
+        </PageShell>
+    );
+}
