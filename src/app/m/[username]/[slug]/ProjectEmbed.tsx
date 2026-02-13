@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import type { Profile, Showcase } from '@/lib/db/types';
-import { vibeColor, vibeText, vibeRaw } from '@/lib/vibe';
+import { VIBE_RAW_COLORS } from '@/lib/vibe';
+import { extractColorsFromImage } from '@/lib/colors';
 
 interface ProjectEmbedProps {
     profile: Profile;
@@ -16,11 +17,19 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
     const isVibe = vibeLocked || hovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
     const [iframeLoaded, setIframeLoaded] = useState(false);
+    const [palColor, setPalColor] = useState(VIBE_RAW_COLORS[0]);
 
-    const vt = vibeText(0);
-    const bg = isVibe ? vibeColor(0) : 'white';
-    const accentBg = isVibe ? vibeColor(1) : '#242423';
-    const accentText = isVibe ? vibeText(1) : 'text-white';
+    useEffect(() => {
+        if (profile.avatar_url) {
+            extractColorsFromImage(profile.avatar_url).then(c => setPalColor(c.primary));
+        }
+    }, [profile.avatar_url]);
+
+    const dynBg = `radial-gradient(circle at center, ${palColor}26 0%, rgba(255,255,255,0) 70%)`;
+    const dynTextStyle = { color: palColor };
+    const bg = isVibe ? dynBg : 'white';
+    const accentBg = isVibe ? dynBg : '#242423';
+    const accentTextCls = isVibe ? '' : 'text-white';
 
     return (
         <div className="flex flex-col h-screen">
@@ -32,7 +41,7 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
                 {/* Artode toggle */}
                 <div
                     className="w-5 h-5 cursor-pointer transition-all duration-300 flex-shrink-0"
-                    style={{ backgroundColor: isVibe ? vibeRaw(0) : '#242423' }}
+                    style={{ backgroundColor: isVibe ? palColor : '#242423' }}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
                     onClick={toggleVibe}
@@ -42,20 +51,22 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
                 <nav className="flex items-center gap-1.5 text-[11px] font-mono min-w-0">
                     <Link
                         href="/"
-                        className={`flex items-center gap-1.5 hover:opacity-80 transition-colors ${isVibe ? `${vt} opacity-50` : 'text-[#9b9a97]'}`}
+                        className={`flex items-center gap-1.5 hover:opacity-80 transition-colors ${isVibe ? 'opacity-50' : 'text-[#9b9a97]'}`}
+                        style={isVibe ? dynTextStyle : undefined}
                     >
                         <div className="w-2.5 h-2.5 bg-brand-red rounded-[1px] flex-shrink-0" />
                         <span>VibeCoder</span>
                     </Link>
-                    <span className={isVibe ? `${vt} opacity-30` : 'text-[#d5d5d3]'}>/</span>
+                    <span className={isVibe ? 'opacity-30' : 'text-[#d5d5d3]'} style={isVibe ? dynTextStyle : undefined}>/</span>
                     <Link
                         href={`/m/${profile.username}`}
-                        className={`hover:opacity-80 transition-colors truncate ${isVibe ? `${vt} opacity-50` : 'text-[#9b9a97]'}`}
+                        className={`hover:opacity-80 transition-colors truncate ${isVibe ? 'opacity-50' : 'text-[#9b9a97]'}`}
+                        style={isVibe ? dynTextStyle : undefined}
                     >
                         {profile.username}
                     </Link>
-                    <span className={isVibe ? `${vt} opacity-30` : 'text-[#d5d5d3]'}>/</span>
-                    <span className={`font-medium truncate ${isVibe ? vt : 'text-[#37352f]'}`}>
+                    <span className={isVibe ? 'opacity-30' : 'text-[#d5d5d3]'} style={isVibe ? dynTextStyle : undefined}>/</span>
+                    <span className={`font-medium truncate ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
                         {showcase.title}
                     </span>
                 </nav>
@@ -64,7 +75,7 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
 
                 {/* Tags */}
                 {showcase.tags.length > 0 && (
-                    <span className={`text-[8px] font-mono uppercase tracking-wider flex-shrink-0 ${isVibe ? `${vt} opacity-40` : 'text-[#9b9a97]'}`}>
+                    <span className={`text-[8px] font-mono uppercase tracking-wider flex-shrink-0 ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>
                         {showcase.tags.slice(0, 3).join(' · ')}
                     </span>
                 )}
@@ -76,7 +87,8 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
                             href={showcase.source_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 ${isVibe ? `${vt} opacity-60 hover:opacity-100` : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 ${isVibe ? 'opacity-60 hover:opacity-100' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                            style={isVibe ? dynTextStyle : undefined}
                         >
                             Source ↗
                         </a>
@@ -86,7 +98,8 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
                             href={showcase.post_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 ${isVibe ? `${vt} opacity-60 hover:opacity-100` : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 ${isVibe ? 'opacity-60 hover:opacity-100' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                            style={isVibe ? dynTextStyle : undefined}
                         >
                             Post ↗
                         </a>
@@ -95,7 +108,7 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
                         href={showcase.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 flex-shrink-0 ${accentText}`}
+                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 flex-shrink-0 ${accentTextCls}`}
                         style={{ backgroundColor: accentBg }}
                     >
                         Live ↗
