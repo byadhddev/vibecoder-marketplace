@@ -6,7 +6,6 @@ import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import {
-    VIBE_RAW_COLORS,
     vibeColor, vibeText, vibeRaw,
     randomShuffle, GRID_CLASSES,
 } from '@/lib/vibe';
@@ -131,27 +130,35 @@ export default function HomePage() {
                 );
             case 'vibeloper': {
                 const v = tile.vibeloper!;
-                const accent = VIBE_RAW_COLORS[index % VIBE_RAW_COLORS.length];
                 return (
                     <div
-                        className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] group transition-all duration-300`}
-                        style={{ background: bg }}
+                        className={`${tile.colSpan} relative overflow-hidden min-h-[140px] md:min-h-[160px] group transition-all duration-300 bg-[#242423]`}
                     >
-                        <div className="flex items-center gap-3">
-                            {v.avatar_url && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={v.avatar_url} alt="" className="w-6 h-6 rounded-full border border-[#ededeb]" />
-                            )}
-                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${accent}4D` : `${accent}20` }} />
-                            <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider">{v.showcase_count} projects</span>
-                        </div>
-                        <div>
-                            <h3 className={`text-base font-serif mb-1 transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] group-hover:text-brand-red'} ${tile.colSpan.includes('col-span-2') ? 'md:text-lg' : ''}`}>
+                        {v.avatar_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                                src={v.avatar_url}
+                                alt={v.name}
+                                className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                            />
+                        ) : (
+                            <div className="absolute inset-0 flex items-center justify-center text-white text-3xl font-serif">
+                                {v.name.charAt(0)}
+                            </div>
+                        )}
+                        {/* Bottom overlay with name */}
+                        <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                            <h3 className="text-sm md:text-base font-serif text-white leading-tight">
                                 {v.name}
                             </h3>
-                            <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>
-                                {v.role || `@${v.username}`}
-                            </p>
+                            <div className="flex items-center justify-between mt-1">
+                                <p className="text-[11px] text-white/60">
+                                    {v.role || `@${v.username}`}
+                                </p>
+                                <span className="text-[8px] font-mono text-white/40 uppercase tracking-wider">
+                                    {v.showcase_count} projects
+                                </span>
+                            </div>
                         </div>
                     </div>
                 );
