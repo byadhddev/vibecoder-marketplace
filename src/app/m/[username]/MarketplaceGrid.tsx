@@ -163,12 +163,12 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                         {(s.source_url || s.post_url) && (
                             <div className="flex items-center gap-3 mt-2">
                                 {s.source_url && (
-                                    <a href={s.source_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
-                                        className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Source ↗</a>
+                                    <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); window.open(s.source_url, '_blank', 'noopener,noreferrer'); }}
+                                        className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Source ↗</button>
                                 )}
                                 {s.post_url && (
-                                    <a href={s.post_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
-                                        className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Post ↗</a>
+                                    <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); window.open(s.post_url, '_blank', 'noopener,noreferrer'); }}
+                                        className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Post ↗</button>
                                 )}
                             </div>
                         )}

@@ -40,21 +40,30 @@ export async function branchExists(branch: string, token?: Token): Promise<boole
     return res.status === 200;
 }
 
-/** Create an orphan branch with an initial empty commit */
+/** Create an orphan branch with an initial commit containing a placeholder file */
 export async function createOrphanBranch(branch: string, token: Token): Promise<boolean> {
     const owner = DATA_OWNER();
     const repo = DATA_NAME();
 
-    // 1. Create an empty tree
+    // 1. Create a blob (GitHub rejects empty trees)
+    const blobRes = await fetch(`${API}/repos/${owner}/${repo}/git/blobs`, {
+        method: 'POST',
+        headers: headers(token),
+        body: JSON.stringify({ content: btoa('{}'), encoding: 'base64' }),
+    });
+    if (!blobRes.ok) { console.error('Failed to create blob:', await blobRes.text()); return false; }
+    const { sha: blobSha } = await blobRes.json();
+
+    // 2. Create tree with the placeholder blob
     const treeRes = await fetch(`${API}/repos/${owner}/${repo}/git/trees`, {
         method: 'POST',
         headers: headers(token),
-        body: JSON.stringify({ tree: [] }),
+        body: JSON.stringify({ tree: [{ path: '.init', mode: '100644', type: 'blob', sha: blobSha }] }),
     });
     if (!treeRes.ok) { console.error('Failed to create tree:', await treeRes.text()); return false; }
     const { sha: treeSha } = await treeRes.json();
 
-    // 2. Create a commit with no parents (orphan)
+    // 3. Create a commit with no parents (orphan)
     const commitRes = await fetch(`${API}/repos/${owner}/${repo}/git/commits`, {
         method: 'POST',
         headers: headers(token),
@@ -67,7 +76,7 @@ export async function createOrphanBranch(branch: string, token: Token): Promise<
     if (!commitRes.ok) { console.error('Failed to create commit:', await commitRes.text()); return false; }
     const { sha: commitSha } = await commitRes.json();
 
-    // 3. Create the ref
+    // 4. Create the ref
     const refRes = await fetch(`${API}/repos/${owner}/${repo}/git/refs`, {
         method: 'POST',
         headers: headers(token),
