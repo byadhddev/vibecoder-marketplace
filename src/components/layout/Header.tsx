@@ -38,12 +38,6 @@ export function Header({ breadcrumbs, rightContent, className = '' }: HeaderProp
                             Explore
                         </Link>
                         <Link
-                            href="/gallery"
-                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
-                        >
-                            Gallery
-                        </Link>
-                        <Link
                             href="/manager"
                             className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
                         >
@@ -73,12 +67,6 @@ export function Header({ breadcrumbs, rightContent, className = '' }: HeaderProp
                             className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
                         >
                             Explore
-                        </Link>
-                        <Link
-                            href="/gallery"
-                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
-                        >
-                            Gallery
                         </Link>
                         <button
                             onClick={() => signIn('github')}

@@ -11,10 +11,10 @@ import type { Showcase, Profile, ProfileInput } from '@/lib/db/types';
 import {
     ACCENTS,
     vibeColor, vibeText, vibeRaw,
-    randomShuffle, GRID_CLASSES,
+    GRID_CLASSES,
 } from '@/lib/vibe';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-save' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav';
+type TileVariant = 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-save' | 'filler' | 'showcase' | 'empty' | 'nav';
 
 interface Tile {
     id: string;
@@ -36,24 +36,28 @@ interface FormState {
 
 const EMPTY_FORM: FormState = { title: '', description: '', url: '', source_url: '', post_url: '', tags: '', status: 'draft' };
 
-function buildTiles(showcases: Showcase[], username?: string): Tile[] {
-    const tiles: Tile[] = [
-        { id: 'artode', colSpan: 'col-span-1', variant: 'artode' },
-        { id: 'title', colSpan: 'col-span-2 md:col-span-2', variant: 'title' },
-        { id: 'counter', colSpan: 'col-span-1', variant: 'counter' },
-        // Profile editor tiles
+function buildProfileTiles(): Tile[] {
+    return [
         { id: 'profile-identity', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-identity' },
         { id: 'profile-bio', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-bio' },
         { id: 'profile-socials', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-socials' },
         { id: 'profile-save', colSpan: 'col-span-1', variant: 'profile-save' },
-        // Showcase form tiles
+        { id: 'profile-filler', colSpan: 'col-span-1', variant: 'filler' },
+    ];
+}
+
+function buildFormTiles(): Tile[] {
+    return [
         { id: 'form-url', colSpan: 'col-span-2 md:col-span-2', variant: 'form-url' },
         { id: 'form-links', colSpan: 'col-span-2 md:col-span-2', variant: 'form-links' },
         { id: 'form-details', colSpan: 'col-span-2 md:col-span-2', variant: 'form-details' },
         { id: 'form-action', colSpan: 'col-span-1', variant: 'form-action' },
-        { id: 'signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
-        { id: 'filler', colSpan: 'col-span-1', variant: 'filler' },
+        { id: 'form-filler', colSpan: 'col-span-1', variant: 'filler' },
     ];
+}
+
+function buildShowcaseTiles(showcases: Showcase[], username?: string): Tile[] {
+    const tiles: Tile[] = [];
     if (username) tiles.push({ id: 'nav-public', colSpan: 'col-span-1', variant: 'nav', href: `/m/${username}` });
 
     const showcaseTiles: Tile[] = showcases.map(s => ({
@@ -77,7 +81,6 @@ export default function ManagerPage() {
     const [hovered, setHovered] = useState(false);
     const isVibe = vibeLocked || hovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
-    const [shuffledTiles, setShuffledTiles] = useState<Tile[]>([]);
     const [username, setUsername] = useState<string | undefined>(undefined);
     // Profile state
     const [profile, setProfile] = useState<ProfileInput>({ name: '', role: '', bio: '', website: '', location: '', social_links: {} });
@@ -118,10 +121,6 @@ export default function ManagerPage() {
             })
             .catch(() => {});
     }, [status]);
-
-    useEffect(() => {
-        if (!loading) setShuffledTiles(randomShuffle(buildTiles(showcases, username)));
-    }, [showcases, loading, username]);
 
     const fetchOG = async (url: string) => {
         if (!url) return;
@@ -190,31 +189,6 @@ export default function ManagerPage() {
         const bg = isVibe ? vibeColor(index) : 'white';
 
         switch (tile.variant) {
-            case 'artode':
-                return (
-                    <div
-                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
-                        onMouseEnter={() => setHovered(true)}
-                        onMouseLeave={() => setHovered(false)}
-                        onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
-                    >
-                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-white'}`} />
-                    </div>
-                );
-            case 'title':
-                return (
-                    <div className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? vibeColor(index) : '#242423' }}>
-                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? vt + ' opacity-60' : 'text-white/40'}`}>Manager</span>
-                        <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? vt : 'text-white'}`}>Your Showcases</span>
-                    </div>
-                );
-            case 'counter':
-                return (
-                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{showcases.length}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Total</span>
-                    </div>
-                );
             case 'profile-identity':
                 return (
                     <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
@@ -350,17 +324,6 @@ export default function ManagerPage() {
                         )}
                     </div>
                 );
-            case 'signature':
-                return (
-                    <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
-                        <div className="flex items-center gap-4">
-                            <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? vibeRaw(index) : 'rgba(216,0,24,0.3)' }} />
-                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>
-                                {username ? `vibecoder.dev/m/${username}` : 'Your marketplace'}
-                            </span>
-                        </div>
-                    </div>
-                );
             case 'filler':
                 return (
                     <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${vibeRaw(index)}1A` : '#f0f0ef' }} />
@@ -420,26 +383,34 @@ export default function ManagerPage() {
         }
     }
 
+    const renderGrid = (tiles: Tile[]) => (
+        <div className={GRID_CLASSES}>
+            {tiles.map((tile, i) => {
+                const rendered = renderTile(tile, i);
+                return tile.href ? (
+                    <Link key={tile.id} href={tile.href} target={tile.variant === 'nav' ? '_blank' : undefined} className="contents">{rendered}</Link>
+                ) : (
+                    <div key={tile.id} className="contents">{rendered}</div>
+                );
+            })}
+        </div>
+    );
+
     return (
         <PageShell>
             <Header breadcrumbs={breadcrumbs} />
             <section className="flex-1">
-                <div
-                    className={GRID_CLASSES}
-                >
-                    {loading ? (
-                        <div className="col-span-2 md:col-span-4 flex items-center justify-center py-32 bg-white">
-                            <div className="w-6 h-6 border-2 border-[#ededeb] border-t-[#37352f] rounded-full animate-spin" />
-                        </div>
-                    ) : shuffledTiles.map((tile, i) => {
-                        const rendered = renderTile(tile, i);
-                        return tile.href ? (
-                            <Link key={tile.id} href={tile.href} target={tile.variant === 'nav' ? '_blank' : undefined} className="contents">{rendered}</Link>
-                        ) : (
-                            <div key={tile.id} className="contents">{rendered}</div>
-                        );
-                    })}
-                </div>
+                {loading ? (
+                    <div className="flex items-center justify-center py-32">
+                        <div className="w-6 h-6 border-2 border-[#ededeb] border-t-[#37352f] rounded-full animate-spin" />
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        {renderGrid(buildProfileTiles())}
+                        {renderGrid(buildFormTiles())}
+                        {renderGrid(buildShowcaseTiles(showcases, username))}
+                    </div>
+                )}
             </section>
             <Footer />
         </PageShell>
