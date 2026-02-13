@@ -39,6 +39,11 @@ async function readRegistry(token?: string): Promise<{ data: Registry; sha: stri
     return { data: { users: [], updated_at: new Date().toISOString() }, sha: '' };
 }
 
+export async function getRegistry(): Promise<Registry> {
+    const { data } = await readRegistry();
+    return data;
+}
+
 async function updateRegistry(
     updater: (reg: Registry) => Registry,
     token: string,

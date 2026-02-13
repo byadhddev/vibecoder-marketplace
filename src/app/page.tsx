@@ -50,12 +50,19 @@ function buildTiles(vibelopers: VibeloperSummary[]): Tile[] {
 }
 
 export default function HomePage() {
-    const [vibelopers] = useState<VibeloperSummary[]>([]);
+    const [vibelopers, setVibelopers] = useState<VibeloperSummary[]>([]);
     const [shuffledTiles, setShuffledTiles] = useState<Tile[]>([]);
     const [vibeLocked, setVibeLocked] = useState(false);
     const [hovered, setHovered] = useState(false);
     const isVibe = vibeLocked || hovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
+
+    useEffect(() => {
+        fetch('/api/marketplace/vibelopers')
+            .then(r => r.json())
+            .then(data => setVibelopers(data.vibelopers || []))
+            .catch(() => setVibelopers([]));
+    }, []);
 
     useEffect(() => {
         setShuffledTiles(randomShuffle(buildTiles(vibelopers)));
