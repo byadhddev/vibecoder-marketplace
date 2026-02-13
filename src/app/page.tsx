@@ -163,12 +163,9 @@ export default function HomePage() {
                                 {v.name.charAt(0)}
                             </div>
                         )}
-                        <div
-                            className="absolute bottom-0 inset-x-0 px-3 py-2.5"
-                            style={{ backgroundColor: primary + 'E6' }}
-                        >
-                            <h3 className="text-sm font-serif leading-tight" style={{ color: textClr }}>{v.name}</h3>
-                            <p className="text-[10px] mt-0.5" style={{ color: subClr }}>{v.role || `@${v.username}`}</p>
+                        <div className="absolute bottom-0 inset-x-0 px-3 py-2.5">
+                            <h3 className="text-sm font-serif leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" style={{ color: textClr }}>{v.name}</h3>
+                            <p className="text-[10px] mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" style={{ color: subClr }}>{v.role || `@${v.username}`}</p>
                         </div>
                     </div>
                 );
