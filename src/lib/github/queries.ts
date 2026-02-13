@@ -9,7 +9,7 @@ import {
     branchExists, createOrphanBranch, readJSON, writeJSON, deleteFile,
     listFiles, userBranch, REGISTRY_BRANCH,
 } from './client';
-import type { Profile, Showcase, ShowcaseInput, PublicMarketplace } from '@/lib/db/types';
+import type { Profile, ProfileInput, Showcase, ShowcaseInput, PublicMarketplace } from '@/lib/db/types';
 
 function appToken(): string {
     return process.env.GITHUB_APP_TOKEN || process.env.GITHUB_CLIENT_SECRET || '';
@@ -21,14 +21,14 @@ function toSlug(title: string): string {
 
 // ─── Registry (global user index) ────────────────────────────
 
-interface RegistryUser {
+export interface RegistryUser {
     username: string;
     name: string;
     avatar_url: string;
     showcase_count: number;
 }
 
-interface Registry {
+export interface Registry {
     users: RegistryUser[];
     updated_at: string;
 }
@@ -91,6 +91,11 @@ export async function createProfile(
         role: '',
         bio: '',
         avatar_url: avatarUrl || '',
+        website: '',
+        location: '',
+        social_links: {},
+        showcase_count: 0,
+        total_views: 0,
         plan: 'free',
         created_at: now,
         updated_at: now,
@@ -112,6 +117,41 @@ export async function createProfile(
     );
 
     return { ...profile, id: username, user_id: userId } as Profile;
+}
+
+export async function updateProfile(
+    username: string,
+    input: ProfileInput,
+    token?: string,
+): Promise<Profile | null> {
+    const t = token || appToken();
+    const branch = userBranch(username);
+    const result = await readJSON<Omit<Profile, 'id' | 'user_id'>>('profile.json', branch, t);
+    if (!result) return null;
+
+    const updated = {
+        ...result.data,
+        ...input,
+        social_links: { ...(result.data.social_links || {}), ...(input.social_links || {}) },
+        updated_at: new Date().toISOString(),
+    };
+
+    const wrote = await writeJSON('profile.json', branch, updated, t, `Update profile for ${username}`, result.sha);
+    if (!wrote) return null;
+
+    // Update registry name if changed
+    if (input.name) {
+        await updateRegistry(
+            reg => ({
+                ...reg,
+                users: reg.users.map(u => u.username === username ? { ...u, name: input.name! } : u),
+            }),
+            t,
+            `Update registry for ${username}`,
+        );
+    }
+
+    return { ...updated, id: username, user_id: username } as Profile;
 }
 
 export async function getOrCreateDevProfile(): Promise<Profile | null> {

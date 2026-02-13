@@ -32,18 +32,32 @@ export function Header({ breadcrumbs, rightContent, className = '' }: HeaderProp
                 ) : session?.user ? (
                     <div className="flex items-center gap-2.5">
                         <Link
+                            href="/explore"
+                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
+                        >
+                            Explore
+                        </Link>
+                        <Link
+                            href="/gallery"
+                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
+                        >
+                            Gallery
+                        </Link>
+                        <Link
                             href="/manager"
                             className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
                         >
                             Manager
                         </Link>
                         {session.user.image && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                                src={session.user.image}
-                                alt=""
-                                className="w-6 h-6 rounded-full border border-[#ededeb]"
-                            />
+                            <Link href={`/m/${(session.user as { username?: string }).username || session.user.name || ''}`}>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src={session.user.image}
+                                    alt=""
+                                    className="w-6 h-6 rounded-sm border border-[#ededeb]"
+                                />
+                            </Link>
                         )}
                         <button
                             onClick={() => signOut()}
@@ -53,12 +67,26 @@ export function Header({ breadcrumbs, rightContent, className = '' }: HeaderProp
                         </button>
                     </div>
                 ) : (
-                    <button
-                        onClick={() => signIn('github')}
-                        className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
-                    >
-                        Sign in
-                    </button>
+                    <div className="flex items-center gap-2.5">
+                        <Link
+                            href="/explore"
+                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
+                        >
+                            Explore
+                        </Link>
+                        <Link
+                            href="/gallery"
+                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
+                        >
+                            Gallery
+                        </Link>
+                        <button
+                            onClick={() => signIn('github')}
+                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
+                        >
+                            Sign in
+                        </button>
+                    </div>
                 )}
             </div>
         </header>

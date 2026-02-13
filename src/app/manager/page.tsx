@@ -7,14 +7,14 @@ import Link from 'next/link';
 import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import type { Showcase } from '@/lib/db/types';
+import type { Showcase, Profile, ProfileInput } from '@/lib/db/types';
 import {
     ACCENTS,
     vibeColor, vibeText, vibeRaw,
     randomShuffle, GRID_CLASSES,
 } from '@/lib/vibe';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav';
+type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-save' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav';
 
 interface Tile {
     id: string;
@@ -41,6 +41,12 @@ function buildTiles(showcases: Showcase[], username?: string): Tile[] {
         { id: 'artode', colSpan: 'col-span-1', variant: 'artode' },
         { id: 'title', colSpan: 'col-span-2 md:col-span-2', variant: 'title' },
         { id: 'counter', colSpan: 'col-span-1', variant: 'counter' },
+        // Profile editor tiles
+        { id: 'profile-identity', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-identity' },
+        { id: 'profile-bio', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-bio' },
+        { id: 'profile-socials', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-socials' },
+        { id: 'profile-save', colSpan: 'col-span-1', variant: 'profile-save' },
+        // Showcase form tiles
         { id: 'form-url', colSpan: 'col-span-2 md:col-span-2', variant: 'form-url' },
         { id: 'form-links', colSpan: 'col-span-2 md:col-span-2', variant: 'form-links' },
         { id: 'form-details', colSpan: 'col-span-2 md:col-span-2', variant: 'form-details' },
@@ -73,6 +79,10 @@ export default function ManagerPage() {
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
     const [shuffledTiles, setShuffledTiles] = useState<Tile[]>([]);
     const [username, setUsername] = useState<string | undefined>(undefined);
+    // Profile state
+    const [profile, setProfile] = useState<ProfileInput>({ name: '', role: '', bio: '', website: '', location: '', social_links: {} });
+    const [savingProfile, setSavingProfile] = useState(false);
+    const [profileDirty, setProfileDirty] = useState(false);
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -82,6 +92,7 @@ export default function ManagerPage() {
 
     useEffect(() => {
         if (status !== 'authenticated') return;
+        // Fetch showcases
         fetch('/api/marketplace/showcases')
             .then(r => r.ok ? r.json() : { showcases: [] })
             .then(d => {
@@ -90,6 +101,22 @@ export default function ManagerPage() {
             })
             .catch(() => {})
             .finally(() => setLoading(false));
+        // Fetch profile
+        fetch('/api/marketplace/profile')
+            .then(r => r.ok ? r.json() : null)
+            .then(d => {
+                if (d?.profile) {
+                    setProfile({
+                        name: d.profile.name || '',
+                        role: d.profile.role || '',
+                        bio: d.profile.bio || '',
+                        website: d.profile.website || '',
+                        location: d.profile.location || '',
+                        social_links: d.profile.social_links || {},
+                    });
+                }
+            })
+            .catch(() => {});
     }, [status]);
 
     useEffect(() => {
@@ -128,6 +155,23 @@ export default function ManagerPage() {
     const startEdit = (s: Showcase) => {
         setEditing(s.id);
         setForm({ title: s.title, description: s.description, url: s.url, source_url: s.source_url || '', post_url: s.post_url || '', tags: s.tags.join(', '), status: s.status === 'archived' ? 'draft' : s.status });
+    };
+
+    const handleSaveProfile = async () => {
+        setSavingProfile(true);
+        const res = await fetch('/api/marketplace/profile', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profile) });
+        if (res.ok) setProfileDirty(false);
+        setSavingProfile(false);
+    };
+
+    const updateProfile = (field: string, value: string) => {
+        setProfile(prev => ({ ...prev, [field]: value }));
+        setProfileDirty(true);
+    };
+
+    const updateSocial = (key: string, value: string) => {
+        setProfile(prev => ({ ...prev, social_links: { ...prev.social_links, [key]: value } }));
+        setProfileDirty(true);
     };
 
     const breadcrumbs = (
@@ -169,6 +213,72 @@ export default function ManagerPage() {
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
                         <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{showcases.length}</span>
                         <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Total</span>
+                    </div>
+                );
+            case 'profile-identity':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[4] }}>Profile</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[4]}20` }} />
+                        </div>
+                        <div className="space-y-2">
+                            <input type="text" placeholder="Your name" value={profile.name}
+                                onChange={e => updateProfile('name', e.target.value)}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-sm font-serif text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                            <input type="text" placeholder="Role (e.g. Frontend Engineer)" value={profile.role}
+                                onChange={e => updateProfile('role', e.target.value)}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                            <input type="text" placeholder="Location" value={profile.location}
+                                onChange={e => updateProfile('location', e.target.value)}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                        </div>
+                    </div>
+                );
+            case 'profile-bio':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[5] }}>About</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[5]}20` }} />
+                        </div>
+                        <div className="space-y-2">
+                            <textarea placeholder="Bio — tell the world what you build" value={profile.bio}
+                                onChange={e => updateProfile('bio', e.target.value)} rows={3}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-serif text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors resize-none" />
+                            <input type="url" placeholder="Website URL" value={profile.website}
+                                onChange={e => updateProfile('website', e.target.value)}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                        </div>
+                    </div>
+                );
+            case 'profile-socials':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[6] }}>Socials</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[6]}20` }} />
+                        </div>
+                        <div className="space-y-2">
+                            <input type="text" placeholder="GitHub username" value={profile.social_links?.github || ''}
+                                onChange={e => updateSocial('github', e.target.value)}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                            <input type="text" placeholder="Twitter / X handle" value={profile.social_links?.twitter || ''}
+                                onChange={e => updateSocial('twitter', e.target.value)}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                            <input type="text" placeholder="LinkedIn username" value={profile.social_links?.linkedin || ''}
+                                onChange={e => updateSocial('linkedin', e.target.value)}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                        </div>
+                    </div>
+                );
+            case 'profile-save':
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <button onClick={handleSaveProfile} disabled={savingProfile || !profileDirty}
+                            className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 disabled:opacity-30 ${isVibe ? vt : 'text-[#37352f] hover:text-brand-red'}`}>
+                            {savingProfile ? 'Saving…' : profileDirty ? 'Save Profile ↑' : 'Saved ✓'}
+                        </button>
                     </div>
                 );
             case 'form-url':

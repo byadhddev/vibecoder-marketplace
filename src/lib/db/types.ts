@@ -1,3 +1,14 @@
+export interface SocialLinks {
+    github?: string;
+    twitter?: string;
+    linkedin?: string;
+    youtube?: string;
+    instagram?: string;
+    website?: string;
+    devto?: string;
+    medium?: string;
+}
+
 export interface Profile {
     id: string;
     user_id: string;
@@ -6,9 +17,23 @@ export interface Profile {
     role: string;
     bio: string;
     avatar_url: string;
+    website: string;
+    location: string;
+    social_links: SocialLinks;
+    showcase_count: number;
+    total_views: number;
     plan: 'free' | 'pro';
     created_at: string;
     updated_at: string;
+}
+
+export interface ProfileInput {
+    name?: string;
+    role?: string;
+    bio?: string;
+    website?: string;
+    location?: string;
+    social_links?: SocialLinks;
 }
 
 export interface Showcase {

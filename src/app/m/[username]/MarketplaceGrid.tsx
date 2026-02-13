@@ -12,7 +12,7 @@ import {
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'signature' | 'philosophy' | 'filler' | 'showcase';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase';
 
 interface Tile {
     id: string;
@@ -28,6 +28,7 @@ function buildTiles(showcases: Showcase[], username: string): Tile[] {
         { id: 'title', colSpan: 'col-span-2 md:col-span-2', variant: 'title' },
         { id: 'counter', colSpan: 'col-span-1', variant: 'counter' },
         { id: 'status', colSpan: 'col-span-1', variant: 'status' },
+        { id: 'socials', colSpan: 'col-span-2 md:col-span-2', variant: 'socials' },
         { id: 'signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
         { id: 'philosophy', colSpan: 'col-span-2 md:col-span-2', variant: 'philosophy' },
         { id: 'filler', colSpan: 'col-span-1', variant: 'filler' },
@@ -125,6 +126,35 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                         </div>
                     </div>
                 );
+            case 'socials': {
+                const links = (profile as Profile & { social_links?: Record<string, string> }).social_links || {};
+                const socialEntries = Object.entries(links).filter(([, v]) => v);
+                const website = (profile as Profile & { website?: string }).website;
+                if (socialEntries.length === 0 && !website) {
+                    return <div className={`${tile.colSpan} min-h-[60px] transition-all duration-300`} style={{ background: bg }} />;
+                }
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex flex-wrap items-center gap-3">
+                            {website && (
+                                <a href={website.startsWith('http') ? website : `https://${website}`} target="_blank" rel="noopener noreferrer"
+                                    className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                                    Website ↗
+                                </a>
+                            )}
+                            {socialEntries.map(([key, val]) => {
+                                const urls: Record<string, string> = { github: `https://github.com/${val}`, twitter: `https://x.com/${val}`, linkedin: `https://linkedin.com/in/${val}`, youtube: `https://youtube.com/@${val}`, instagram: `https://instagram.com/${val}`, devto: `https://dev.to/${val}`, medium: `https://medium.com/@${val}` };
+                                return (
+                                    <a key={key} href={urls[key] || val} target="_blank" rel="noopener noreferrer"
+                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                                        {key} ↗
+                                    </a>
+                                );
+                            })}
+                        </div>
+                    </div>
+                );
+            }
             case 'signature':
                 return (
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
