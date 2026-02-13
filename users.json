@@ -1,1 +1,11 @@
-{"users":[],"updated_at":"2026-02-13T17:24:00Z"}
+{
+  "users": [
+    {
+      "username": "byadhddev",
+      "name": "adhd.dev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/226852390?v=4",
+      "showcase_count": 0
+    }
+  ],
+  "updated_at": "2026-02-13T17:45:33.605Z"
+}
