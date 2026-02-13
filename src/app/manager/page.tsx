@@ -14,7 +14,7 @@ import {
     GRID_CLASSES,
 } from '@/lib/vibe';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-save' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav';
+type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-save' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav' | 'stat-views' | 'stat-clicks' | 'stat-top';
 
 interface Tile {
     id: string;
@@ -75,6 +75,14 @@ function buildShowcaseTiles(showcases: Showcase[], username?: string): Tile[] {
     return [...tiles, ...showcaseTiles];
 }
 
+function buildStatsTiles(showcases: Showcase[], totalViews: number): Tile[] {
+    return [
+        { id: 'stat-views', colSpan: 'col-span-1', variant: 'stat-views' },
+        { id: 'stat-clicks', colSpan: 'col-span-1', variant: 'stat-clicks' },
+        { id: 'stat-top', colSpan: 'col-span-2 md:col-span-2', variant: 'stat-top' },
+    ];
+}
+
 export default function ManagerPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -91,6 +99,7 @@ export default function ManagerPage() {
     const [username, setUsername] = useState<string | undefined>(undefined);
     // Profile state
     const [profile, setProfile] = useState<ProfileInput>({ name: '', role: '', bio: '', website: '', location: '', social_links: {} });
+    const [totalViews, setTotalViews] = useState(0);
     const [savingProfile, setSavingProfile] = useState(false);
     const [profileDirty, setProfileDirty] = useState(false);
 
@@ -124,6 +133,7 @@ export default function ManagerPage() {
                         location: d.profile.location || '',
                         social_links: d.profile.social_links || {},
                     });
+                    setTotalViews(d.profile.total_views || 0);
                 }
             })
             .catch(() => {});
@@ -371,6 +381,42 @@ export default function ManagerPage() {
                 return (
                     <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${vibeRaw(index)}1A` : '#f0f0ef' }} />
                 );
+            case 'stat-views':
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{totalViews}</span>
+                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Page Views</span>
+                    </div>
+                );
+            case 'stat-clicks': {
+                const totalClicks = showcases.reduce((sum, s) => sum + (s.clicks_count || 0), 0);
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{totalClicks}</span>
+                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Total Clicks</span>
+                    </div>
+                );
+            }
+            case 'stat-top': {
+                const sorted = [...showcases].sort((a, b) => (b.clicks_count || 0) - (a.clicks_count || 0));
+                const top = sorted[0];
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[3] }}>Top</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[3]}20` }} />
+                        </div>
+                        {top ? (
+                            <div>
+                                <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{top.title}</span>
+                                <span className={`text-[10px] font-mono ml-2 transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>{top.clicks_count || 0} clicks · {top.views_count || 0} views</span>
+                            </div>
+                        ) : (
+                            <span className={`text-[13px] font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] opacity-70'}`}>No data yet</span>
+                        )}
+                    </div>
+                );
+            }
             case 'nav':
                 return (
                     <div className={`${tile.colSpan} p-5 flex flex-col justify-between min-h-[100px] group transition-all duration-300`} style={{ background: bg }}>
@@ -452,6 +498,7 @@ export default function ManagerPage() {
                         {renderGrid(buildProfileTiles())}
                         {renderGrid(buildFormTiles())}
                         {renderGrid(buildShowcaseTiles(showcases, username))}
+                        {renderGrid(buildStatsTiles(showcases, totalViews))}
                     </div>
                 )}
             </section>

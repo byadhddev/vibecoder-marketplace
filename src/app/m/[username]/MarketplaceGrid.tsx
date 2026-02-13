@@ -12,7 +12,7 @@ import {
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks';
 
 interface Tile {
     id: string;
@@ -22,17 +22,22 @@ interface Tile {
     showcase?: Showcase;
 }
 
-function buildTiles(showcases: Showcase[], username: string): Tile[] {
+function buildTiles(showcases: Showcase[], username: string, profile: Profile): Tile[] {
+    const totalClicks = showcases.reduce((sum, s) => sum + (s.clicks_count || 0), 0);
     const decorative: Tile[] = [
         { id: 'artode', colSpan: 'col-span-1', variant: 'artode' },
         { id: 'title', colSpan: 'col-span-2 md:col-span-2', variant: 'title' },
         { id: 'counter', colSpan: 'col-span-1', variant: 'counter' },
         { id: 'status', colSpan: 'col-span-1', variant: 'status' },
+        { id: 'views', colSpan: 'col-span-1', variant: 'views' },
         { id: 'socials', colSpan: 'col-span-2 md:col-span-2', variant: 'socials' },
         { id: 'signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
         { id: 'philosophy', colSpan: 'col-span-2 md:col-span-2', variant: 'philosophy' },
-        { id: 'filler', colSpan: 'col-span-1', variant: 'filler' },
     ];
+    if (totalClicks > 0) {
+        decorative.push({ id: 'clicks', colSpan: 'col-span-1', variant: 'clicks' });
+    }
+    decorative.push({ id: 'filler', colSpan: 'col-span-1', variant: 'filler' });
     const showcaseTiles: Tile[] = showcases.map(s => ({
         id: s.id,
         colSpan: 'col-span-2 md:col-span-2',
@@ -49,7 +54,7 @@ interface MarketplaceGridProps {
 }
 
 export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
-    const [shuffledTiles, setShuffledTiles] = useState<Tile[]>(buildTiles(showcases, profile.username));
+    const [shuffledTiles, setShuffledTiles] = useState<Tile[]>(buildTiles(showcases, profile.username, profile));
     const [vibeLocked, setVibeLocked] = useState(false);
     const [hovered, setHovered] = useState(false);
     const [colors, setColors] = useState<ExtractedColors | null>(null);
@@ -62,8 +67,17 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
         }
     }, [profile.avatar_url]);
 
+    // Track page view once on mount
     useEffect(() => {
-        setShuffledTiles(randomShuffle(buildTiles(showcases, profile.username)));
+        fetch('/api/marketplace/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: profile.username, type: 'page_view' }),
+        }).catch(() => {});
+    }, [profile.username]);
+
+    useEffect(() => {
+        setShuffledTiles(randomShuffle(buildTiles(showcases, profile.username, profile)));
     }, [showcases]);
 
     const handleShowcaseClick = (showcaseId: string) => {
@@ -110,6 +124,22 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                         <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Showcases</span>
                     </div>
                 );
+            case 'views':
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>{profile.total_views || 0}</span>
+                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Views</span>
+                    </div>
+                );
+            case 'clicks': {
+                const totalClicks = showcases.reduce((sum, s) => sum + (s.clicks_count || 0), 0);
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>{totalClicks}</span>
+                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Clicks</span>
+                    </div>
+                );
+            }
             case 'status':
                 return (
                     <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-[#242423]`}>

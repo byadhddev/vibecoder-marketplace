@@ -22,6 +22,7 @@ export interface Profile {
     social_links: SocialLinks;
     showcase_count: number;
     total_views: number;
+    total_clicks: number;
     plan: 'free' | 'pro';
     created_at: string;
     updated_at: string;

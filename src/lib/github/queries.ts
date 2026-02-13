@@ -96,6 +96,7 @@ export async function createProfile(
         social_links: {},
         showcase_count: 0,
         total_views: 0,
+        total_clicks: 0,
         plan: 'free',
         created_at: now,
         updated_at: now,
@@ -367,6 +368,13 @@ export async function trackShowcaseClick(showcaseId: string, _referrer: string, 
         `Track click: ${slug}`,
         existing.sha,
     ).catch(() => {});
+
+    // Increment profile-level total_clicks
+    const profile = await readJSON<Omit<Profile, 'id' | 'user_id'>>('profile.json', branch, token);
+    if (profile) {
+        const updatedProfile = { ...profile.data, total_clicks: (profile.data.total_clicks || 0) + 1 };
+        await writeJSON('profile.json', branch, updatedProfile, token, `Track click on profile: ${username}`, profile.sha).catch(() => {});
+    }
 }
 
 export async function incrementShowcaseViews(showcaseId: string): Promise<void> {
@@ -384,6 +392,21 @@ export async function incrementShowcaseViews(showcaseId: string): Promise<void> 
     await writeJSON(
         `showcases/${slug}.json`, branch, updated, token,
         `Track view: ${slug}`,
+        existing.sha,
+    ).catch(() => {});
+}
+
+export async function incrementProfileViews(username: string): Promise<void> {
+    const token = appToken();
+    const branch = userBranch(username);
+
+    const existing = await readJSON<Omit<Profile, 'id' | 'user_id'>>('profile.json', branch, token);
+    if (!existing) return;
+
+    const updated = { ...existing.data, total_views: (existing.data.total_views || 0) + 1 };
+    await writeJSON(
+        'profile.json', branch, updated, token,
+        `Track profile view: ${username}`,
         existing.sha,
     ).catch(() => {});
 }
