@@ -111,14 +111,18 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                 );
             case 'status':
                 return (
-                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                    <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-[#242423]`}>
                         {profile.avatar_url ? (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={profile.avatar_url} alt="" className="w-12 h-12 rounded-full border border-[#ededeb]" />
+                            <img src={profile.avatar_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
                         ) : (
-                            <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-colors duration-300 ${isVibe ? '' : 'text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Active</span>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold ${isVibe ? '' : 'text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Active</span>
+                            </div>
                         )}
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-2">@{profile.username}</span>
+                        <div className="absolute bottom-0 inset-x-0 px-3 py-2">
+                            <span className="text-[9px] font-mono text-white/70 uppercase tracking-[0.2em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">@{profile.username}</span>
+                        </div>
                     </div>
                 );
             case 'signature':
