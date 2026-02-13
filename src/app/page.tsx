@@ -6,10 +6,10 @@ import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import {
+    VIBE_RAW_COLORS,
     vibeColor, vibeText, vibeRaw,
     randomShuffle, GRID_CLASSES,
 } from '@/lib/vibe';
-import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
 interface VibeloperSummary {
     username: string;
@@ -41,7 +41,7 @@ function buildTiles(vibelopers: VibeloperSummary[]): Tile[] {
     ];
     const vibeloperTiles: Tile[] = vibelopers.map(v => ({
         id: v.username,
-        colSpan: 'col-span-1',
+        colSpan: 'col-span-2 md:col-span-2',
         variant: 'vibeloper' as const,
         href: `/m/${v.username}`,
         vibeloper: v,
@@ -54,7 +54,6 @@ export default function HomePage() {
     const [shuffledTiles, setShuffledTiles] = useState<Tile[]>([]);
     const [vibeLocked, setVibeLocked] = useState(false);
     const [hovered, setHovered] = useState(false);
-    const [avatarColors, setAvatarColors] = useState<Record<string, ExtractedColors>>({});
     const isVibe = vibeLocked || hovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
 
@@ -64,17 +63,6 @@ export default function HomePage() {
             .then(data => setVibelopers(data.vibelopers || []))
             .catch(() => setVibelopers([]));
     }, []);
-
-    // Extract colors from each vibeloper's avatar
-    useEffect(() => {
-        vibelopers.forEach(v => {
-            if (v.avatar_url && !avatarColors[v.username]) {
-                extractColorsFromImage(v.avatar_url).then(colors => {
-                    setAvatarColors(prev => ({ ...prev, [v.username]: colors }));
-                });
-            }
-        });
-    }, [vibelopers]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         setShuffledTiles(randomShuffle(buildTiles(vibelopers)));
@@ -143,59 +131,28 @@ export default function HomePage() {
                 );
             case 'vibeloper': {
                 const v = tile.vibeloper!;
-                const colors = avatarColors[v.username];
-                const primary = colors?.primary || '#242423';
-                const secondary = colors?.secondary || '#d80018';
+                const accent = VIBE_RAW_COLORS[index % VIBE_RAW_COLORS.length];
                 return (
                     <div
-                        className={`${tile.colSpan} aspect-square relative overflow-hidden group transition-all duration-500`}
-                        style={{
-                            background: isVibe
-                                ? `linear-gradient(135deg, ${primary}, ${secondary})`
-                                : `linear-gradient(135deg, ${primary}18, ${secondary}10)`,
-                        }}
+                        className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] group transition-all duration-300`}
+                        style={{ background: bg }}
                     >
-                        {/* Avatar — centered, large */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            {v.avatar_url ? (
+                        <div className="flex items-center gap-3">
+                            {v.avatar_url && (
                                 // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                    src={v.avatar_url}
-                                    alt={v.name}
-                                    className="w-20 h-20 md:w-24 md:h-24 rounded-full transition-all duration-500 group-hover:scale-110"
-                                    style={{
-                                        border: `3px solid ${isVibe ? secondary : primary}30`,
-                                        boxShadow: isVibe ? `0 0 24px ${primary}40` : 'none',
-                                    }}
-                                />
-                            ) : (
-                                <div
-                                    className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-2xl font-serif text-white"
-                                    style={{ backgroundColor: primary }}
-                                >
-                                    {v.name.charAt(0)}
-                                </div>
+                                <img src={v.avatar_url} alt="" className="w-6 h-6 rounded-full border border-[#ededeb]" />
                             )}
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${accent}4D` : `${accent}20` }} />
+                            <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider">{v.showcase_count} projects</span>
                         </div>
-                        {/* Name + info overlay at bottom */}
-                        <div className="absolute bottom-0 inset-x-0 p-3 md:p-4">
-                            <h3 className={`text-sm font-serif leading-tight transition-colors duration-300 ${isVibe ? 'text-white' : 'text-[#37352f] group-hover:text-brand-red'}`}>
+                        <div>
+                            <h3 className={`text-base font-serif mb-1 transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] group-hover:text-brand-red'} ${tile.colSpan.includes('col-span-2') ? 'md:text-lg' : ''}`}>
                                 {v.name}
                             </h3>
-                            <div className="flex items-center justify-between mt-1">
-                                <p className={`text-[10px] leading-relaxed transition-colors duration-300 ${isVibe ? 'text-white/60' : 'text-[#9b9a97]'}`}>
-                                    {v.role || `@${v.username}`}
-                                </p>
-                                <span className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'text-white/40' : 'text-[#9b9a97]'}`}>
-                                    {v.showcase_count}
-                                </span>
-                            </div>
+                            <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>
+                                {v.role || `@${v.username}`}
+                            </p>
                         </div>
-                        {/* Top accent line from extracted color */}
-                        <div
-                            className="absolute top-0 inset-x-0 h-[2px] transition-all duration-500"
-                            style={{ backgroundColor: isVibe ? secondary : `${primary}40` }}
-                        />
                     </div>
                 );
             }
