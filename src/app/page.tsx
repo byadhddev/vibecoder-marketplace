@@ -40,7 +40,7 @@ function buildTiles(vibelopers: VibeloperSummary[]): Tile[] {
     ];
     const vibeloperTiles: Tile[] = vibelopers.map(v => ({
         id: v.username,
-        colSpan: 'col-span-2 md:col-span-2',
+        colSpan: 'col-span-1',
         variant: 'vibeloper' as const,
         href: `/m/${v.username}`,
         vibeloper: v,
@@ -131,34 +131,22 @@ export default function HomePage() {
             case 'vibeloper': {
                 const v = tile.vibeloper!;
                 return (
-                    <div
-                        className={`${tile.colSpan} relative overflow-hidden min-h-[140px] md:min-h-[160px] group transition-all duration-300 bg-[#242423]`}
-                    >
+                    <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-[#242423]`}>
                         {v.avatar_url ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                                 src={v.avatar_url}
                                 alt={v.name}
-                                className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                                className="absolute inset-0 w-full h-full object-cover"
                             />
                         ) : (
                             <div className="absolute inset-0 flex items-center justify-center text-white text-3xl font-serif">
                                 {v.name.charAt(0)}
                             </div>
                         )}
-                        {/* Bottom overlay with name */}
-                        <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
-                            <h3 className="text-sm md:text-base font-serif text-white leading-tight">
-                                {v.name}
-                            </h3>
-                            <div className="flex items-center justify-between mt-1">
-                                <p className="text-[11px] text-white/60">
-                                    {v.role || `@${v.username}`}
-                                </p>
-                                <span className="text-[8px] font-mono text-white/40 uppercase tracking-wider">
-                                    {v.showcase_count} projects
-                                </span>
-                            </div>
+                        <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
+                            <h3 className="text-sm font-serif text-white leading-tight">{v.name}</h3>
+                            <p className="text-[10px] text-white/60 mt-0.5">{v.role || `@${v.username}`}</p>
                         </div>
                     </div>
                 );
