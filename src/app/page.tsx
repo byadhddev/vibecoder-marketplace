@@ -9,6 +9,7 @@ import {
     vibeColor, vibeText, vibeRaw,
     randomShuffle, GRID_CLASSES,
 } from '@/lib/vibe';
+import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
 interface VibeloperSummary {
     username: string;
@@ -53,6 +54,7 @@ export default function HomePage() {
     const [shuffledTiles, setShuffledTiles] = useState<Tile[]>([]);
     const [vibeLocked, setVibeLocked] = useState(false);
     const [hovered, setHovered] = useState(false);
+    const [avatarColors, setAvatarColors] = useState<Record<string, ExtractedColors>>({});
     const isVibe = vibeLocked || hovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
 
@@ -62,6 +64,16 @@ export default function HomePage() {
             .then(data => setVibelopers(data.vibelopers || []))
             .catch(() => setVibelopers([]));
     }, []);
+
+    useEffect(() => {
+        vibelopers.forEach(v => {
+            if (v.avatar_url && !avatarColors[v.username]) {
+                extractColorsFromImage(v.avatar_url).then(colors => {
+                    setAvatarColors(prev => ({ ...prev, [v.username]: colors }));
+                });
+            }
+        });
+    }, [vibelopers]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         setShuffledTiles(randomShuffle(buildTiles(vibelopers)));
@@ -130,6 +142,10 @@ export default function HomePage() {
                 );
             case 'vibeloper': {
                 const v = tile.vibeloper!;
+                const colors = avatarColors[v.username];
+                const primary = colors?.primary || '#242423';
+                const textClr = colors?.textColor || '#ffffff';
+                const subClr = textClr === '#ffffff' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)';
                 return (
                     <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-[#242423]`}>
                         {v.avatar_url ? (
@@ -140,13 +156,19 @@ export default function HomePage() {
                                 className="absolute inset-0 w-full h-full object-cover"
                             />
                         ) : (
-                            <div className="absolute inset-0 flex items-center justify-center text-white text-3xl font-serif">
+                            <div
+                                className="absolute inset-0 flex items-center justify-center text-3xl font-serif"
+                                style={{ backgroundColor: primary, color: textClr }}
+                            >
                                 {v.name.charAt(0)}
                             </div>
                         )}
-                        <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
-                            <h3 className="text-sm font-serif text-white leading-tight">{v.name}</h3>
-                            <p className="text-[10px] text-white/60 mt-0.5">{v.role || `@${v.username}`}</p>
+                        <div
+                            className="absolute bottom-0 inset-x-0 px-3 py-2.5"
+                            style={{ backgroundColor: primary + 'E6' }}
+                        >
+                            <h3 className="text-sm font-serif leading-tight" style={{ color: textClr }}>{v.name}</h3>
+                            <p className="text-[10px] mt-0.5" style={{ color: subClr }}>{v.role || `@${v.username}`}</p>
                         </div>
                     </div>
                 );
