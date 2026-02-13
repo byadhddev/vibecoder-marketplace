@@ -14,7 +14,7 @@ import {
     GRID_CLASSES,
 } from '@/lib/vibe';
 
-type TileVariant = 'section-header' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-save' | 'counter' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav';
+type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-save' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav';
 
 interface Tile {
     id: string;
@@ -22,7 +22,6 @@ interface Tile {
     variant: TileVariant;
     href?: string;
     showcase?: Showcase;
-    label?: string;
 }
 
 interface FormState {
@@ -39,7 +38,9 @@ const EMPTY_FORM: FormState = { title: '', description: '', url: '', source_url:
 
 function buildProfileTiles(): Tile[] {
     return [
-        { id: 'p-header', colSpan: 'col-span-2 md:col-span-4', variant: 'section-header', label: 'Profile' },
+        { id: 'p-artode', colSpan: 'col-span-1', variant: 'artode' },
+        { id: 'p-title', colSpan: 'col-span-2 md:col-span-2', variant: 'title' },
+        { id: 'p-filler-top', colSpan: 'col-span-1', variant: 'filler' },
         { id: 'profile-identity', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-identity' },
         { id: 'profile-bio', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-bio' },
         { id: 'profile-socials', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-socials' },
@@ -50,18 +51,19 @@ function buildProfileTiles(): Tile[] {
 
 function buildFormTiles(): Tile[] {
     return [
-        { id: 'f-header', colSpan: 'col-span-2 md:col-span-4', variant: 'section-header', label: 'Add Showcase' },
+        { id: 'f-counter', colSpan: 'col-span-1', variant: 'counter' },
         { id: 'form-url', colSpan: 'col-span-2 md:col-span-2', variant: 'form-url' },
+        { id: 'f-filler-top', colSpan: 'col-span-1', variant: 'filler' },
         { id: 'form-links', colSpan: 'col-span-2 md:col-span-2', variant: 'form-links' },
         { id: 'form-details', colSpan: 'col-span-2 md:col-span-2', variant: 'form-details' },
         { id: 'form-action', colSpan: 'col-span-1', variant: 'form-action' },
-        { id: 'f-counter', colSpan: 'col-span-1', variant: 'counter' },
+        { id: 'f-filler', colSpan: 'col-span-1', variant: 'filler' },
     ];
 }
 
 function buildShowcaseTiles(showcases: Showcase[], username?: string): Tile[] {
     const tiles: Tile[] = [
-        { id: 's-header', colSpan: 'col-span-2 md:col-span-4', variant: 'section-header', label: 'Your Showcases' },
+        { id: 's-signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
     ];
     if (username) tiles.push({ id: 'nav-public', colSpan: 'col-span-1', variant: 'nav', href: `/m/${username}` });
 
@@ -194,20 +196,22 @@ export default function ManagerPage() {
         const bg = isVibe ? vibeColor(index) : 'white';
 
         switch (tile.variant) {
-            case 'section-header':
+            case 'artode':
                 return (
                     <div
-                        className={`${tile.colSpan} px-6 py-4 flex items-center justify-between bg-[#242423]`}
+                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
+                        onMouseEnter={() => setHovered(true)}
+                        onMouseLeave={() => setHovered(false)}
+                        onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
                     >
-                        <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-white'}`}>
-                            {tile.label}
-                        </span>
-                        <div
-                            className={`w-5 h-5 cursor-pointer transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-white'}`}
-                            onMouseEnter={() => setHovered(true)}
-                            onMouseLeave={() => setHovered(false)}
-                            onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
-                        />
+                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-white'}`} />
+                    </div>
+                );
+            case 'title':
+                return (
+                    <div className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? vibeColor(index) : '#242423' }}>
+                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? vt + ' opacity-60' : 'text-white/40'}`}>Manager</span>
+                        <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? vt : 'text-white'}`}>Your Showcases</span>
                     </div>
                 );
             case 'counter':
