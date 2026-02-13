@@ -6,7 +6,7 @@ import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import {
-    vibeColor, vibeText, vibeRaw,
+    VIBE_RAW_COLORS,
     randomShuffle, GRID_CLASSES,
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
@@ -80,8 +80,15 @@ export default function HomePage() {
     }, [vibelopers]);
 
     function renderTile(tile: Tile, index: number) {
-        const vt = vibeText(index);
-        const bg = isVibe ? vibeColor(index) : 'white';
+        // Build dynamic palette from extracted avatar colors
+        const extractedHexes = Object.values(avatarColors).flatMap(c => [c.primary, c.secondary]);
+        const palette = extractedHexes.length > 0 ? extractedHexes : VIBE_RAW_COLORS;
+        const palColor = palette[index % palette.length];
+        const dynBg = `radial-gradient(circle at center, ${palColor}26 0%, rgba(255,255,255,0) 70%)`;
+        // Determine readable text class for this palette color
+        const dynTextStyle = { color: palColor };
+
+        const bg = isVibe ? dynBg : 'white';
 
         switch (tile.variant) {
             case 'artode':
@@ -99,23 +106,23 @@ export default function HomePage() {
                 return (
                     <div
                         className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`}
-                        style={{ background: isVibe ? vibeColor(index) : '#242423' }}
+                        style={{ background: isVibe ? dynBg : '#242423' }}
                     >
-                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? vt + ' opacity-60' : 'text-white/40'}`}>VibeCoder</span>
-                        <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? vt : 'text-white'}`}>Marketplace</span>
+                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/40'}`} style={isVibe ? dynTextStyle : undefined}>VibeCoder</span>
+                        <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? '' : 'text-white'}`} style={isVibe ? dynTextStyle : undefined}>Marketplace</span>
                     </div>
                 );
             case 'counter':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{vibelopers.length}</span>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>{vibelopers.length}</span>
                         <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Vibelopers</span>
                     </div>
                 );
             case 'status':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-colors duration-300 ${isVibe ? vt : 'text-brand-red'}`}>Active</span>
+                        <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-colors duration-300 ${isVibe ? '' : 'text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Active</span>
                         <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-2">Feb 2026</span>
                     </div>
                 );
@@ -123,22 +130,22 @@ export default function HomePage() {
                 return (
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex items-center gap-4">
-                            <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? vibeRaw(index) : 'rgba(216,0,24,0.3)' }} />
-                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>vibecoder.dev</span>
+                            <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? palColor : 'rgba(216,0,24,0.3)' }} />
+                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>vibecoder.dev</span>
                         </div>
                     </div>
                 );
             case 'philosophy':
                 return (
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
-                        <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] opacity-70'}`}>
+                        <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] opacity-70'}`} style={isVibe ? dynTextStyle : undefined}>
                             Plug-and-play portfolios. Showcase your work from anywhere.
                         </p>
                     </div>
                 );
             case 'filler':
                 return (
-                    <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${vibeRaw(index)}1A` : '#f0f0ef' }} />
+                    <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : '#f0f0ef' }} />
                 );
             case 'vibeloper': {
                 const v = tile.vibeloper!;
