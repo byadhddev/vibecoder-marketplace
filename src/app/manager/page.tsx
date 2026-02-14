@@ -14,7 +14,7 @@ import {
     GRID_CLASSES,
 } from '@/lib/vibe';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'form-speed' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-skills' | 'profile-hire' | 'profile-save' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav' | 'stat-views' | 'stat-clicks' | 'stat-top';
+type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'form-speed' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-skills' | 'profile-hire' | 'profile-save' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav' | 'stat-views' | 'stat-clicks' | 'stat-top' | 'request' | 'earn-form' | 'earn-total';
 
 interface Tile {
     id: string;
@@ -88,6 +88,24 @@ function buildStatsTiles(showcases: Showcase[], totalViews: number): Tile[] {
     ];
 }
 
+function buildRequestTiles(requests: { id: string; name: string; email: string; description: string; budget: string; timeline: string; status: string; created_at: string; }[]): Tile[] {
+    const active = requests.filter(r => r.status !== 'archived');
+    if (active.length === 0) return [];
+    return [
+        { id: 'req-artode', colSpan: 'col-span-1', variant: 'artode' },
+        ...active.map(r => ({ id: `req-${r.id}`, colSpan: 'col-span-2 md:col-span-2' as const, variant: 'request' as const })),
+        { id: 'req-filler', colSpan: 'col-span-1', variant: 'filler' },
+    ];
+}
+
+function buildEarningsTiles(earnings: { id: string; amount: number; }[], totalEarned: number): Tile[] {
+    return [
+        { id: 'earn-total', colSpan: 'col-span-1', variant: 'earn-total' },
+        { id: 'earn-form', colSpan: 'col-span-2 md:col-span-2', variant: 'earn-form' },
+        { id: 'earn-filler', colSpan: 'col-span-1', variant: 'filler' },
+    ];
+}
+
 export default function ManagerPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -107,6 +125,14 @@ export default function ManagerPage() {
     const [totalViews, setTotalViews] = useState(0);
     const [savingProfile, setSavingProfile] = useState(false);
     const [profileDirty, setProfileDirty] = useState(false);
+    // Requests & Earnings
+    interface ContactReq { id: string; name: string; email: string; description: string; budget: string; timeline: string; status: string; created_at: string; }
+    interface EarningEntry { id: string; amount: number; currency: string; client_name: string; showcase_id: string; note: string; created_at: string; }
+    const [requests, setRequests] = useState<ContactReq[]>([]);
+    const [earnings, setEarnings] = useState<EarningEntry[]>([]);
+    const [totalEarned, setTotalEarned] = useState(0);
+    const [earnForm, setEarnForm] = useState({ amount: '', client_name: '', showcase_id: '', note: '' });
+    const [savingEarning, setSavingEarning] = useState(false);
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -146,7 +172,36 @@ export default function ManagerPage() {
                 }
             })
             .catch(() => {});
+        // Fetch requests
+        fetch('/api/marketplace/contact')
+            .then(r => r.ok ? r.json() : { requests: [] })
+            .then(d => setRequests(d.requests || []))
+            .catch(() => {});
+        // Fetch earnings
+        fetch('/api/marketplace/earnings')
+            .then(r => r.ok ? r.json() : { earnings: [], total: 0 })
+            .then(d => { setEarnings(d.earnings || []); setTotalEarned(d.total || 0); })
+            .catch(() => {});
     }, [status]);
+
+    const handleArchiveRequest = async (id: string) => {
+        await fetch('/api/marketplace/contact', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ request_id: id, status: 'archived' }) });
+        setRequests(prev => prev.filter(r => r.id !== id));
+    };
+    const handleLogEarning = async () => {
+        if (!earnForm.amount) return;
+        setSavingEarning(true);
+        try {
+            const res = await fetch('/api/marketplace/earnings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...earnForm, amount: parseFloat(earnForm.amount) }) });
+            if (res.ok) {
+                const d = await res.json();
+                setEarnings(prev => [d.earning, ...prev]);
+                setTotalEarned(prev => prev + parseFloat(earnForm.amount));
+                setEarnForm({ amount: '', client_name: '', showcase_id: '', note: '' });
+            }
+        } catch {}
+        setSavingEarning(false);
+    };
 
     const fetchOG = async (url: string) => {
         if (!url) return;
@@ -551,6 +606,65 @@ export default function ManagerPage() {
                     </div>
                 );
             }
+            case 'request': {
+                const reqId = tile.id.replace('req-', '');
+                const req = requests.find(r => r.id === reqId);
+                if (!req) return null;
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col gap-2 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[index % ACCENTS.length] }}>Request</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[index % ACCENTS.length]}20` }} />
+                            <span className={`text-[8px] font-mono uppercase tracking-wider ${isVibe ? `${vt} opacity-40` : 'text-[#9b9a97]'}`}>{new Date(req.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <p className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{req.description}</p>
+                        <div className="flex items-center gap-4 mt-1">
+                            <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>{req.name} · {req.email}</span>
+                            {req.budget && <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>Budget: {req.budget}</span>}
+                            {req.timeline && <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>Timeline: {req.timeline}</span>}
+                        </div>
+                        <div className="flex items-center gap-3 mt-2">
+                            <a href={`mailto:${req.email}?subject=Re: Your VibeCoder request`} className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? vt : 'text-brand-red hover:text-[#37352f]'}`}>Reply ↗</a>
+                            <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : '#ededeb' }} />
+                            <button onClick={() => handleArchiveRequest(req.id)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Archive</button>
+                        </div>
+                    </div>
+                );
+            }
+            case 'earn-total':
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>${totalEarned.toLocaleString()}</span>
+                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Earned</span>
+                    </div>
+                );
+            case 'earn-form':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col gap-2 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3 mb-1">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[index % ACCENTS.length] }}>Log Earning</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[index % ACCENTS.length]}20` }} />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <input type="number" placeholder="Amount ($)" value={earnForm.amount}
+                                onChange={e => setEarnForm(prev => ({ ...prev, amount: e.target.value }))}
+                                className={`bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none pb-1 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-[#37352f] border-[#ededeb] placeholder:text-[#9b9a97]'}`} />
+                            <input type="text" placeholder="Client (optional)" value={earnForm.client_name}
+                                onChange={e => setEarnForm(prev => ({ ...prev, client_name: e.target.value }))}
+                                className={`bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none pb-1 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-[#37352f] border-[#ededeb] placeholder:text-[#9b9a97]'}`} />
+                        </div>
+                        <input type="text" placeholder="Note (optional)" value={earnForm.note}
+                            onChange={e => setEarnForm(prev => ({ ...prev, note: e.target.value }))}
+                            className={`w-full bg-transparent border-b focus:border-[#37352f] text-[12px] font-serif outline-none pb-1 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-[#37352f] border-[#ededeb] placeholder:text-[#9b9a97]'}`} />
+                        <button
+                            onClick={handleLogEarning}
+                            disabled={savingEarning || !earnForm.amount}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-1 self-start transition-colors disabled:opacity-30 ${isVibe ? vt : 'text-brand-red hover:text-[#37352f]'}`}
+                        >
+                            {savingEarning ? 'Saving…' : 'Log Earning →'}
+                        </button>
+                    </div>
+                );
         }
     }
 
@@ -581,6 +695,8 @@ export default function ManagerPage() {
                         {renderGrid(buildFormTiles())}
                         {renderGrid(buildShowcaseTiles(showcases, username))}
                         {renderGrid(buildStatsTiles(showcases, totalViews))}
+                        {requests.length > 0 && renderGrid(buildRequestTiles(requests))}
+                        {renderGrid(buildEarningsTiles(earnings, totalEarned))}
                     </div>
                 )}
             </section>

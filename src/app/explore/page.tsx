@@ -19,7 +19,17 @@ interface ShowcaseWithUser {
     _user: { username: string; name: string; avatar_url: string };
 }
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'filter' | 'filler' | 'showcase';
+interface Builder {
+    username: string;
+    name: string;
+    avatar_url: string;
+    role: string;
+    skills: string[];
+    available_for_hire: boolean;
+    showcase_count: number;
+}
+
+type TileVariant = 'artode' | 'title' | 'counter' | 'filter' | 'filler' | 'showcase' | 'builder';
 
 interface Tile {
     id: string;
@@ -27,12 +37,18 @@ interface Tile {
     variant: TileVariant;
     href?: string;
     showcase?: ShowcaseWithUser;
+    builder?: Builder;
 }
 
 export default function ExplorePage() {
     const [showcases, setShowcases] = useState<ShowcaseWithUser[]>([]);
+    const [builders, setBuilders] = useState<Builder[]>([]);
     const [allTags, setAllTags] = useState<string[]>([]);
+    const [allSkills, setAllSkills] = useState<string[]>([]);
     const [activeTag, setActiveTag] = useState<string | null>(null);
+    const [activeSkill, setActiveSkill] = useState<string | null>(null);
+    const [availableOnly, setAvailableOnly] = useState(false);
+    const [viewMode, setViewMode] = useState<'showcases' | 'builders'>('showcases');
     const [shuffledTiles, setShuffledTiles] = useState<Tile[]>([]);
     const [vibeLocked, setVibeLocked] = useState(false);
     const [hovered, setHovered] = useState(false);
@@ -41,25 +57,34 @@ export default function ExplorePage() {
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
 
     useEffect(() => {
-        const url = activeTag ? `/api/marketplace/explore?tag=${encodeURIComponent(activeTag)}` : '/api/marketplace/explore';
+        const params = new URLSearchParams();
+        if (activeTag) params.set('tag', activeTag);
+        if (activeSkill) params.set('skill', activeSkill);
+        if (availableOnly) params.set('available', 'true');
+        const url = `/api/marketplace/explore${params.toString() ? `?${params}` : ''}`;
         fetch(url)
             .then(r => r.json())
             .then(d => {
                 setShowcases(d.showcases || []);
-                if (!activeTag) setAllTags(d.tags || []);
+                setBuilders(d.builders || []);
+                if (!activeTag && !activeSkill) {
+                    setAllTags(d.tags || []);
+                    setAllSkills(d.skills || []);
+                }
             })
             .catch(() => {});
-    }, [activeTag]);
+    }, [activeTag, activeSkill, availableOnly]);
 
     useEffect(() => {
         const users = new Map<string, string>();
         showcases.forEach(s => { if (s._user.avatar_url) users.set(s._user.username, s._user.avatar_url); });
+        builders.forEach(b => { if (b.avatar_url) users.set(b.username, b.avatar_url); });
         users.forEach((url, username) => {
             if (!avatarColors[username]) {
                 extractColorsFromImage(url).then(c => setAvatarColors(prev => ({ ...prev, [username]: c })));
             }
         });
-    }, [showcases]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [showcases, builders]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         const decorative: Tile[] = [
@@ -68,16 +93,28 @@ export default function ExplorePage() {
             { id: 'counter', colSpan: 'col-span-1', variant: 'counter' },
             { id: 'filter', colSpan: 'col-span-2 md:col-span-4', variant: 'filter' },
         ];
-        const scTiles: Tile[] = showcases.map(s => ({
-            id: `${s._user.username}/${s.slug}`,
-            colSpan: 'col-span-2 md:col-span-2',
-            variant: 'showcase' as const,
-            href: `/m/${s._user.username}/${s.slug}`,
-            showcase: s,
-        }));
-        if (scTiles.length % 2 !== 0) scTiles.push({ id: 'filler', colSpan: 'col-span-2 md:col-span-2', variant: 'filler' });
-        setShuffledTiles([...decorative, ...scTiles]);
-    }, [showcases]);
+        if (viewMode === 'builders') {
+            const builderTiles: Tile[] = builders.map(b => ({
+                id: `builder-${b.username}`,
+                colSpan: 'col-span-2 md:col-span-2',
+                variant: 'builder' as const,
+                href: `/m/${b.username}`,
+                builder: b,
+            }));
+            if (builderTiles.length % 2 !== 0) builderTiles.push({ id: 'filler', colSpan: 'col-span-2 md:col-span-2', variant: 'filler' });
+            setShuffledTiles([...decorative, ...builderTiles]);
+        } else {
+            const scTiles: Tile[] = showcases.map(s => ({
+                id: `${s._user.username}/${s.slug}`,
+                colSpan: 'col-span-2 md:col-span-2',
+                variant: 'showcase' as const,
+                href: `/m/${s._user.username}/${s.slug}`,
+                showcase: s,
+            }));
+            if (scTiles.length % 2 !== 0) scTiles.push({ id: 'filler', colSpan: 'col-span-2 md:col-span-2', variant: 'filler' });
+            setShuffledTiles([...decorative, ...scTiles]);
+        }
+    }, [showcases, builders, viewMode]);
 
     function renderTile(tile: Tile, index: number) {
         const extractedHexes = Object.values(avatarColors).flatMap(c => [c.primary, c.secondary]);
@@ -115,23 +152,89 @@ export default function ExplorePage() {
                 );
             case 'filter':
                 return (
-                    <div className={`${tile.colSpan} p-4 md:p-5 flex flex-wrap items-center gap-2 min-h-[60px] transition-all duration-300`} style={{ background: bg }}>
-                        <button onClick={() => setActiveTag(null)}
-                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${!activeTag ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
-                            All
-                        </button>
-                        {allTags.slice(0, 12).map(tag => (
-                            <button key={tag} onClick={() => setActiveTag(tag)}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${activeTag === tag ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
-                                {tag}
+                    <div className={`${tile.colSpan} p-4 md:p-5 flex flex-col gap-2 min-h-[60px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <button onClick={() => setViewMode('showcases')}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${viewMode === 'showcases' ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                Showcases
                             </button>
-                        ))}
+                            <button onClick={() => setViewMode('builders')}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${viewMode === 'builders' ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                Builders
+                            </button>
+                            <div className="w-px h-3 bg-[#ededeb]" />
+                            <button onClick={() => setAvailableOnly(!availableOnly)}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${availableOnly ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                {availableOnly ? '● Available' : 'Available'}
+                            </button>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <button onClick={() => { setActiveTag(null); setActiveSkill(null); }}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${!activeTag && !activeSkill ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                All
+                            </button>
+                            {viewMode === 'showcases' ? (
+                                allTags.slice(0, 12).map(tag => (
+                                    <button key={tag} onClick={() => { setActiveTag(tag); setActiveSkill(null); }}
+                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${activeTag === tag ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                        {tag}
+                                    </button>
+                                ))
+                            ) : (
+                                allSkills.slice(0, 12).map(skill => (
+                                    <button key={skill} onClick={() => { setActiveSkill(skill); setActiveTag(null); }}
+                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${activeSkill === skill ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                        {skill}
+                                    </button>
+                                ))
+                            )}
+                        </div>
                     </div>
                 );
             case 'filler':
                 return (
                     <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : '#f0f0ef' }} />
                 );
+            case 'builder': {
+                const b = tile.builder!;
+                const userColors = avatarColors[b.username];
+                const accent = userColors?.primary || ACCENTS[index % ACCENTS.length];
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] group transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            {b.avatar_url && (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={b.avatar_url} alt="" className="w-6 h-6 rounded-sm" />
+                            )}
+                            <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] group-hover:text-brand-red'}`} style={isVibe ? { color: accent } : undefined}>
+                                {b.name}
+                            </span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${accent}4D` : `${accent}20` }} />
+                            {b.available_for_hire && (
+                                <span className="flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                    <span className="text-[8px] font-mono uppercase tracking-wider text-green-600">Hire</span>
+                                </span>
+                            )}
+                        </div>
+                        <div>
+                            <p className={`text-[11px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? { color: accent } : undefined}>
+                                {b.role}
+                            </p>
+                            {b.skills.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                    {b.skills.slice(0, 5).map(s => (
+                                        <span key={s} className="text-[8px] font-mono px-1.5 py-0.5 rounded-sm bg-[#f7f6f3] text-[#9b9a97]">{s}</span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        <span className={`text-[9px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? { color: accent } : undefined}>
+                            {b.showcase_count} showcase{b.showcase_count !== 1 ? 's' : ''}
+                        </span>
+                    </div>
+                );
+            }
             case 'showcase': {
                 const s = tile.showcase!;
                 const userColors = avatarColors[s._user.username];

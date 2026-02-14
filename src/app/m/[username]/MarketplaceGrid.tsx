@@ -12,7 +12,7 @@ import {
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share' | 'skills' | 'hire';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share' | 'skills' | 'hire' | 'contact-form' | 'rate';
 
 interface Tile {
     id: string;
@@ -40,6 +40,10 @@ function buildTiles(showcases: Showcase[], username: string, profile: Profile): 
     }
     if (profile.available_for_hire) {
         decorative.push({ id: 'hire', colSpan: 'col-span-2 md:col-span-2', variant: 'hire' });
+        decorative.push({ id: 'contact-form', colSpan: 'col-span-2 md:col-span-2', variant: 'contact-form' });
+        if (profile.hourly_rate > 0) {
+            decorative.push({ id: 'rate', colSpan: 'col-span-1', variant: 'rate' });
+        }
     }
     if (totalClicks > 0) {
         decorative.push({ id: 'clicks', colSpan: 'col-span-1', variant: 'clicks' });
@@ -66,6 +70,9 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
     const [hovered, setHovered] = useState(false);
     const [colors, setColors] = useState<ExtractedColors | null>(null);
     const [copied, setCopied] = useState<string | null>(null);
+    const [contactForm, setContactForm] = useState({ name: '', email: '', description: '', budget: '', timeline: '' });
+    const [contactSending, setContactSending] = useState(false);
+    const [contactSent, setContactSent] = useState(false);
     const isVibe = vibeLocked || hovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
 
@@ -302,6 +309,77 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                                 ${rate}{rateLabel}
                             </span>
                         )}
+                    </div>
+                );
+            }
+            case 'contact-form': {
+                const handleContactSubmit = async () => {
+                    if (!contactForm.name || !contactForm.email || !contactForm.description) return;
+                    setContactSending(true);
+                    try {
+                        await fetch('/api/marketplace/contact', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username: profile.username, ...contactForm }),
+                        });
+                        setContactSent(true);
+                        setContactForm({ name: '', email: '', description: '', budget: '', timeline: '' });
+                    } catch {}
+                    setContactSending(false);
+                };
+                if (contactSent) {
+                    return (
+                        <div className={`${tile.colSpan} p-5 md:p-6 flex items-center justify-center min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                            <span className={`text-[13px] font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                                Request sent ✓ — {profile.name} will be in touch.
+                            </span>
+                        </div>
+                    );
+                }
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col gap-2 min-h-[200px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3 mb-1">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : ACCENTS[0] }}>Contact</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${ACCENTS[0]}20` }} />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <input type="text" placeholder="Your name" value={contactForm.name}
+                                onChange={e => setContactForm(prev => ({ ...prev, name: e.target.value }))}
+                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                            <input type="email" placeholder="Email" value={contactForm.email}
+                                onChange={e => setContactForm(prev => ({ ...prev, email: e.target.value }))}
+                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                        </div>
+                        <input type="text" placeholder="What do you need built?" value={contactForm.description}
+                            onChange={e => setContactForm(prev => ({ ...prev, description: e.target.value }))}
+                            className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-serif text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                        <div className="grid grid-cols-2 gap-2">
+                            <input type="text" placeholder="Budget range" value={contactForm.budget}
+                                onChange={e => setContactForm(prev => ({ ...prev, budget: e.target.value }))}
+                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                            <input type="text" placeholder="Timeline" value={contactForm.timeline}
+                                onChange={e => setContactForm(prev => ({ ...prev, timeline: e.target.value }))}
+                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                        </div>
+                        <button
+                            onClick={handleContactSubmit}
+                            disabled={contactSending || !contactForm.name || !contactForm.email || !contactForm.description}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-1 self-start transition-colors disabled:opacity-30 ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`}
+                            style={isVibe ? dynTextStyle : undefined}
+                        >
+                            {contactSending ? 'Sending…' : 'Send Request →'}
+                        </button>
+                    </div>
+                );
+            }
+            case 'rate': {
+                const rateLabel = profile.rate_type === 'hourly' ? '/hr' : profile.rate_type === 'project' ? '/proj' : '';
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            ${profile.hourly_rate}{rateLabel}
+                        </span>
+                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Rate</span>
                     </div>
                 );
             }

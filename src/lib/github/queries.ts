@@ -9,7 +9,7 @@ import {
     branchExists, createOrphanBranch, readJSON, writeJSON, deleteFile,
     listFiles, userBranch, REGISTRY_BRANCH,
 } from './client';
-import type { Profile, ProfileInput, Showcase, ShowcaseInput, PublicMarketplace } from '@/lib/db/types';
+import type { Profile, ProfileInput, Showcase, ShowcaseInput, PublicMarketplace, Earning } from '@/lib/db/types';
 
 function appToken(): string {
     return process.env.GITHUB_APP_TOKEN || process.env.GITHUB_CLIENT_SECRET || '';
@@ -424,4 +424,115 @@ export async function incrementProfileViews(username: string): Promise<void> {
         `Track profile view: ${username}`,
         existing.sha,
     ).catch(() => {});
+}
+
+// ─── Contact Requests ────────────────────────────────────────
+
+interface ContactRequest {
+    id: string;
+    name: string;
+    email: string;
+    description: string;
+    budget: string;
+    timeline: string;
+    status: 'new' | 'read' | 'archived';
+    created_at: string;
+}
+
+interface ContactStore {
+    requests: ContactRequest[];
+}
+
+export async function submitContactRequest(
+    toUsername: string,
+    data: { name: string; email: string; description: string; budget: string; timeline: string },
+): Promise<boolean> {
+    const token = appToken();
+    const branch = userBranch(toUsername);
+
+    const existing = await readJSON<ContactStore>('requests.json', branch, token);
+    const store: ContactStore = existing ? existing.data : { requests: [] };
+    const sha = existing?.sha;
+
+    const request: ContactRequest = {
+        id: `req_${Date.now()}`,
+        ...data,
+        status: 'new',
+        created_at: new Date().toISOString(),
+    };
+
+    store.requests.unshift(request);
+
+    const wrote = await writeJSON('requests.json', branch, store, token, `New contact request from ${data.name}`, sha);
+    return !!wrote;
+}
+
+export async function getContactRequests(username: string, token?: string): Promise<ContactRequest[]> {
+    const t = token || appToken();
+    const branch = userBranch(username);
+    const result = await readJSON<ContactStore>('requests.json', branch, t);
+    return result ? result.data.requests : [];
+}
+
+export async function updateContactRequestStatus(username: string, requestId: string, status: 'read' | 'archived', token?: string): Promise<boolean> {
+    const t = token || appToken();
+    const branch = userBranch(username);
+    const existing = await readJSON<ContactStore>('requests.json', branch, t);
+    if (!existing) return false;
+
+    const store = { ...existing.data, requests: existing.data.requests.map(r => r.id === requestId ? { ...r, status } : r) };
+    const wrote = await writeJSON('requests.json', branch, store, t, `Update request ${requestId}`, existing.sha);
+    return !!wrote;
+}
+
+// ─── Earnings ────────────────────────────────────────────────
+
+interface EarningsStore {
+    earnings: Earning[];
+    total: number;
+}
+
+export async function addEarning(
+    username: string,
+    data: { amount: number; currency?: string; client_name?: string; showcase_id?: string; note?: string },
+    token?: string,
+): Promise<Earning | null> {
+    const t = token || appToken();
+    const branch = userBranch(username);
+
+    const existing = await readJSON<EarningsStore>('earnings.json', branch, t);
+    const store: EarningsStore = existing ? existing.data : { earnings: [], total: 0 };
+    const sha = existing?.sha;
+
+    const earning: Earning = {
+        id: `earn_${Date.now()}`,
+        amount: data.amount,
+        currency: data.currency || 'USD',
+        client_name: data.client_name || '',
+        showcase_id: data.showcase_id || '',
+        note: data.note || '',
+        created_at: new Date().toISOString(),
+    };
+
+    store.earnings.unshift(earning);
+    store.total = store.earnings.reduce((sum, e) => sum + e.amount, 0);
+
+    const wrote = await writeJSON('earnings.json', branch, store, t, `Log earning: $${data.amount}`, sha);
+    if (!wrote) return null;
+
+    // Update profile total_earned
+    const profile = await readJSON<Omit<Profile, 'id' | 'user_id'>>('profile.json', branch, t);
+    if (profile) {
+        const updatedProfile = { ...profile.data, total_earned: store.total };
+        await writeJSON('profile.json', branch, updatedProfile, t, `Update total earned`, profile.sha).catch(() => {});
+    }
+
+    return earning;
+}
+
+export async function getEarnings(username: string, token?: string): Promise<EarningsStore> {
+    const t = token || appToken();
+    const branch = userBranch(username);
+    const result = await readJSON<EarningsStore>('earnings.json', branch, t);
+    return result ? result.data : { earnings: [], total: 0 };
 }
