@@ -1,37 +1,106 @@
 @import "tailwindcss";
 
 /* =============================================================================
-   VIBECODER DESIGN SYSTEM
-   Aligned with Artode Minis (lab/)
+   VIBECODER DESIGN SYSTEM — Light / Dark
    ============================================================================= */
 
 :root {
-  /* Brand Accent */
-  --brand-accent: #D80018;
+  /* ── Surfaces ── */
+  --vc-bg: #ffffff;
+  --vc-surface: #ffffff;
+  --vc-surface-raised: #f7f6f3;
+  --vc-surface-inset: #ffffff;
 
-  /* Neutral Palette - Stone */
-  --background: #ffffff;
-  --foreground: #1c1917;
-  --foreground-muted: #78716c;
-  --border: #e7e5e4;
+  /* ── Borders ── */
+  --vc-border: #ededeb;
+  --vc-border-subtle: #e7e5e4;
+
+  /* ── Text ── */
+  --vc-text: #37352f;
+  --vc-text-secondary: #9b9a97;
+  --vc-text-muted: #d5d5d3;
+
+  /* ── Dark accent tiles ── */
+  --vc-dark: #242423;
+  --vc-dark-text: rgba(255, 255, 255, 0.2);
+  --vc-dark-text-strong: #ffffff;
+  --vc-dark-hover: #37352f;
+
+  /* ── Brand ── */
+  --vc-brand: #D80018;
+  --vc-brand-hover: #b80015;
+  --vc-brand-subtle: rgba(216, 0, 24, 0.3);
+
+  /* ── Skeletons ── */
+  --vc-skeleton: #f0f0ef;
+  --vc-skeleton-dark: #3a3a39;
+
+  /* ── Legacy aliases ── */
+  --brand-accent: var(--vc-brand);
+  --background: var(--vc-bg);
+  --foreground: var(--vc-text);
+  --foreground-muted: var(--vc-text-secondary);
+  --border: var(--vc-border-subtle);
   --border-hover: #a8a29e;
 
   /* Layout */
   --content-max-width: 900px;
 }
 
+.dark {
+  --vc-bg: #0d1117;
+  --vc-surface: #161b22;
+  --vc-surface-raised: #1c2128;
+  --vc-surface-inset: #0d1117;
+
+  --vc-border: #30363d;
+  --vc-border-subtle: #21262d;
+
+  --vc-text: #e6edf3;
+  --vc-text-secondary: #8b949e;
+  --vc-text-muted: #484f58;
+
+  --vc-dark: #0d1117;
+  --vc-dark-text: rgba(230, 237, 243, 0.2);
+  --vc-dark-text-strong: #e6edf3;
+  --vc-dark-hover: #1c2128;
+
+  --vc-brand: #f85149;
+  --vc-brand-hover: #da3633;
+  --vc-brand-subtle: rgba(248, 81, 73, 0.25);
+
+  --vc-skeleton: #21262d;
+  --vc-skeleton-dark: #30363d;
+
+  --border-hover: #484f58;
+}
+
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-foreground-muted: var(--foreground-muted);
-  --color-border: var(--border);
-  --color-accent: var(--brand-accent);
+  --color-background: var(--vc-bg);
+  --color-foreground: var(--vc-text);
+  --color-foreground-muted: var(--vc-text-secondary);
+  --color-border: var(--vc-border);
+  --color-accent: var(--vc-brand);
 
   /* Brand Colors */
-  --color-brand-red: #D80018;
-  --color-brand-dark: #0a0a0a;
-  --color-brand-paper: #ffffff;
-  --color-brand-gray: #f5f5f5;
+  --color-brand-red: var(--vc-brand);
+  --color-brand-dark: var(--vc-dark);
+  --color-brand-paper: var(--vc-surface);
+  --color-brand-gray: var(--vc-surface-raised);
+
+  /* Semantic tokens for Tailwind utilities */
+  --color-vc-bg: var(--vc-bg);
+  --color-vc-surface: var(--vc-surface);
+  --color-vc-surface-raised: var(--vc-surface-raised);
+  --color-vc-surface-inset: var(--vc-surface-inset);
+  --color-vc-border: var(--vc-border);
+  --color-vc-border-subtle: var(--vc-border-subtle);
+  --color-vc-text: var(--vc-text);
+  --color-vc-text-secondary: var(--vc-text-secondary);
+  --color-vc-text-muted: var(--vc-text-muted);
+  --color-vc-dark: var(--vc-dark);
+  --color-vc-brand: var(--vc-brand);
+  --color-vc-skeleton: var(--vc-skeleton);
 
   /* Fonts */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

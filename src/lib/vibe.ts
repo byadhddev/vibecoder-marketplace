@@ -44,4 +44,4 @@ export function randomShuffle<T>(array: T[]): T[] {
 }
 
 // Grid wrapper classes (the 1px-gap bordered grid)
-export const GRID_CLASSES = 'border border-[#ededeb] rounded-lg overflow-hidden bg-[#ededeb] grid grid-cols-2 md:grid-cols-4 gap-px';
+export const GRID_CLASSES = 'border border-vc-border rounded-lg overflow-hidden bg-vc-border grid grid-cols-2 md:grid-cols-4 gap-px';

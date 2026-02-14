@@ -52,13 +52,13 @@ function SearchPageContent() {
     const showcases = results.filter(r => r.type === 'showcase');
 
     const breadcrumbs = (
-        <div className="flex items-center gap-2 text-[#9b9a97]">
-            <Link href="/" className="flex items-center gap-2 hover:text-[#37352f] transition-colors font-medium">
+        <div className="flex items-center gap-2 text-vc-text-secondary">
+            <Link href="/" className="flex items-center gap-2 hover:text-vc-text transition-colors font-medium">
                 <div className="w-3 h-3 bg-brand-red rounded-[2px]" />
                 <span>VibeCoder</span>
             </Link>
-            <span className="text-[#d5d5d3]">/</span>
-            <span className="text-[#37352f] font-medium">search</span>
+            <span className="text-vc-text-muted">/</span>
+            <span className="text-vc-text font-medium">search</span>
         </div>
     );
 
@@ -68,7 +68,7 @@ function SearchPageContent() {
             <section>
                 <div className={GRID_CLASSES}>
                     {/* Search input tile */}
-                    <div className="col-span-2 md:col-span-4 p-6 md:p-8 bg-[#242423]">
+                    <div className="col-span-2 md:col-span-4 p-6 md:p-8 bg-vc-dark">
                         <input
                             type="text"
                             value={query}
@@ -82,15 +82,15 @@ function SearchPageContent() {
                     {/* Loading */}
                     {loading && (
                         <div className="col-span-2 md:col-span-4 p-6 flex items-center justify-center">
-                            <span className="text-[11px] font-mono text-[#9b9a97] uppercase tracking-[0.15em] animate-pulse">Searching...</span>
+                            <span className="text-[11px] font-mono text-vc-text-secondary uppercase tracking-[0.15em] animate-pulse">Searching...</span>
                         </div>
                     )}
 
                     {/* No results */}
                     {searched && !loading && results.length === 0 && (
                         <div className="col-span-2 md:col-span-4 p-8 flex flex-col items-center justify-center min-h-[200px]">
-                            <span className="text-lg font-serif text-[#37352f] mb-2">No results found</span>
-                            <span className="text-[11px] font-mono text-[#9b9a97] text-center">
+                            <span className="text-lg font-serif text-vc-text mb-2">No results found</span>
+                            <span className="text-[11px] font-mono text-vc-text-secondary text-center">
                                 Try searching for a builder name, skill (e.g. &quot;React&quot;), or showcase title
                             </span>
                         </div>
@@ -99,24 +99,24 @@ function SearchPageContent() {
                     {/* Builders section */}
                     {builders.length > 0 && (
                         <>
-                            <div className="col-span-2 md:col-span-4 p-4 bg-[#f7f6f3]">
-                                <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#9b9a97]">Builders ({builders.length})</span>
+                            <div className="col-span-2 md:col-span-4 p-4 bg-vc-surface-raised">
+                                <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-vc-text-secondary">Builders ({builders.length})</span>
                             </div>
                             {builders.map((r, i) => (
                                 <Link key={r.url} href={r.url} className="contents">
-                                    <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[120px] bg-white group hover:bg-[#fafaf9] transition-colors">
+                                    <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[120px] bg-vc-surface group hover:bg-[#fafaf9] transition-colors">
                                         <div className="flex items-center gap-3">
                                             {r.avatar_url && (
                                                 <Image src={r.avatar_url} alt="" width={24} height={24} className="rounded-sm" />
                                             )}
-                                            <span className="text-sm font-serif text-[#37352f] group-hover:text-brand-red transition-colors">{r.title}</span>
+                                            <span className="text-sm font-serif text-vc-text group-hover:text-brand-red transition-colors">{r.title}</span>
                                             <div className="flex-1 h-px" style={{ backgroundColor: `${ACCENTS[i % ACCENTS.length]}20` }} />
                                         </div>
-                                        <span className="text-[11px] font-mono text-[#9b9a97]">{r.subtitle}</span>
+                                        <span className="text-[11px] font-mono text-vc-text-secondary">{r.subtitle}</span>
                                         {r.tags && r.tags.length > 0 && (
                                             <div className="flex flex-wrap gap-1 mt-2">
                                                 {r.tags.map(t => (
-                                                    <span key={t} className="text-[8px] font-mono px-1.5 py-0.5 rounded-sm bg-[#f7f6f3] text-[#9b9a97]">{t}</span>
+                                                    <span key={t} className="text-[8px] font-mono px-1.5 py-0.5 rounded-sm bg-vc-surface-raised text-vc-text-secondary">{t}</span>
                                                 ))}
                                             </div>
                                         )}
@@ -129,23 +129,23 @@ function SearchPageContent() {
                     {/* Showcases section */}
                     {showcases.length > 0 && (
                         <>
-                            <div className="col-span-2 md:col-span-4 p-4 bg-[#f7f6f3]">
-                                <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#9b9a97]">Showcases ({showcases.length})</span>
+                            <div className="col-span-2 md:col-span-4 p-4 bg-vc-surface-raised">
+                                <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-vc-text-secondary">Showcases ({showcases.length})</span>
                             </div>
                             {showcases.map((r, i) => (
                                 <Link key={r.url} href={r.url} className="contents">
-                                    <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[100px] bg-white group hover:bg-[#fafaf9] transition-colors">
+                                    <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[100px] bg-vc-surface group hover:bg-[#fafaf9] transition-colors">
                                         <div className="flex items-center gap-3">
                                             {r.avatar_url && (
                                                 <Image src={r.avatar_url} alt="" width={20} height={20} className="rounded-sm opacity-60" />
                                             )}
-                                            <span className="text-sm font-serif text-[#37352f] group-hover:text-brand-red transition-colors">{r.title}</span>
+                                            <span className="text-sm font-serif text-vc-text group-hover:text-brand-red transition-colors">{r.title}</span>
                                         </div>
-                                        <span className="text-[11px] font-mono text-[#9b9a97]">{r.subtitle}</span>
+                                        <span className="text-[11px] font-mono text-vc-text-secondary">{r.subtitle}</span>
                                         {r.tags && r.tags.length > 0 && (
                                             <div className="flex flex-wrap gap-1 mt-2">
                                                 {r.tags.map(t => (
-                                                    <span key={t} className="text-[8px] font-mono px-1.5 py-0.5 rounded-sm bg-[#f7f6f3] text-[#9b9a97]">{t}</span>
+                                                    <span key={t} className="text-[8px] font-mono px-1.5 py-0.5 rounded-sm bg-vc-surface-raised text-vc-text-secondary">{t}</span>
                                                 ))}
                                             </div>
                                         )}
@@ -158,7 +158,7 @@ function SearchPageContent() {
                     {/* Empty state filler */}
                     {!searched && !loading && (
                         <div className="col-span-2 md:col-span-4 p-8 flex flex-col items-center justify-center min-h-[200px]">
-                            <span className="text-[11px] font-mono text-[#9b9a97] uppercase tracking-[0.15em]">Type to search</span>
+                            <span className="text-[11px] font-mono text-vc-text-secondary uppercase tracking-[0.15em]">Type to search</span>
                         </div>
                     )}
                 </div>
@@ -174,7 +174,7 @@ export default function SearchPage() {
             <PageShell>
                 <Header />
                 <div className="flex items-center justify-center min-h-[300px]">
-                    <span className="text-[11px] font-mono text-[#9b9a97] uppercase tracking-[0.15em] animate-pulse">Loading...</span>
+                    <span className="text-[11px] font-mono text-vc-text-secondary uppercase tracking-[0.15em] animate-pulse">Loading...</span>
                 </div>
                 <Footer />
             </PageShell>

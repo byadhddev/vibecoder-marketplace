@@ -11,7 +11,7 @@ export default function SearchLoading() {
             <section>
                 <div className={GRID_CLASSES}>
                     {/* Search bar */}
-                    <div className="col-span-2 md:col-span-4 p-5 md:p-6 bg-[#242423] min-h-[70px] flex items-center">
+                    <div className="col-span-2 md:col-span-4 p-5 md:p-6 bg-vc-dark min-h-[70px] flex items-center">
                         <Skeleton.Shimmer className="h-5 w-full max-w-md bg-[#3a3a39]" />
                     </div>
                     {/* Builders section */}

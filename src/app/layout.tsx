@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import '@/styles/globals.css';
 import { SessionProvider } from '@/components/SessionProvider';
+import { ThemeProvider } from '@/lib/theme';
 
 const inter = Inter({
     variable: '--font-inter',
@@ -17,6 +18,9 @@ const playfair = Playfair_Display({
     weight: ['400', '500', '600', '700', '800', '900'],
     style: ['normal', 'italic'],
 });
+
+// Inline script to prevent flash of wrong theme
+const themeScript = `(function(){try{var t=localStorage.getItem('vc-theme');var d=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})()`;
 
 export const metadata: Metadata = {
     title: {
@@ -43,9 +47,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={`${inter.variable} ${playfair.variable} antialiased`}>
+            <head>
+                <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+            </head>
+            <body className={`${inter.variable} ${playfair.variable} antialiased bg-vc-bg text-vc-text transition-colors duration-200`}>
                 <Suspense>
-                    <SessionProvider>{children}</SessionProvider>
+                    <SessionProvider>
+                        <ThemeProvider>{children}</ThemeProvider>
+                    </SessionProvider>
                 </Suspense>
             </body>
         </html>

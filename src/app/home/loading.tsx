@@ -18,7 +18,7 @@ export default function HomeLoading() {
                     <Skeleton.TitleTile />
                     <Skeleton.CounterTile />
                     {/* Status */}
-                    <div className="col-span-1 p-5 bg-white flex items-center justify-center min-h-[120px]">
+                    <div className="col-span-1 p-5 bg-vc-surface flex items-center justify-center min-h-[120px]">
                         <Skeleton.Shimmer className="h-3 w-16" />
                     </div>
                     {/* CTA tiles */}

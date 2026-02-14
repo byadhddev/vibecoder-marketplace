@@ -185,19 +185,19 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
             case 'artode':
                 return (
                     <div
-                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
+                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-vc-dark ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                         onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
                     >
-                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-white'}`} />
+                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-vc-surface'}`} />
                     </div>
                 );
             case 'title':
                 return (
                     <div
                         className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`}
-                        style={{ background: isVibe ? dynBg : '#242423' }}
+                        style={{ background: isVibe ? dynBg : 'var(--vc-dark)' }}
                     >
                         <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/40'}`} style={isVibe ? dynTextStyle : undefined}>Marketplace</span>
                         <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? '' : 'text-white'}`} style={isVibe ? dynTextStyle : undefined}>{profile.name}</span>
@@ -206,29 +206,29 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
             case 'counter':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>{showcases.length}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Showcases</span>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>{showcases.length}</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Showcases</span>
                     </div>
                 );
             case 'views':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>{profile.total_views || 0}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Views</span>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>{profile.total_views || 0}</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Views</span>
                     </div>
                 );
             case 'clicks': {
                 const totalClicks = showcases.reduce((sum, s) => sum + (s.clicks_count || 0), 0);
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>{totalClicks}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Clicks</span>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>{totalClicks}</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Clicks</span>
                     </div>
                 );
             }
             case 'status':
                 return (
-                    <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-[#242423]`}>
+                    <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-vc-dark`}>
                         {profile.avatar_url ? (
                             <Image src={profile.avatar_url} alt="" fill className="object-cover" />
                         ) : (
@@ -253,7 +253,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                         <div className="flex flex-wrap items-center gap-3">
                             {website && (
                                 <a href={website.startsWith('http') ? website : `https://${website}`} target="_blank" rel="noopener noreferrer"
-                                    className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                                    className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-vc-text-secondary hover:text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                                     Website ↗
                                 </a>
                             )}
@@ -261,7 +261,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                                 const urls: Record<string, string> = { github: `https://github.com/${val}`, twitter: `https://x.com/${val}`, linkedin: `https://linkedin.com/in/${val}`, youtube: `https://youtube.com/@${val}`, instagram: `https://instagram.com/${val}`, devto: `https://dev.to/${val}`, medium: `https://medium.com/@${val}` };
                                 return (
                                     <a key={key} href={urls[key] || val} target="_blank" rel="noopener noreferrer"
-                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-vc-text-secondary hover:text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                                         {key} ↗
                                     </a>
                                 );
@@ -275,7 +275,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex items-center gap-4">
                             <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? palColor : 'rgba(216,0,24,0.3)' }} />
-                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                                 vibecoder.dev/m/{profile.username}
                             </span>
                         </div>
@@ -284,7 +284,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
             case 'philosophy':
                 return (
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
-                        <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] opacity-70'}`} style={isVibe ? dynTextStyle : undefined}>
+                        <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-vc-text opacity-70'}`} style={isVibe ? dynTextStyle : undefined}>
                             {profile.bio || profile.role || 'Building things that matter.'}
                         </p>
                     </div>
@@ -323,28 +323,28 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                                         copyToClipboard(() => url, 'link');
                                     }
                                 }}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors min-h-[44px] sm:min-h-0 ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors min-h-[44px] sm:min-h-0 ${isVibe ? '' : 'text-vc-text-secondary hover:text-vc-text'}`}
                                 style={isVibe ? dynTextStyle : undefined}
                             >
                                 {copied === 'link' ? 'Copied ✓' : 'Share'}
                             </button>
                             <button
                                 onClick={() => copyToClipboard(() => `<iframe src="${getFullUrl(embedPath)}" width="400" height="400" frameborder="0"></iframe>`, 'embed')}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-vc-text-secondary hover:text-vc-text'}`}
                                 style={isVibe ? dynTextStyle : undefined}
                             >
                                 {copied === 'embed' ? 'Copied ✓' : 'Embed'}
                             </button>
                             <button
                                 onClick={() => openShare(() => `https://x.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(getFullUrl(profilePath))}`)}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-vc-text-secondary hover:text-vc-text'}`}
                                 style={isVibe ? dynTextStyle : undefined}
                             >
                                 Twitter ↗
                             </button>
                             <button
                                 onClick={() => openShare(() => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getFullUrl(profilePath))}`)}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-vc-text-secondary hover:text-vc-text'}`}
                                 style={isVibe ? dynTextStyle : undefined}
                             >
                                 LinkedIn ↗
@@ -363,7 +363,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                             {skills.map(s => (
-                                <span key={s} className={`text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded transition-colors duration-300 ${isVibe ? '' : 'text-[#9b9a97] bg-[#f0f0f0]'}`}
+                                <span key={s} className={`text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded transition-colors duration-300 ${isVibe ? '' : 'text-vc-text-secondary bg-[#f0f0f0]'}`}
                                     style={isVibe ? { color: palColor, backgroundColor: `${palColor}15` } : undefined}>
                                     {s}
                                 </span>
@@ -376,7 +376,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                 const rate = profile.hourly_rate;
                 const rateLabel = profile.rate_type === 'hourly' ? '/hr' : profile.rate_type === 'project' ? '/project' : '';
                 return (
-                    <div className={`${tile.colSpan} p-5 md:p-6 flex items-center justify-between min-h-[60px] transition-all duration-300 bg-[#242423]`}>
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex items-center justify-between min-h-[60px] transition-all duration-300 bg-vc-dark`}>
                         <div className="flex items-center gap-3">
                             <div className="w-2 h-2 bg-brand-red rounded-full animate-pulse" />
                             <span className="text-[11px] font-mono text-white uppercase tracking-[0.15em]">Available for Hire</span>
@@ -416,12 +416,12 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                 if (contactSent) {
                     return (
                         <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col items-center justify-center gap-2 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                            <span className={`text-[13px] font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            <span className={`text-[13px] font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                                 Request sent ✓ — {profile.name} will be in touch.
                             </span>
                             {contactIssueUrl && (
                                 <a href={contactIssueUrl} target="_blank" rel="noopener noreferrer"
-                                    className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`}
+                                    className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-brand-red hover:text-vc-text'}`}
                                     style={isVibe ? dynTextStyle : undefined}>
                                     Track on GitHub ↗
                                 </a>
@@ -438,29 +438,29 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <input type="text" placeholder="Your name" value={contactForm.name}
                                 onChange={e => setContactForm(prev => ({ ...prev, name: e.target.value }))}
-                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
+                                className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                             <input type="email" placeholder="Email" value={contactForm.email}
                                 onChange={e => setContactForm(prev => ({ ...prev, email: e.target.value }))}
-                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
+                                className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                         </div>
                         <input type="text" placeholder="What do you need built?" value={contactForm.description}
                             onChange={e => setContactForm(prev => ({ ...prev, description: e.target.value }))}
-                            className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-serif text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
+                            className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-serif text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <input type="text" placeholder="Budget range" value={contactForm.budget}
                                 onChange={e => setContactForm(prev => ({ ...prev, budget: e.target.value }))}
-                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
+                                className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                             <input type="text" placeholder="Timeline" value={contactForm.timeline}
                                 onChange={e => setContactForm(prev => ({ ...prev, timeline: e.target.value }))}
-                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
+                                className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                         </div>
-                        <span className={`text-[8px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>
+                        <span className={`text-[8px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-vc-text-secondary'}`} style={isVibe ? dynTextStyle : undefined}>
                             ● This request will be public on GitHub for transparency
                         </span>
                         <button
                             onClick={handleContactSubmit}
                             disabled={contactSending || !contactForm.name || !contactForm.email || !contactForm.description}
-                            className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-1 self-start transition-colors disabled:opacity-30 py-2 px-3 min-h-[44px] sm:min-h-0 sm:py-0 sm:px-0 ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-1 self-start transition-colors disabled:opacity-30 py-2 px-3 min-h-[44px] sm:min-h-0 sm:py-0 sm:px-0 ${isVibe ? '' : 'text-brand-red hover:text-vc-text'}`}
                             style={isVibe ? dynTextStyle : undefined}
                         >
                             {contactSending ? 'Sending…' : 'Send Request →'}
@@ -472,10 +472,10 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                 const rateLabel = profile.rate_type === 'hourly' ? '/hr' : profile.rate_type === 'project' ? '/proj' : '';
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                        <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                             ${profile.hourly_rate}{rateLabel}
                         </span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Rate</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Rate</span>
                     </div>
                 );
             }
@@ -504,7 +504,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                             <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : ACCENTS[0] }}>Reviews</span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${ACCENTS[0]}20` }} />
                             {avgStars > 0 && (
-                                <span className={`text-[10px] font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                                <span className={`text-[10px] font-mono transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                                     {'⭐'.repeat(Math.round(avgStars))} {avgStars}
                                 </span>
                             )}
@@ -513,19 +513,19 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                             <div className="flex flex-col gap-1.5">
                                 {reviews.slice(0, 3).map(r => (
                                     <a key={r.html_url} href={r.html_url} target="_blank" rel="noopener noreferrer"
-                                        className={`text-[11px] font-serif italic transition-colors truncate ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                        className={`text-[11px] font-serif italic transition-colors truncate ${isVibe ? 'opacity-60' : 'text-vc-text-secondary hover:text-vc-text'}`}
                                         style={isVibe ? dynTextStyle : undefined}>
                                         {'⭐'.repeat(r.stars)} &ldquo;{r.body.replace(/## Review.*\n\n/, '').slice(0, 80)}{r.body.length > 80 ? '…' : ''}&rdquo; — @{r.reviewer}
                                     </a>
                                 ))}
                             </div>
                         ) : (
-                            <p className={`text-[11px] font-serif italic transition-colors ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            <p className={`text-[11px] font-serif italic transition-colors ${isVibe ? 'opacity-40' : 'text-vc-text-secondary'}`} style={isVibe ? dynTextStyle : undefined}>
                                 No reviews yet. Be the first.
                             </p>
                         )}
                         <button onClick={handleLeaveReview}
-                            className={`text-[9px] font-mono uppercase tracking-[0.15em] self-start transition-colors ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] self-start transition-colors ${isVibe ? '' : 'text-brand-red hover:text-vc-text'}`}
                             style={isVibe ? dynTextStyle : undefined}>
                             Leave Review →
                         </button>
@@ -544,7 +544,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                         </div>
                         <div className="flex flex-wrap gap-2">
                             {b.map(badge => (
-                                <span key={badge.id} className={`text-[10px] font-mono px-2 py-1 rounded-sm transition-colors duration-300 ${isVibe ? 'opacity-80' : 'bg-[#f7f6f3] text-[#37352f]'}`}
+                                <span key={badge.id} className={`text-[10px] font-mono px-2 py-1 rounded-sm transition-colors duration-300 ${isVibe ? 'opacity-80' : 'bg-vc-surface-raised text-vc-text'}`}
                                     style={isVibe ? { backgroundColor: `${palColor}20`, color: palColor } : undefined}
                                     title={badge.description}>
                                     {badge.emoji} {badge.label}
@@ -557,11 +557,11 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
             case 'earned':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                        <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                             ${(profile.total_earned || 0).toLocaleString()}
                         </span>
                         <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em]">Earned</span>
+                            <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em]">Earned</span>
                             {hasVerifiedEarnings && (
                                 <span className="text-[8px] font-mono text-green-600 bg-green-50 px-1.5 py-0.5 rounded-sm uppercase tracking-wider">✓ Verified</span>
                             )}
@@ -590,23 +590,23 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                                 <span className="text-[8px] font-mono text-brand-red uppercase tracking-wider">⚡ {s.build_hours}h</span>
                             )}
                             {(feedbackCounts._total || 0) > 0 && (
-                                <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider">💬 {feedbackCounts._total}</span>
+                                <span className="text-[8px] font-mono text-vc-text-secondary uppercase tracking-wider">💬 {feedbackCounts._total}</span>
                             )}
                             {s.tags.length > 0 && (
-                                <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider">{s.tags[0]}</span>
+                                <span className="text-[8px] font-mono text-vc-text-secondary uppercase tracking-wider">{s.tags[0]}</span>
                             )}
                         </div>
                         <div>
-                            <h3 className={`text-base font-serif mb-1 transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] group-hover:text-brand-red'} ${tile.colSpan.includes('col-span-2') ? 'md:text-lg' : ''}`} style={isVibe ? dynTextStyle : undefined}>
+                            <h3 className={`text-base font-serif mb-1 transition-colors duration-300 ${isVibe ? '' : 'text-vc-text group-hover:text-brand-red'} ${tile.colSpan.includes('col-span-2') ? 'md:text-lg' : ''}`} style={isVibe ? dynTextStyle : undefined}>
                                 {s.title}
                             </h3>
-                            <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary'}`} style={isVibe ? dynTextStyle : undefined}>
                                 {s.description}
                             </p>
                             {(s.ai_tools || []).length > 0 && (
                                 <div className="flex items-center gap-1.5 mt-1.5">
                                     {(s.ai_tools || []).map(tool => (
-                                        <span key={tool} className="text-[8px] font-mono uppercase tracking-wider text-[#9b9a97] bg-[#f0f0f0] px-1.5 py-0.5 rounded">{tool}</span>
+                                        <span key={tool} className="text-[8px] font-mono uppercase tracking-wider text-vc-text-secondary bg-[#f0f0f0] px-1.5 py-0.5 rounded">{tool}</span>
                                     ))}
                                 </div>
                             )}
@@ -614,16 +614,16 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                         <div className="flex items-center gap-3 mt-2">
                             {s.source_url && (
                                 <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); window.open(s.source_url, '_blank', 'noopener,noreferrer'); }}
-                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>Source ↗</button>
+                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary hover:text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>Source ↗</button>
                             )}
                             {s.post_url && (
                                 <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); window.open(s.post_url, '_blank', 'noopener,noreferrer'); }}
-                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>Post ↗</button>
+                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary hover:text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>Post ↗</button>
                             )}
                             <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); handleFeedback(s.slug, s.title); }}
-                                className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Feedback</button>
+                                className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary hover:text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Feedback</button>
                             <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); handleEndorse(s.slug, s.title); }}
-                                className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-green-600'}`} style={isVibe ? dynTextStyle : undefined}>Endorse ✅</button>
+                                className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary hover:text-green-600'}`} style={isVibe ? dynTextStyle : undefined}>Endorse ✅</button>
                         </div>
                     </div>
                 );
@@ -632,13 +632,13 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
     }
 
     const breadcrumbs = (
-        <div className="flex items-center gap-2 text-[#9b9a97]">
-            <Link href="/" className="flex items-center gap-2 hover:text-[#37352f] transition-colors font-medium">
+        <div className="flex items-center gap-2 text-vc-text-secondary">
+            <Link href="/" className="flex items-center gap-2 hover:text-vc-text transition-colors font-medium">
                 <div className="w-3 h-3 bg-brand-red rounded-[2px]" />
                 <span>VibeCoder</span>
             </Link>
-            <span className="text-[#d5d5d3]">/</span>
-            <span className="text-[#37352f] font-medium">{profile.username}</span>
+            <span className="text-vc-text-muted">/</span>
+            <span className="text-vc-text font-medium">{profile.username}</span>
         </div>
     );
 

@@ -152,17 +152,17 @@ export default function ExploreClient({ initialData }: {
             case 'artode':
                 return (
                     <div
-                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
+                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-vc-dark ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                         onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
                     >
-                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-white'}`} />
+                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-vc-surface'}`} />
                     </div>
                 );
             case 'title':
                 return (
-                    <div className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? dynBg : '#242423' }}>
+                    <div className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? dynBg : 'var(--vc-dark)' }}>
                         <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/40'}`} style={isVibe ? dynTextStyle : undefined}>VibeCoder</span>
                         <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? '' : 'text-white'}`} style={isVibe ? dynTextStyle : undefined}>Explore</span>
                     </div>
@@ -170,8 +170,8 @@ export default function ExploreClient({ initialData }: {
             case 'counter':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>{showcases.length}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Projects</span>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>{showcases.length}</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Projects</span>
                     </div>
                 );
             case 'filter':
@@ -179,35 +179,35 @@ export default function ExploreClient({ initialData }: {
                     <div className={`${tile.colSpan} p-4 md:p-5 flex flex-col gap-2 min-h-[60px] transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex flex-wrap items-center gap-2">
                             <button onClick={() => setViewMode('showcases')}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 min-h-[36px] transition-colors ${viewMode === 'showcases' ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 min-h-[36px] transition-colors ${viewMode === 'showcases' ? 'text-brand-red font-bold' : 'text-vc-text-secondary hover:text-vc-text'}`}>
                                 Showcases
                             </button>
                             <button onClick={() => setViewMode('builders')}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 min-h-[36px] transition-colors ${viewMode === 'builders' ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 min-h-[36px] transition-colors ${viewMode === 'builders' ? 'text-brand-red font-bold' : 'text-vc-text-secondary hover:text-vc-text'}`}>
                                 Builders
                             </button>
-                            <div className="w-px h-3 bg-[#ededeb]" />
+                            <div className="w-px h-3 bg-vc-border" />
                             <button onClick={() => setAvailableOnly(!availableOnly)}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 min-h-[36px] transition-colors ${availableOnly ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 min-h-[36px] transition-colors ${availableOnly ? 'text-brand-red font-bold' : 'text-vc-text-secondary hover:text-vc-text'}`}>
                                 {availableOnly ? '● Available' : 'Available'}
                             </button>
                         </div>
                         <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-none">
                             <button onClick={() => { setActiveTag(null); setActiveSkill(null); }}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 whitespace-nowrap transition-colors ${!activeTag && !activeSkill ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 whitespace-nowrap transition-colors ${!activeTag && !activeSkill ? 'text-brand-red font-bold' : 'text-vc-text-secondary hover:text-vc-text'}`}>
                                 All
                             </button>
                             {viewMode === 'showcases' ? (
                                 allTags.slice(0, 12).map(tag => (
                                     <button key={tag} onClick={() => { setActiveTag(tag); setActiveSkill(null); }}
-                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 whitespace-nowrap transition-colors ${activeTag === tag ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 whitespace-nowrap transition-colors ${activeTag === tag ? 'text-brand-red font-bold' : 'text-vc-text-secondary hover:text-vc-text'}`}>
                                         {tag}
                                     </button>
                                 ))
                             ) : (
                                 allSkills.slice(0, 12).map(skill => (
                                     <button key={skill} onClick={() => { setActiveSkill(skill); setActiveTag(null); }}
-                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 whitespace-nowrap transition-colors ${activeSkill === skill ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 whitespace-nowrap transition-colors ${activeSkill === skill ? 'text-brand-red font-bold' : 'text-vc-text-secondary hover:text-vc-text'}`}>
                                         {skill}
                                     </button>
                                 ))
@@ -220,16 +220,16 @@ export default function ExploreClient({ initialData }: {
                     <div className={`${tile.colSpan} p-4 md:p-5 flex flex-col gap-2 min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : ACCENTS[0] }}>●</span>
-                            <span className={`text-[10px] font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            <span className={`text-[10px] font-mono transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                                 {openRequests.length} open hire request{openRequests.length !== 1 ? 's' : ''} right now
                             </span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${ACCENTS[0]}20` }} />
-                            <span className={`text-[8px] font-mono uppercase tracking-wider ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>Live</span>
+                            <span className={`text-[8px] font-mono uppercase tracking-wider ${isVibe ? 'opacity-40' : 'text-vc-text-secondary'}`} style={isVibe ? dynTextStyle : undefined}>Live</span>
                         </div>
                         <div className="flex flex-wrap gap-x-4 gap-y-1">
                             {openRequests.slice(0, 4).map(r => (
                                 <a key={r.issue_number} href={r.html_url} target="_blank" rel="noopener noreferrer"
-                                    className={`text-[9px] font-serif italic transition-colors truncate max-w-[200px] ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-brand-red'}`}
+                                    className={`text-[9px] font-serif italic transition-colors truncate max-w-[200px] ${isVibe ? 'opacity-60' : 'text-vc-text-secondary hover:text-brand-red'}`}
                                     style={isVibe ? dynTextStyle : undefined}>
                                     &ldquo;{r.description.slice(0, 50)}{r.description.length > 50 ? '…' : ''}&rdquo;
                                 </a>
@@ -251,7 +251,7 @@ export default function ExploreClient({ initialData }: {
                             {b.avatar_url && (
                                 <Image src={b.avatar_url} alt="" width={24} height={24} className="rounded-sm" />
                             )}
-                            <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] group-hover:text-brand-red'}`} style={isVibe ? { color: accent } : undefined}>
+                            <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? '' : 'text-vc-text group-hover:text-brand-red'}`} style={isVibe ? { color: accent } : undefined}>
                                 {b.name}
                             </span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${accent}4D` : `${accent}20` }} />
@@ -263,18 +263,18 @@ export default function ExploreClient({ initialData }: {
                             )}
                         </div>
                         <div>
-                            <p className={`text-[11px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? { color: accent } : undefined}>
+                            <p className={`text-[11px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary'}`} style={isVibe ? { color: accent } : undefined}>
                                 {b.role}
                             </p>
                             {b.skills.length > 0 && (
                                 <div className="flex flex-wrap gap-1 mt-2">
                                     {b.skills.slice(0, 5).map(s => (
-                                        <span key={s} className="text-[8px] font-mono px-1.5 py-0.5 rounded-sm bg-[#f7f6f3] text-[#9b9a97]">{s}</span>
+                                        <span key={s} className="text-[8px] font-mono px-1.5 py-0.5 rounded-sm bg-vc-surface-raised text-vc-text-secondary">{s}</span>
                                     ))}
                                 </div>
                             )}
                         </div>
-                        <span className={`text-[9px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? { color: accent } : undefined}>
+                        <span className={`text-[9px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-vc-text-secondary'}`} style={isVibe ? { color: accent } : undefined}>
                             {b.showcase_count} showcase{b.showcase_count !== 1 ? 's' : ''}
                         </span>
                     </div>
@@ -290,15 +290,15 @@ export default function ExploreClient({ initialData }: {
                             {s._user.avatar_url && (
                                 <Image src={s._user.avatar_url} alt="" width={20} height={20} className="rounded-sm" />
                             )}
-                            <span className="text-[10px] font-mono text-[#9b9a97]">{s._user.name}</span>
+                            <span className="text-[10px] font-mono text-vc-text-secondary">{s._user.name}</span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${accent}4D` : `${accent}20` }} />
-                            {s.tags[0] && <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider">{s.tags[0]}</span>}
+                            {s.tags[0] && <span className="text-[8px] font-mono text-vc-text-secondary uppercase tracking-wider">{s.tags[0]}</span>}
                         </div>
                         <div>
-                            <h3 className={`text-base font-serif mb-1 transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] group-hover:text-brand-red'} md:text-lg`} style={isVibe ? { color: accent } : undefined}>
+                            <h3 className={`text-base font-serif mb-1 transition-colors duration-300 ${isVibe ? '' : 'text-vc-text group-hover:text-brand-red'} md:text-lg`} style={isVibe ? { color: accent } : undefined}>
                                 {s.title}
                             </h3>
-                            <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? { color: accent } : undefined}>
+                            <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary'}`} style={isVibe ? { color: accent } : undefined}>
                                 {s.description}
                             </p>
                         </div>
@@ -309,13 +309,13 @@ export default function ExploreClient({ initialData }: {
     }
 
     const breadcrumbs = (
-        <div className="flex items-center gap-2 text-[#9b9a97]">
-            <Link href="/" className="flex items-center gap-2 hover:text-[#37352f] transition-colors font-medium">
+        <div className="flex items-center gap-2 text-vc-text-secondary">
+            <Link href="/" className="flex items-center gap-2 hover:text-vc-text transition-colors font-medium">
                 <div className="w-3 h-3 bg-brand-red rounded-[2px]" />
                 <span>VibeCoder</span>
             </Link>
-            <span className="text-[#d5d5d3]">/</span>
-            <span className="text-[#37352f] font-medium">explore</span>
+            <span className="text-vc-text-muted">/</span>
+            <span className="text-vc-text font-medium">explore</span>
         </div>
     );
 

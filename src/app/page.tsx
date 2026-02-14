@@ -49,10 +49,10 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
             <div className="flex flex-col items-center gap-3">
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-[#D80018] animate-pulse" />
-                    <span className="text-sm font-mono" style={isVibe && vibeColor ? { color: vibeColor } : { color: '#37352f' }}>{message}</span>
+                    <span className="text-sm font-mono" style={isVibe && vibeColor ? { color: vibeColor } : { color: 'var(--vc-text)' }}>{message}</span>
                 </div>
                 {count > 0 && (
-                    <span className="text-[10px] font-mono text-[#9b9a97] uppercase tracking-[0.2em]">
+                    <span className="text-[10px] font-mono text-vc-text-secondary uppercase tracking-[0.2em]">
                         {count}+ builders already waiting
                     </span>
                 )}
@@ -69,7 +69,7 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
                     onChange={e => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
-                    className="flex-1 px-4 py-3 border border-[#e7e5e4] bg-white text-sm font-mono text-[#37352f] placeholder:text-[#c8c6c4] focus:outline-none focus:border-[#D80018] focus:ring-1 focus:ring-[#D80018]/20 transition-all duration-300"
+                    className="flex-1 px-4 py-3 border border-[#e7e5e4] bg-vc-surface text-sm font-mono text-vc-text placeholder:text-[#c8c6c4] focus:outline-none focus:border-[#D80018] focus:ring-1 focus:ring-[#D80018]/20 transition-all duration-300"
                     disabled={state === 'loading'}
                 />
                 <button
@@ -84,7 +84,7 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
                 <span className="text-[11px] font-mono text-[#D80018]">{message}</span>
             )}
             {count > 0 && (
-                <span className="text-[10px] font-mono text-[#9b9a97] uppercase tracking-[0.2em]">
+                <span className="text-[10px] font-mono text-vc-text-secondary uppercase tracking-[0.2em]">
                     {count}+ builders already waiting
                 </span>
             )}
@@ -129,7 +129,7 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
 /* ─────────────────────────────────────────────────────────
    GRID
    ───────────────────────────────────────────────────────── */
-const GRID = 'border border-[#ededeb] rounded-lg overflow-hidden bg-[#ededeb] grid grid-cols-2 md:grid-cols-4 gap-px';
+const GRID = 'border border-vc-border rounded-lg overflow-hidden bg-vc-border grid grid-cols-2 md:grid-cols-4 gap-px';
 
 /* ─────────────────────────────────────────────────────────
    LANDING PAGE — with Vibe Mode
@@ -154,7 +154,7 @@ export default function LandingPage() {
     // Per-tile vibe style helpers
     function pal(index: number) { return VIBE_COLORS[index % VIBE_COLORS.length]; }
     function bg(index: number) { return isVibe ? vibeGradient(pal(index)) : 'white'; }
-    function darkBg(index: number) { return isVibe ? vibeGradient(pal(index)) : '#242423'; }
+    function darkBg(index: number) { return isVibe ? vibeGradient(pal(index)) : 'var(--vc-dark)'; }
     function textStyle(index: number) { return isVibe ? { color: pal(index) } : undefined; }
 
     // Founder section helpers — respond to avatar hover/click OR global vibe
@@ -162,7 +162,7 @@ export default function LandingPage() {
     function fText(index: number) { return isFounderVibe ? { color: pal(index) } : undefined; }
 
     return (
-        <div className="min-h-screen w-full bg-[#fbfbfa] text-[#37352f] relative">
+        <div className="min-h-screen w-full bg-[#fbfbfa] text-vc-text relative">
             {/* Background grid pattern */}
             <div
                 className="fixed inset-0 pointer-events-none opacity-[0.4]"
@@ -172,24 +172,24 @@ export default function LandingPage() {
                 }}
             />
 
-            <div className="relative mx-auto max-w-[900px] px-6 py-8 md:px-20 md:py-16 bg-white min-h-screen shadow-[0_0_50px_-12px_rgba(0,0,0,0.08)] border-x border-[#ededeb]">
+            <div className="relative mx-auto max-w-[900px] px-6 py-8 md:px-20 md:py-16 bg-vc-surface min-h-screen shadow-[0_0_50px_-12px_rgba(0,0,0,0.08)] border-x border-vc-border">
 
                 {/* ── Nav ─────────────────────────────────── */}
                 <nav className="flex items-center justify-between mb-20 md:mb-32">
                     <div className="flex items-center gap-3">
                         {/* Artode toggle — click to activate vibe mode */}
                         <div
-                            className={`w-4 h-4 cursor-pointer transition-all duration-300 ${vibeLocked ? 'bg-[#D80018] scale-110 ring-2 ring-[#D80018]/30' : isVibe ? 'bg-[#D80018]' : 'bg-[#242423]'}`}
+                            className={`w-4 h-4 cursor-pointer transition-all duration-300 ${vibeLocked ? 'bg-[#D80018] scale-110 ring-2 ring-[#D80018]/30' : isVibe ? 'bg-[#D80018]' : 'bg-vc-dark'}`}
                             onMouseEnter={() => setHovered(true)}
                             onMouseLeave={() => setHovered(false)}
                             onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
                         />
-                        <span className="text-sm font-serif italic transition-colors duration-300" style={isVibe ? { color: pal(0) } : { color: '#37352f' }}>VibeCoder</span>
+                        <span className="text-sm font-serif italic transition-colors duration-300" style={isVibe ? { color: pal(0) } : { color: 'var(--vc-text)' }}>VibeCoder</span>
                     </div>
                     <div className="flex items-center gap-4">
                         <Link
                             href="/home"
-                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors duration-300"
+                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-vc-text-secondary hover:text-vc-text transition-colors duration-300"
                         >
                             Marketplace →
                         </Link>
@@ -345,7 +345,7 @@ export default function LandingPage() {
                 <section className="mb-24 md:mb-36">
                     <FadeIn>
                         <div className="text-center mb-10">
-                            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#9b9a97]">How It Works</span>
+                            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-vc-text-secondary">How It Works</span>
                         </div>
                     </FadeIn>
                     <div className={GRID}>
@@ -360,7 +360,7 @@ export default function LandingPage() {
                                     style={{ background: bg(i) }}
                                 >
                                     <span
-                                        className={`text-[32px] md:text-[40px] font-serif leading-none mb-4 transition-colors duration-300 ${isVibe ? 'opacity-30' : 'text-[#ededeb]'}`}
+                                        className={`text-[32px] md:text-[40px] font-serif leading-none mb-4 transition-colors duration-300 ${isVibe ? 'opacity-30' : 'text-vc-text-muted'}`}
                                         style={isVibe ? textStyle(i) : undefined}
                                     >{item.step}</span>
                                     <h3
@@ -393,17 +393,17 @@ export default function LandingPage() {
                     <FadeIn>
                         <div
                             className="py-16 md:py-24 flex flex-col items-center text-center border-y transition-colors duration-300"
-                            style={{ borderColor: isVibe ? `${pal(1)}30` : '#ededeb' }}
+                            style={{ borderColor: isVibe ? `${pal(1)}30` : 'var(--vc-border)' }}
                         >
                             <p
-                                className={`text-xl md:text-2xl lg:text-3xl font-serif italic leading-relaxed max-w-lg transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`}
+                                className={`text-xl md:text-2xl lg:text-3xl font-serif italic leading-relaxed max-w-lg transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`}
                                 style={textStyle(1)}
                             >
                                 &ldquo;Every token burned should build something someone needs.&rdquo;
                             </p>
                             <div className="flex items-center gap-3 mt-6">
                                 <div className="w-6 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? pal(0) : 'rgba(216,0,24,0.3)' }} />
-                                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#9b9a97]">Our Philosophy</span>
+                                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-vc-text-secondary">Our Philosophy</span>
                                 <div className="w-6 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? pal(0) : 'rgba(216,0,24,0.3)' }} />
                             </div>
                         </div>
@@ -417,18 +417,18 @@ export default function LandingPage() {
                     <FadeIn>
                         <div className="flex items-center gap-3 mb-6">
                             <span className={`text-xl font-normal font-mono transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#ebebeb]'}`} style={isFounderVibe ? fText(1) : undefined}>#</span>
-                            <h2 className="text-2xl font-semibold tracking-tight text-[#37352f] font-serif">
+                            <h2 className="text-2xl font-semibold tracking-tight text-vc-text font-serif">
                                 <span className={`transition-colors duration-300`} style={fText(1)}>Meet the</span>{' '}
                                 <span className="line-through opacity-40">Developer</span>{' '}
                                 <span className={`italic transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#D80018]'}`} style={isFounderVibe ? fText(0) : undefined}>Vibeloper</span>
                             </h2>
                         </div>
 
-                        <div className="border border-[#ededeb] rounded-lg overflow-hidden grid grid-cols-2 md:grid-cols-6 bg-[#ededeb] gap-px">
+                        <div className="border border-vc-border rounded-lg overflow-hidden grid grid-cols-2 md:grid-cols-6 bg-vc-border gap-px">
 
                             {/* Avatar — hover to preview vibe, click to lock */}
                             <div
-                                className="col-span-1 aspect-square bg-[#242423] relative overflow-hidden cursor-pointer z-20"
+                                className="col-span-1 aspect-square bg-vc-dark relative overflow-hidden cursor-pointer z-20"
                                 onMouseEnter={() => setFounderHovered(true)}
                                 onMouseLeave={() => setFounderHovered(false)}
                                 onClick={() => setFounderVibed(v => !v)}
@@ -439,7 +439,7 @@ export default function LandingPage() {
 
                             {/* Name & Role */}
                             <div className="col-span-1 md:col-span-2 px-4 md:px-6 py-4 flex flex-col justify-center transition-all duration-300" style={{ background: fBg(1) }}>
-                                <h4 className={`text-sm md:text-lg font-serif mb-0.5 leading-tight transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#37352f]'}`} style={fText(1)}>
+                                <h4 className={`text-sm md:text-lg font-serif mb-0.5 leading-tight transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text'}`} style={fText(1)}>
                                     <span className="flex flex-col md:block">
                                         <span>Jagadesh</span>
                                         <span className="md:inline hidden"> </span>
@@ -453,7 +453,7 @@ export default function LandingPage() {
                             <a href="https://twitter.com/byadhddev" target="_blank" rel="noopener noreferrer"
                                className="col-span-1 flex items-center justify-center min-h-[70px] md:min-h-0 hover:bg-[#fbfbfa] transition-all duration-300 group/link"
                                style={{ background: fBg(0) }}>
-                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#9b9a97] group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(0) } : undefined} fill="currentColor" viewBox="0 0 24 24">
+                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(0) } : undefined} fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                                 </svg>
                             </a>
@@ -462,7 +462,7 @@ export default function LandingPage() {
                             <a href="https://github.com/byadhddev" target="_blank" rel="noopener noreferrer"
                                className="col-span-1 flex items-center justify-center min-h-[70px] md:min-h-0 hover:bg-[#fbfbfa] transition-all duration-300 group/link"
                                style={{ background: fBg(1) }}>
-                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#9b9a97] group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(1) } : undefined} fill="currentColor" viewBox="0 0 24 24">
+                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(1) } : undefined} fill="currentColor" viewBox="0 0 24 24">
                                     <path fillRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" clipRule="evenodd"/>
                                 </svg>
                             </a>
@@ -471,30 +471,30 @@ export default function LandingPage() {
                             <a href="https://byadhd.dev" target="_blank" rel="noopener noreferrer"
                                className="col-span-2 md:col-span-1 flex items-center justify-center min-h-[60px] hover:bg-[#fbfbfa] transition-all duration-300 group/link"
                                style={{ background: fBg(0) }}>
-                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#9b9a97] group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(0) } : undefined} fill="currentColor" viewBox="0 0 24 24">
+                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(0) } : undefined} fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
                                 </svg>
                             </a>
 
                             {/* Filler */}
-                            <div className={`hidden md:block col-span-1 transition-all duration-300 ${isFounderVibe ? '' : 'bg-[#f0f0ef]'}`} style={isFounderVibe ? { background: `${pal(1)}1A` } : undefined} />
+                            <div className={`hidden md:block col-span-1 transition-all duration-300 ${isFounderVibe ? '' : 'bg-vc-skeleton'}`} style={isFounderVibe ? { background: `${pal(1)}1A` } : undefined} />
 
                             {/* Quote/Bio */}
                             <div className="col-span-2 md:col-span-3 md:row-span-2 p-6 md:p-10 flex flex-col justify-center relative overflow-hidden transition-all duration-300" style={{ background: fBg(0) }}>
                                 <div className={`absolute top-0 right-0 w-48 h-48 blur-3xl rounded-full -mr-24 -mt-24 pointer-events-none transition-opacity duration-300 ${isFounderVibe ? 'bg-[#D80018]/20 opacity-100' : 'bg-[#D80018]/5 opacity-40'}`} />
-                                <h3 className={`text-xl md:text-2xl font-serif mb-4 md:mb-6 leading-tight relative z-10 transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#37352f]'}`} style={fText(0)}>
+                                <h3 className={`text-xl md:text-2xl font-serif mb-4 md:mb-6 leading-tight relative z-10 transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text'}`} style={fText(0)}>
                                     &ldquo;Software shouldn&apos;t just work. <br />
                                     It should <span className="italic">feel</span> like something.&rdquo;
                                 </h3>
-                                <p className="text-[13px] md:text-[14px] leading-relaxed text-[#37352f] opacity-80 font-medium font-serif relative z-10">
+                                <p className="text-[13px] md:text-[14px] leading-relaxed text-vc-text opacity-80 font-medium font-serif relative z-10">
                                     I build interactive digital matter. VibeCoder is the marketplace where builders like me find their next gig.
                                 </p>
                             </div>
 
                             {/* Focus Tag */}
                             <div className="col-span-1 md:row-span-2 p-6 flex flex-col items-center justify-center text-center transition-all duration-300" style={{ background: fBg(1) }}>
-                                <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mb-3">Focus</span>
-                                <span className={`text-[11px] font-bold uppercase tracking-widest leading-tight transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#37352f]'}`} style={fText(1)}>Physics<br />Driven UI</span>
+                                <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mb-3">Focus</span>
+                                <span className={`text-[11px] font-bold uppercase tracking-widest leading-tight transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text'}`} style={fText(1)}>Physics<br />Driven UI</span>
                             </div>
 
                             {/* Note Label */}
@@ -506,7 +506,7 @@ export default function LandingPage() {
                             <a href="https://linkedin.com/in/jagadesh-ronanki" target="_blank" rel="noopener noreferrer"
                                className="col-span-2 md:col-span-1 flex items-center justify-center min-h-[60px] hover:bg-[#fbfbfa] transition-all duration-300 group/link"
                                style={{ background: fBg(1) }}>
-                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#9b9a97] group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(1) } : undefined} fill="currentColor" viewBox="0 0 24 24">
+                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(1) } : undefined} fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                                 </svg>
                             </a>
@@ -515,30 +515,30 @@ export default function LandingPage() {
                             <div className="col-span-2 p-8 flex items-center transition-all duration-300" style={{ background: fBg(0) }}>
                                 <div className="flex items-center gap-4">
                                     <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isFounderVibe ? pal(0) : 'rgba(216,0,24,0.3)' }} />
-                                    <span className={`text-sm font-serif italic transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#37352f]'}`} style={fText(0)}>adhd.dev</span>
+                                    <span className={`text-sm font-serif italic transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text'}`} style={fText(0)}>adhd.dev</span>
                                 </div>
                             </div>
 
                             {/* Philosophy Italic */}
                             <div className="hidden md:flex col-span-2 p-8 items-center transition-all duration-300" style={{ background: fBg(1) }}>
-                                <p className={`text-[13px] leading-relaxed opacity-70 font-serif italic transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#37352f]'}`} style={fText(1)}>
+                                <p className={`text-[13px] leading-relaxed opacity-70 font-serif italic transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text'}`} style={fText(1)}>
                                     Software stops being static and starts breathing.
                                 </p>
                             </div>
 
                             {/* Contact */}
-                            <a href="mailto:adhd.paws@gmail.com" className="col-span-2 p-8 flex flex-col justify-center group/mail hover:bg-white transition-all duration-300" style={{ background: isFounderVibe ? fBg(0) : '#fbfbfa' }}>
-                                <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-widest mb-3">Direct Contact</span>
+                            <a href="mailto:adhd.paws@gmail.com" className="col-span-2 p-8 flex flex-col justify-center group/mail hover:bg-vc-surface transition-all duration-300" style={{ background: isFounderVibe ? fBg(0) : 'var(--vc-bg)' }}>
+                                <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-widest mb-3">Direct Contact</span>
                                 <div className="flex items-center gap-3">
-                                    <svg className={`w-4 h-4 transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#9b9a97] group-hover/mail:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(0) } : undefined} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg className={`w-4 h-4 transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/mail:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(0) } : undefined} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
                                     </svg>
-                                    <span className={`text-[12px] font-mono border-b transition-colors duration-300 ${isFounderVibe ? '' : 'border-[#ededeb] text-[#37352f]'}`} style={isFounderVibe ? { color: pal(0), borderColor: `${pal(0)}4D` } : undefined}>adhd.paws@gmail.com</span>
+                                    <span className={`text-[12px] font-mono border-b transition-colors duration-300 ${isFounderVibe ? '' : 'border-vc-border text-vc-text'}`} style={isFounderVibe ? { color: pal(0), borderColor: `${pal(0)}4D` } : undefined}>adhd.paws@gmail.com</span>
                                 </div>
                             </a>
 
                             {/* Filler bottom */}
-                            <div className={`hidden md:block col-span-2 transition-all duration-300 ${isFounderVibe ? '' : 'bg-[#f0f0ef]'}`} style={isFounderVibe ? { background: `${pal(0)}33` } : undefined} />
+                            <div className={`hidden md:block col-span-2 transition-all duration-300 ${isFounderVibe ? '' : 'bg-vc-skeleton'}`} style={isFounderVibe ? { background: `${pal(0)}33` } : undefined} />
                         </div>
                     </FadeIn>
                 </section>
@@ -549,7 +549,7 @@ export default function LandingPage() {
                 <section className="mb-24 md:mb-36">
                     <FadeIn>
                         <div className="text-center mb-10">
-                            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#9b9a97]">Platform Features</span>
+                            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-vc-text-secondary">Platform Features</span>
                         </div>
                     </FadeIn>
                     <div className={GRID}>
@@ -567,7 +567,7 @@ export default function LandingPage() {
                                 <div className="col-span-1 p-5 md:p-6 flex flex-col min-h-[140px] transition-all duration-300" style={{ background: bg(i) }}>
                                     <span className={`text-lg mb-3 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`} style={textStyle(i)}>{feature.icon}</span>
                                     <h4 className={`text-[13px] font-serif mb-1 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`} style={textStyle(i)}>{feature.title}</h4>
-                                    <p className={`text-[11px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{feature.desc}</p>
+                                    <p className={`text-[11px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{feature.desc}</p>
                                 </div>
                             </FadeIn>
                         ))}
@@ -584,7 +584,7 @@ export default function LandingPage() {
                             <div className="col-span-2 md:col-span-1 p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300" style={{ background: bg(2) }}>
                                 <div className="flex items-center gap-4">
                                     <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? pal(2) : 'rgba(216,0,24,0.3)' }} />
-                                    <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={textStyle(2)}>vibecoder.dev</span>
+                                    <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={textStyle(2)}>vibecoder.dev</span>
                                 </div>
                             </div>
 
@@ -610,7 +610,7 @@ export default function LandingPage() {
                                     We&apos;re onboarding builders and seekers in small batches.
                                     Join the waitlist to get early access and shape the platform.
                                 </p>
-                                <div className="w-full max-w-md [&_input]:border-white/20 [&_input]:bg-white/5 [&_input]:text-white [&_input]:placeholder:text-white/30 [&_input:focus]:border-[#D80018] [&_input:focus]:ring-[#D80018]/20 [&_span]:text-white/40">
+                                <div className="w-full max-w-md [&_input]:border-white/20 [&_input]:bg-vc-surface/5 [&_input]:text-white [&_input]:placeholder:text-white/30 [&_input:focus]:border-[#D80018] [&_input:focus]:ring-[#D80018]/20 [&_span]:text-white/40">
                                     <WaitlistInput count={waitlistCount} variant="bottom" isVibe={isVibe} vibeColor={pal(4)} />
                                 </div>
                             </div>
@@ -619,16 +619,16 @@ export default function LandingPage() {
                 </section>
 
                 {/* ── Footer ───────────────────────────────── */}
-                <footer className="pt-8 border-t border-[#ebebeb] text-[#9b9a97] text-sm flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 pb-8">
-                    <div className="italic font-serif flex items-center gap-2 shrink-0 whitespace-nowrap transition-colors duration-300" style={isVibe ? { color: pal(0) } : { color: '#37352f' }}>
+                <footer className="pt-8 border-t border-[#ebebeb] text-vc-text-secondary text-sm flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 pb-8">
+                    <div className="italic font-serif flex items-center gap-2 shrink-0 whitespace-nowrap transition-colors duration-300" style={isVibe ? { color: pal(0) } : { color: 'var(--vc-text)' }}>
                         <div className={`w-2 h-2 transition-all duration-300 ${isVibe ? 'scale-110' : ''}`} style={{ backgroundColor: isVibe ? pal(0) : '#D80018' }} />
                         VibeCoder Marketplace
                     </div>
                     <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-6 gap-y-3">
-                        <Link href="/home" className="hover:text-[#37352f] transition-colors duration-300 hover:underline decoration-dotted underline-offset-4">
+                        <Link href="/home" className="hover:text-vc-text transition-colors duration-300 hover:underline decoration-dotted underline-offset-4">
                             Marketplace
                         </Link>
-                        <Link href="/explore" className="hover:text-[#37352f] transition-colors duration-300 hover:underline decoration-dotted underline-offset-4">
+                        <Link href="/explore" className="hover:text-vc-text transition-colors duration-300 hover:underline decoration-dotted underline-offset-4">
                             Explore
                         </Link>
                         <span className="shrink-0 whitespace-nowrap">© 2026</span>

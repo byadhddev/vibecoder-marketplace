@@ -260,13 +260,13 @@ export default function ManagerPage() {
     };
 
     const breadcrumbs = (
-        <div className="flex items-center gap-2 text-[#9b9a97]">
-            <Link href="/" className="flex items-center gap-2 hover:text-[#37352f] transition-colors font-medium">
+        <div className="flex items-center gap-2 text-vc-text-secondary">
+            <Link href="/" className="flex items-center gap-2 hover:text-vc-text transition-colors font-medium">
                 <div className="w-3 h-3 bg-brand-red rounded-[2px]" />
                 <span>VibeCoder</span>
             </Link>
-            <span className="text-[#d5d5d3]">/</span>
-            <span className="text-[#37352f] font-medium">manager</span>
+            <span className="text-vc-text-muted">/</span>
+            <span className="text-vc-text font-medium">manager</span>
         </div>
     );
 
@@ -278,17 +278,17 @@ export default function ManagerPage() {
             case 'artode':
                 return (
                     <div
-                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
+                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-vc-dark ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                         onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
                     >
-                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-white'}`} />
+                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-vc-surface'}`} />
                     </div>
                 );
             case 'title':
                 return (
-                    <div className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? vibeColor(index) : '#242423' }}>
+                    <div className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? vibeColor(index) : 'var(--vc-dark)' }}>
                         <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? vt + ' opacity-60' : 'text-white/40'}`}>Manager</span>
                         <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? vt : 'text-white'}`}>Your Showcases</span>
                     </div>
@@ -296,8 +296,8 @@ export default function ManagerPage() {
             case 'counter':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{showcases.length}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Total</span>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-vc-text'}`}>{showcases.length}</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Total</span>
                     </div>
                 );
             case 'signature':
@@ -305,7 +305,7 @@ export default function ManagerPage() {
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex items-center gap-4">
                             <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? vibeRaw(index) : 'rgba(216,0,24,0.3)' }} />
-                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>
+                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-vc-text'}`}>
                                 {username ? `vibecoder.dev/m/${username}` : 'Your marketplace'}
                             </span>
                         </div>
@@ -321,13 +321,13 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="text" placeholder="Your name" value={profile.name}
                                 onChange={e => updateProfile('name', e.target.value)}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-sm font-serif text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-sm font-serif text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Role (e.g. Frontend Engineer)" value={profile.role}
                                 onChange={e => updateProfile('role', e.target.value)}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Location" value={profile.location}
                                 onChange={e => updateProfile('location', e.target.value)}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -341,10 +341,10 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <textarea placeholder="Bio — tell the world what you build" value={profile.bio}
                                 onChange={e => updateProfile('bio', e.target.value)} rows={3}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-serif text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors resize-none" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-serif text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors resize-none" />
                             <input type="url" placeholder="Website URL" value={profile.website}
                                 onChange={e => updateProfile('website', e.target.value)}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -358,13 +358,13 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="text" placeholder="GitHub username" value={profile.social_links?.github || ''}
                                 onChange={e => updateSocial('github', e.target.value)}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Twitter / X handle" value={profile.social_links?.twitter || ''}
                                 onChange={e => updateSocial('twitter', e.target.value)}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             <input type="text" placeholder="LinkedIn username" value={profile.social_links?.linkedin || ''}
                                 onChange={e => updateSocial('linkedin', e.target.value)}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -378,11 +378,11 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="text" placeholder="Skills (comma-separated: React, Next.js, Python…)" value={(profile.skills || []).join(', ')}
                                 onChange={e => { setProfile(prev => ({ ...prev, skills: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })); setProfileDirty(true); }}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             {(profile.skills || []).length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 mt-1">
                                     {(profile.skills || []).map(s => (
-                                        <span key={s} className="text-[9px] font-mono uppercase tracking-wider text-[#9b9a97] bg-[#f0f0f0] px-1.5 py-0.5 rounded">{s}</span>
+                                        <span key={s} className="text-[9px] font-mono uppercase tracking-wider text-vc-text-secondary bg-[#f0f0f0] px-1.5 py-0.5 rounded">{s}</span>
                                     ))}
                                 </div>
                             )}
@@ -400,22 +400,22 @@ export default function ManagerPage() {
                             <label className="flex items-center gap-3 cursor-pointer">
                                 <div
                                     onClick={() => { setProfile(prev => ({ ...prev, available_for_hire: !prev.available_for_hire })); setProfileDirty(true); }}
-                                    className={`w-8 h-4 rounded-full transition-colors duration-200 relative cursor-pointer ${profile.available_for_hire ? 'bg-brand-red' : 'bg-[#ededeb]'}`}
+                                    className={`w-8 h-4 rounded-full transition-colors duration-200 relative cursor-pointer ${profile.available_for_hire ? 'bg-brand-red' : 'bg-vc-border'}`}
                                 >
-                                    <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform duration-200 ${profile.available_for_hire ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                                    <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-vc-surface shadow transition-transform duration-200 ${profile.available_for_hire ? 'translate-x-4' : 'translate-x-0.5'}`} />
                                 </div>
-                                <span className={`text-[11px] font-mono ${profile.available_for_hire ? 'text-brand-red font-medium' : 'text-[#9b9a97]'}`}>
+                                <span className={`text-[11px] font-mono ${profile.available_for_hire ? 'text-brand-red font-medium' : 'text-vc-text-secondary'}`}>
                                     {profile.available_for_hire ? 'Available for Hire' : 'Not Available'}
                                 </span>
                             </label>
                             <div className="flex items-center gap-3">
                                 <input type="number" placeholder="Rate" value={profile.hourly_rate || ''}
                                     onChange={e => { setProfile(prev => ({ ...prev, hourly_rate: parseFloat(e.target.value) || 0 })); setProfileDirty(true); }}
-                                    className="w-full sm:w-20 bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors" />
-                                <span className="text-[10px] font-mono text-[#9b9a97]">$</span>
+                                    className="w-full sm:w-20 bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                <span className="text-[10px] font-mono text-vc-text-secondary">$</span>
                                 <select value={profile.rate_type || 'negotiable'}
                                     onChange={e => { setProfile(prev => ({ ...prev, rate_type: e.target.value as 'hourly' | 'project' | 'negotiable' })); setProfileDirty(true); }}
-                                    className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] outline-none py-2 transition-colors">
+                                    className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text outline-none py-2 transition-colors">
                                     <option value="hourly">/hour</option>
                                     <option value="project">/project</option>
                                     <option value="negotiable">negotiable</option>
@@ -425,7 +425,7 @@ export default function ManagerPage() {
                                 <input type="checkbox" checked={profile.email_notifications !== false}
                                     onChange={e => { setProfile(prev => ({ ...prev, email_notifications: e.target.checked })); setProfileDirty(true); }}
                                     className="w-3 h-3 accent-brand-red" />
-                                <span className="text-[10px] font-mono text-[#9b9a97]">Email notifications</span>
+                                <span className="text-[10px] font-mono text-vc-text-secondary">Email notifications</span>
                             </label>
                         </div>
                     </div>
@@ -434,7 +434,7 @@ export default function ManagerPage() {
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
                         <button onClick={handleSaveProfile} disabled={savingProfile || !profileDirty}
-                            className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 disabled:opacity-30 ${isVibe ? vt : 'text-[#37352f] hover:text-brand-red'}`}>
+                            className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 disabled:opacity-30 ${isVibe ? vt : 'text-vc-text hover:text-brand-red'}`}>
                             {savingProfile ? 'Saving…' : profileDirty ? 'Save Profile ↑' : 'Saved ✓'}
                         </button>
                     </div>
@@ -445,15 +445,15 @@ export default function ManagerPage() {
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[0] }}>{editing ? 'Ed' : 'New'}</span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[0]}20` }} />
-                            {fetchingOG && <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider animate-pulse">Fetching…</span>}
+                            {fetchingOG && <span className="text-[8px] font-mono text-vc-text-secondary uppercase tracking-wider animate-pulse">Fetching…</span>}
                         </div>
                         <div className="space-y-2">
                             <input type="url" placeholder="Paste URL (GitHub, CodeSandbox, etc.)" value={form.url}
                                 onChange={e => setForm(prev => ({ ...prev, url: e.target.value }))} onBlur={() => fetchOG(form.url)}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-sm font-serif text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-serif outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-sm font-serif text-vc-text placeholder:text-vc-text-secondary placeholder:font-serif outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Title" value={form.title}
                                 onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-sm font-serif text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-serif outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-sm font-serif text-vc-text placeholder:text-vc-text-secondary placeholder:font-serif outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -467,10 +467,10 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="url" placeholder="Source code URL (GitHub, GitLab, etc.)" value={form.source_url}
                                 onChange={e => setForm(prev => ({ ...prev, source_url: e.target.value }))}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                             <input type="url" placeholder="Blog post / article URL" value={form.post_url}
                                 onChange={e => setForm(prev => ({ ...prev, post_url: e.target.value }))}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -484,10 +484,10 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="text" placeholder="Description" value={form.description}
                                 onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-serif text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-serif outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-serif text-vc-text placeholder:text-vc-text-secondary placeholder:font-serif outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Tags (comma-separated)" value={form.tags}
                                 onChange={e => setForm(prev => ({ ...prev, tags: e.target.value }))}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -501,10 +501,10 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="number" placeholder="Build time in hours (e.g. 6)" value={form.build_hours}
                                 onChange={e => setForm(prev => ({ ...prev, build_hours: e.target.value }))}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                             <input type="text" placeholder="AI tools (comma-separated: Cursor, Claude, Copilot…)" value={form.ai_tools}
                                 onChange={e => setForm(prev => ({ ...prev, ai_tools: e.target.value }))}
-                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -512,16 +512,16 @@ export default function ManagerPage() {
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
                         <button onClick={() => setForm(prev => ({ ...prev, status: prev.status === 'published' ? 'draft' : 'published' }))}
-                            className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-colors duration-300 mb-3 ${isVibe ? vt : form.status === 'published' ? 'text-brand-red' : 'text-[#9b9a97]'}`}>
+                            className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-colors duration-300 mb-3 ${isVibe ? vt : form.status === 'published' ? 'text-brand-red' : 'text-vc-text-secondary'}`}>
                             {form.status === 'published' ? 'Live' : 'Draft'}
                         </button>
                         <button onClick={handleSave} disabled={saving || !form.title || !form.url}
-                            className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 disabled:opacity-30 ${isVibe ? vt : 'text-[#37352f] hover:text-brand-red'}`}>
+                            className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 disabled:opacity-30 ${isVibe ? vt : 'text-vc-text hover:text-brand-red'}`}>
                             {saving ? 'Saving…' : editing ? 'Update ↑' : 'Add ↑'}
                         </button>
                         {editing && (
                             <button onClick={() => { setEditing(null); setForm(EMPTY_FORM); }}
-                                className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-2 hover:text-[#37352f] transition-colors">Cancel</button>
+                                className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-2 hover:text-vc-text transition-colors">Cancel</button>
                         )}
                     </div>
                 );
@@ -532,16 +532,16 @@ export default function ManagerPage() {
             case 'stat-views':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{totalViews}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Page Views</span>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-vc-text'}`}>{totalViews}</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Page Views</span>
                     </div>
                 );
             case 'stat-clicks': {
                 const totalClicks = showcases.reduce((sum, s) => sum + (s.clicks_count || 0), 0);
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{totalClicks}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Total Clicks</span>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-vc-text'}`}>{totalClicks}</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Total Clicks</span>
                     </div>
                 );
             }
@@ -556,11 +556,11 @@ export default function ManagerPage() {
                         </div>
                         {top ? (
                             <div>
-                                <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{top.title}</span>
-                                <span className={`text-[10px] font-mono ml-2 transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>{top.clicks_count || 0} clicks · {top.views_count || 0} views</span>
+                                <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-vc-text'}`}>{top.title}</span>
+                                <span className={`text-[10px] font-mono ml-2 transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary'}`}>{top.clicks_count || 0} clicks · {top.views_count || 0} views</span>
                             </div>
                         ) : (
-                            <span className={`text-[13px] font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] opacity-70'}`}>No data yet</span>
+                            <span className={`text-[13px] font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-vc-text opacity-70'}`}>No data yet</span>
                         )}
                     </div>
                 );
@@ -568,14 +568,14 @@ export default function ManagerPage() {
             case 'nav':
                 return (
                     <div className={`${tile.colSpan} p-5 flex flex-col justify-between min-h-[100px] group transition-all duration-300`} style={{ background: bg }}>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em]">Public</span>
-                        <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] group-hover:text-brand-red'}`}>View Page ↗</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em]">Public</span>
+                        <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-vc-text group-hover:text-brand-red'}`}>View Page ↗</span>
                     </div>
                 );
             case 'empty':
                 return (
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
-                        <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] opacity-70'}`}>
+                        <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? vt : 'text-vc-text opacity-70'}`}>
                             No showcases yet. Paste a URL above to get started.
                         </p>
                     </div>
@@ -590,28 +590,28 @@ export default function ManagerPage() {
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : accent }}>{numStr}</span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${accent}20` }} />
-                            <span className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : s.status === 'published' ? 'text-brand-red' : 'text-[#9b9a97]'}`}>{s.status}</span>
+                            <span className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : s.status === 'published' ? 'text-brand-red' : 'text-vc-text-secondary'}`}>{s.status}</span>
                         </div>
                         <div>
-                            <h3 className={`text-base font-serif mb-1 transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f] group-hover:text-brand-red'} ${tile.colSpan.includes('col-span-2') ? 'md:text-lg' : ''}`}>{s.title}</h3>
-                            <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>{s.description}</p>
+                            <h3 className={`text-base font-serif mb-1 transition-colors duration-300 ${isVibe ? vt : 'text-vc-text group-hover:text-brand-red'} ${tile.colSpan.includes('col-span-2') ? 'md:text-lg' : ''}`}>{s.title}</h3>
+                            <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary'}`}>{s.description}</p>
                             {s.tags.length > 0 && (
                                 <div className="flex items-center gap-2 mt-2">
                                     <div className="w-4 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${accent}20` }} />
-                                    <span className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-40` : 'text-[#9b9a97]'}`}>{s.tags.join(' · ')}</span>
+                                    <span className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-40` : 'text-vc-text-secondary'}`}>{s.tags.join(' · ')}</span>
                                 </div>
                             )}
                         </div>
                         <div className="flex items-center gap-3 mt-3">
-                            <button onClick={() => startEdit(s)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Edit</button>
-                            <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : '#ededeb' }} />
-                            <button onClick={() => handleDelete(s.id)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-brand-red'}`}>Remove</button>
+                            <button onClick={() => startEdit(s)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary hover:text-vc-text'}`}>Edit</button>
+                            <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : 'var(--vc-border)' }} />
+                            <button onClick={() => handleDelete(s.id)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary hover:text-brand-red'}`}>Remove</button>
                             <div className="flex-1" />
                             {s.source_url && (
-                                <a href={s.source_url} target="_blank" rel="noopener noreferrer" className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Source ↗</a>
+                                <a href={s.source_url} target="_blank" rel="noopener noreferrer" className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary hover:text-vc-text'}`}>Source ↗</a>
                             )}
                             {s.post_url && (
-                                <a href={s.post_url} target="_blank" rel="noopener noreferrer" className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Post ↗</a>
+                                <a href={s.post_url} target="_blank" rel="noopener noreferrer" className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary hover:text-vc-text'}`}>Post ↗</a>
                             )}
                         </div>
                     </div>
@@ -626,21 +626,21 @@ export default function ManagerPage() {
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[index % ACCENTS.length] }}>Request #{req.issue_number}</span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[index % ACCENTS.length]}20` }} />
-                            <span className={`text-[8px] font-mono uppercase tracking-wider ${isVibe ? `${vt} opacity-40` : 'text-[#9b9a97]'}`}>{new Date(req.created_at).toLocaleDateString()}</span>
-                            {req.comments > 0 && <span className={`text-[8px] font-mono ${isVibe ? `${vt} opacity-40` : 'text-[#9b9a97]'}`}>{req.comments} 💬</span>}
+                            <span className={`text-[8px] font-mono uppercase tracking-wider ${isVibe ? `${vt} opacity-40` : 'text-vc-text-secondary'}`}>{new Date(req.created_at).toLocaleDateString()}</span>
+                            {req.comments > 0 && <span className={`text-[8px] font-mono ${isVibe ? `${vt} opacity-40` : 'text-vc-text-secondary'}`}>{req.comments} 💬</span>}
                         </div>
-                        <p className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{req.description}</p>
+                        <p className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-vc-text'}`}>{req.description}</p>
                         <div className="flex items-center gap-4 mt-1">
-                            <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>{req.name} · {req.email}</span>
-                            {req.budget && <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>Budget: {req.budget}</span>}
-                            {req.timeline && <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>Timeline: {req.timeline}</span>}
+                            <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary'}`}>{req.name} · {req.email}</span>
+                            {req.budget && <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary'}`}>Budget: {req.budget}</span>}
+                            {req.timeline && <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary'}`}>Timeline: {req.timeline}</span>}
                         </div>
                         <div className="flex items-center gap-3 mt-2">
-                            <a href={req.html_url} target="_blank" rel="noopener noreferrer" className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? vt : 'text-brand-red hover:text-[#37352f]'}`}>View on GitHub ↗</a>
-                            <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : '#ededeb' }} />
-                            <a href={`mailto:${req.email}?subject=Re: Your VibeCoder request`} className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Reply ↗</a>
-                            <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : '#ededeb' }} />
-                            <button onClick={() => handleArchiveRequest(req.issue_number)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Close</button>
+                            <a href={req.html_url} target="_blank" rel="noopener noreferrer" className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? vt : 'text-brand-red hover:text-vc-text'}`}>View on GitHub ↗</a>
+                            <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : 'var(--vc-border)' }} />
+                            <a href={`mailto:${req.email}?subject=Re: Your VibeCoder request`} className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary hover:text-vc-text'}`}>Reply ↗</a>
+                            <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : 'var(--vc-border)' }} />
+                            <button onClick={() => handleArchiveRequest(req.issue_number)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors ${isVibe ? `${vt} opacity-60` : 'text-vc-text-secondary hover:text-vc-text'}`}>Close</button>
                         </div>
                     </div>
                 );
@@ -648,8 +648,8 @@ export default function ManagerPage() {
             case 'earn-total':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>${totalEarned.toLocaleString()}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Earned</span>
+                        <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? vt : 'text-vc-text'}`}>${totalEarned.toLocaleString()}</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Earned</span>
                     </div>
                 );
             case 'earn-form':
@@ -662,21 +662,21 @@ export default function ManagerPage() {
                         <div className="grid grid-cols-2 gap-2">
                             <input type="number" placeholder="Amount ($)" value={earnForm.amount}
                                 onChange={e => setEarnForm(prev => ({ ...prev, amount: e.target.value }))}
-                                className={`bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-[#37352f] border-[#ededeb] placeholder:text-[#9b9a97]'}`} />
+                                className={`bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
                             <input type="text" placeholder="Client (optional)" value={earnForm.client_name}
                                 onChange={e => setEarnForm(prev => ({ ...prev, client_name: e.target.value }))}
-                                className={`bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-[#37352f] border-[#ededeb] placeholder:text-[#9b9a97]'}`} />
+                                className={`bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
                         </div>
                         <input type="text" placeholder="Note (optional)" value={earnForm.note}
                             onChange={e => setEarnForm(prev => ({ ...prev, note: e.target.value }))}
-                            className={`w-full bg-transparent border-b focus:border-[#37352f] text-[12px] font-serif outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-[#37352f] border-[#ededeb] placeholder:text-[#9b9a97]'}`} />
+                            className={`w-full bg-transparent border-b focus:border-[#37352f] text-[12px] font-serif outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
                         <input type="url" placeholder="Proof URL — invoice, screenshot (optional)" value={earnForm.proof_url}
                             onChange={e => setEarnForm(prev => ({ ...prev, proof_url: e.target.value }))}
-                            className={`w-full bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-[#37352f] border-[#ededeb] placeholder:text-[#9b9a97]'}`} />
+                            className={`w-full bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
                         <button
                             onClick={handleLogEarning}
                             disabled={savingEarning || !earnForm.amount}
-                            className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-1 self-start transition-colors disabled:opacity-30 ${isVibe ? vt : 'text-brand-red hover:text-[#37352f]'}`}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-1 self-start transition-colors disabled:opacity-30 ${isVibe ? vt : 'text-brand-red hover:text-vc-text'}`}
                         >
                             {savingEarning ? 'Saving…' : 'Log Earning →'}
                         </button>
@@ -704,7 +704,7 @@ export default function ManagerPage() {
             <section className="flex-1">
                 {loading ? (
                     <div className="flex items-center justify-center py-32">
-                        <div className="w-6 h-6 border-2 border-[#ededeb] border-t-[#37352f] rounded-full animate-spin" />
+                        <div className="w-6 h-6 border-2 border-vc-border border-t-[#37352f] rounded-full animate-spin" />
                     </div>
                 ) : (
                     <div className="space-y-4">

@@ -18,16 +18,16 @@ export function PageShell({
     const maxWidthClass = variant === 'narrow' ? 'max-w-[900px]' : 'max-w-[1100px]';
 
     const containerClasses = theme === 'paper'
-        ? 'bg-white min-h-screen shadow-[0_0_50px_-12px_rgba(0,0,0,0.08)] border-x border-[#ededeb]'
+        ? 'bg-vc-surface min-h-screen shadow-[0_0_50px_-12px_rgba(0,0,0,0.08)] dark:shadow-[0_0_50px_-12px_rgba(0,0,0,0.3)] border-x border-vc-border'
         : 'min-h-screen';
 
     return (
-        <div className="min-h-screen w-full bg-[#fbfbfa] text-[#37352f] relative">
+        <div className="min-h-screen w-full bg-vc-bg text-vc-text relative transition-colors">
             {backgroundStyle === 'grid' && (
                 <div
-                    className="fixed inset-0 pointer-events-none opacity-[0.4]"
+                    className="fixed inset-0 pointer-events-none opacity-[0.4] dark:opacity-[0.15]"
                     style={{
-                        backgroundImage: 'linear-gradient(#e5e5e5 1px, transparent 1px), linear-gradient(90deg, #e5e5e5 1px, transparent 1px)',
+                        backgroundImage: 'linear-gradient(var(--vc-border) 1px, transparent 1px), linear-gradient(90deg, var(--vc-border) 1px, transparent 1px)',
                         backgroundSize: '24px 24px',
                     }}
                 />

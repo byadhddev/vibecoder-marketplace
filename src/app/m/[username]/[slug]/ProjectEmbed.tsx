@@ -28,20 +28,20 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
     const dynBg = `radial-gradient(circle at center, ${palColor}26 0%, rgba(255,255,255,0) 70%)`;
     const dynTextStyle = { color: palColor };
     const bg = isVibe ? dynBg : 'white';
-    const accentBg = isVibe ? dynBg : '#242423';
+    const accentBg = isVibe ? dynBg : 'var(--vc-dark)';
     const accentTextCls = isVibe ? '' : 'text-white';
 
     return (
         <div className="flex flex-col h-screen">
             {/* Compact top bar */}
             <div
-                className="flex items-center gap-3 px-4 py-2 border-b border-[#ededeb] transition-all duration-300"
+                className="flex items-center gap-3 px-4 py-2 border-b border-vc-border transition-all duration-300"
                 style={{ background: bg }}
             >
                 {/* Artode toggle */}
                 <div
                     className="w-5 h-5 cursor-pointer transition-all duration-300 flex-shrink-0"
-                    style={{ backgroundColor: isVibe ? palColor : '#242423' }}
+                    style={{ backgroundColor: isVibe ? palColor : 'var(--vc-dark)' }}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
                     onClick={toggleVibe}
@@ -51,22 +51,22 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
                 <nav className="flex items-center gap-1.5 text-[11px] font-mono min-w-0">
                     <Link
                         href="/"
-                        className={`flex items-center gap-1.5 hover:opacity-80 transition-colors ${isVibe ? 'opacity-50' : 'text-[#9b9a97]'}`}
+                        className={`flex items-center gap-1.5 hover:opacity-80 transition-colors ${isVibe ? 'opacity-50' : 'text-vc-text-secondary'}`}
                         style={isVibe ? dynTextStyle : undefined}
                     >
                         <div className="w-2.5 h-2.5 bg-brand-red rounded-[1px] flex-shrink-0" />
                         <span>VibeCoder</span>
                     </Link>
-                    <span className={isVibe ? 'opacity-30' : 'text-[#d5d5d3]'} style={isVibe ? dynTextStyle : undefined}>/</span>
+                    <span className={isVibe ? 'opacity-30' : 'text-vc-text-muted'} style={isVibe ? dynTextStyle : undefined}>/</span>
                     <Link
                         href={`/m/${profile.username}`}
-                        className={`hover:opacity-80 transition-colors truncate ${isVibe ? 'opacity-50' : 'text-[#9b9a97]'}`}
+                        className={`hover:opacity-80 transition-colors truncate ${isVibe ? 'opacity-50' : 'text-vc-text-secondary'}`}
                         style={isVibe ? dynTextStyle : undefined}
                     >
                         {profile.username}
                     </Link>
-                    <span className={isVibe ? 'opacity-30' : 'text-[#d5d5d3]'} style={isVibe ? dynTextStyle : undefined}>/</span>
-                    <span className={`font-medium truncate ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                    <span className={isVibe ? 'opacity-30' : 'text-vc-text-muted'} style={isVibe ? dynTextStyle : undefined}>/</span>
+                    <span className={`font-medium truncate ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                         {showcase.title}
                     </span>
                 </nav>
@@ -75,7 +75,7 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
 
                 {/* Tags */}
                 {showcase.tags.length > 0 && (
-                    <span className={`text-[8px] font-mono uppercase tracking-wider flex-shrink-0 ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>
+                    <span className={`text-[8px] font-mono uppercase tracking-wider flex-shrink-0 ${isVibe ? 'opacity-40' : 'text-vc-text-secondary'}`} style={isVibe ? dynTextStyle : undefined}>
                         {showcase.tags.slice(0, 3).join(' · ')}
                     </span>
                 )}
@@ -87,7 +87,7 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
                             href={showcase.source_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 ${isVibe ? 'opacity-60 hover:opacity-100' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 ${isVibe ? 'opacity-60 hover:opacity-100' : 'text-vc-text-secondary hover:text-vc-text'}`}
                             style={isVibe ? dynTextStyle : undefined}
                         >
                             Source ↗
@@ -98,7 +98,7 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
                             href={showcase.post_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 ${isVibe ? 'opacity-60 hover:opacity-100' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded-sm transition-all duration-300 ${isVibe ? 'opacity-60 hover:opacity-100' : 'text-vc-text-secondary hover:text-vc-text'}`}
                             style={isVibe ? dynTextStyle : undefined}
                         >
                             Post ↗
@@ -121,8 +121,8 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
                 {!iframeLoaded && (
                     <div className="absolute inset-0 flex items-center justify-center bg-[#fafaf9]">
                         <div className="flex flex-col items-center gap-3">
-                            <div className="w-6 h-6 border-2 border-[#ededeb] border-t-brand-red rounded-full animate-spin" />
-                            <span className="text-[11px] font-mono text-[#9b9a97] uppercase tracking-wider">Loading project…</span>
+                            <div className="w-6 h-6 border-2 border-vc-border border-t-brand-red rounded-full animate-spin" />
+                            <span className="text-[11px] font-mono text-vc-text-secondary uppercase tracking-wider">Loading project…</span>
                         </div>
                     </div>
                 )}

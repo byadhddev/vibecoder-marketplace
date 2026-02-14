@@ -18,7 +18,7 @@ export default function LeaderboardLoading() {
                     <Skeleton.TitleTile />
                     <Skeleton.CounterTile />
                     {/* Sort controls */}
-                    <div className="col-span-2 md:col-span-4 p-4 bg-white flex items-center gap-3 min-h-[50px]">
+                    <div className="col-span-2 md:col-span-4 p-4 bg-vc-surface flex items-center gap-3 min-h-[50px]">
                         <Skeleton.Shimmer className="h-6 w-20 rounded-sm" />
                         <Skeleton.Shimmer className="h-6 w-20 rounded-sm" />
                         <div className="flex-1" />

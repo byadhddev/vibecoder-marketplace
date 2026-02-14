@@ -11,8 +11,8 @@ export default function LoginPage() {
             <Header />
             <section className="flex-1 flex items-center justify-center">
                 <div className="text-center">
-                    <h1 className="text-xl font-serif text-[#37352f] mb-2">Sign in to VibeCoder</h1>
-                    <p className="text-[12px] text-[#9b9a97] mb-6 max-w-[280px]">
+                    <h1 className="text-xl font-serif text-vc-text mb-2">Sign in to VibeCoder</h1>
+                    <p className="text-[12px] text-vc-text-secondary mb-6 max-w-[280px]">
                         Connect your GitHub to create and manage your showcase marketplace.
                     </p>
                     <button

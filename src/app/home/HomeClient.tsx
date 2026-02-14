@@ -101,19 +101,19 @@ export default function HomeClient({ initialVibelopers }: {
             case 'artode':
                 return (
                     <div
-                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
+                        className={`${tile.colSpan} aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-vc-dark ${vibeLocked ? 'ring-2 ring-inset ring-brand-red/50' : ''}`}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                         onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
                     >
-                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-white'}`} />
+                        <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-brand-red scale-110' : isVibe ? 'bg-brand-red scale-105' : 'bg-vc-surface'}`} />
                     </div>
                 );
             case 'title':
                 return (
                     <div
                         className={`${tile.colSpan} p-6 md:p-8 flex flex-col justify-center min-h-[120px] transition-all duration-300`}
-                        style={{ background: isVibe ? dynBg : '#242423' }}
+                        style={{ background: isVibe ? dynBg : 'var(--vc-dark)' }}
                     >
                         <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/40'}`} style={isVibe ? dynTextStyle : undefined}>VibeCoder</span>
                         <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? '' : 'text-white'}`} style={isVibe ? dynTextStyle : undefined}>Ship Fast. Get Found. Get Paid.</span>
@@ -122,15 +122,15 @@ export default function HomeClient({ initialVibelopers }: {
             case 'counter':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>{vibelopers.length}</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Vibelopers</span>
+                        <span className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>{vibelopers.length}</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-1">Vibelopers</span>
                     </div>
                 );
             case 'status':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
                         <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-colors duration-300 ${isVibe ? '' : 'text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Active</span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-2">Feb 2026</span>
+                        <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mt-2">Feb 2026</span>
                     </div>
                 );
             case 'signature':
@@ -138,14 +138,14 @@ export default function HomeClient({ initialVibelopers }: {
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex items-center gap-4">
                             <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? palColor : 'rgba(216,0,24,0.3)' }} />
-                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>vibecoder.dev</span>
+                            <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>vibecoder.dev</span>
                         </div>
                     </div>
                 );
             case 'philosophy':
                 return (
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
-                        <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] opacity-70'}`} style={isVibe ? dynTextStyle : undefined}>
+                        <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-vc-text opacity-70'}`} style={isVibe ? dynTextStyle : undefined}>
                             Every token burned should build something someone needs.
                         </p>
                     </div>
@@ -153,11 +153,11 @@ export default function HomeClient({ initialVibelopers }: {
             case 'cta-builder':
                 return (
                     <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-2 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>For Builders</span>
-                        <p className={`text-[13px] leading-relaxed font-serif transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-2 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary'}`} style={isVibe ? dynTextStyle : undefined}>For Builders</span>
+                        <p className={`text-[13px] leading-relaxed font-serif transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                             Your showcases are your storefront. Set your rate, prove your speed, get discovered.
                         </p>
-                        <Link href="/manager" className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-3 transition-colors ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                        <Link href="/manager" className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-3 transition-colors ${isVibe ? '' : 'text-brand-red hover:text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                             Showcase Your Work →
                         </Link>
                     </div>
@@ -165,18 +165,18 @@ export default function HomeClient({ initialVibelopers }: {
             case 'cta-seeker':
                 return (
                     <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
-                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-2 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>For Seekers</span>
-                        <p className={`text-[13px] leading-relaxed font-serif transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-2 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary'}`} style={isVibe ? dynTextStyle : undefined}>For Seekers</span>
+                        <p className={`text-[13px] leading-relaxed font-serif transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                             Browse real projects, not PDF portfolios. See how fast they build. Hire with confidence.
                         </p>
-                        <Link href="/explore" className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-3 transition-colors ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                        <Link href="/explore" className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-3 transition-colors ${isVibe ? '' : 'text-brand-red hover:text-vc-text'}`} style={isVibe ? dynTextStyle : undefined}>
                             Find a Builder →
                         </Link>
                     </div>
                 );
             case 'community':
                 return (
-                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? dynBg : '#242423' }}>
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? dynBg : 'var(--vc-dark)' }}>
                         <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-2 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/40'}`} style={isVibe ? dynTextStyle : undefined}>Open & Transparent</span>
                         <p className={`text-[13px] leading-relaxed font-serif transition-colors duration-300 ${isVibe ? '' : 'text-white/80'}`} style={isVibe ? dynTextStyle : undefined}>
                             All hire requests are public GitHub Issues. Discussions are open. Everything is auditable.
@@ -200,7 +200,7 @@ export default function HomeClient({ initialVibelopers }: {
                 const textClr = colors?.textColor || '#ffffff';
                 const subClr = textClr === '#ffffff' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)';
                 return (
-                    <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-[#242423]`}>
+                    <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-vc-dark`}>
                         {v.avatar_url ? (
                             <Image
                                 src={v.avatar_url}

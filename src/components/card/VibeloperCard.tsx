@@ -31,7 +31,7 @@ export function VibeloperCard({ profile, showcases, compact = false }: Vibeloper
             className="relative overflow-hidden font-sans"
             style={{
                 width: compact ? 320 : 400,
-                background: '#242423',
+                background: 'var(--vc-dark)',
                 fontFamily: "'Inter', system-ui, sans-serif",
             }}
         >
