@@ -286,7 +286,7 @@ export function StatPill({
       <AnimatedCounter
         target={value}
         suffix={suffix}
-        className="text-lg md:text-xl font-serif font-bold transition-colors duration-300"
+        className="text-lg md:text-xl font-sans font-bold tabular-nums transition-colors duration-300"
         style={{ color: isVibe && vibeColor ? vibeColor : 'var(--vc-text)' }}
       />
       <span className="text-[9px] font-sans uppercase tracking-[0.15em] text-vc-text-secondary">{label}</span>
