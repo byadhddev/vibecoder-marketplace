@@ -48,6 +48,7 @@ export async function GET(req: Request) {
                 role: p!.role, skills: p!.skills || [], hourly_rate: p!.hourly_rate || 0,
                 rate_type: p!.rate_type || 'negotiable', showcase_count: p!.showcase_count || 0,
                 total_views: p!.total_views || 0, available_for_hire: p!.available_for_hire || false,
+                created_at: p!.created_at || '',
             })),
         });
     } catch (error) {

@@ -131,7 +131,7 @@ export default function ManagerPage() {
     const [requests, setRequests] = useState<ContactReq[]>([]);
     const [earnings, setEarnings] = useState<EarningEntry[]>([]);
     const [totalEarned, setTotalEarned] = useState(0);
-    const [earnForm, setEarnForm] = useState({ amount: '', client_name: '', showcase_id: '', note: '' });
+    const [earnForm, setEarnForm] = useState({ amount: '', client_name: '', showcase_id: '', note: '', proof_url: '' });
     const [savingEarning, setSavingEarning] = useState(false);
 
     useEffect(() => {
@@ -197,7 +197,7 @@ export default function ManagerPage() {
                 const d = await res.json();
                 setEarnings(prev => [d.earning, ...prev]);
                 setTotalEarned(prev => prev + parseFloat(earnForm.amount));
-                setEarnForm({ amount: '', client_name: '', showcase_id: '', note: '' });
+                setEarnForm({ amount: '', client_name: '', showcase_id: '', note: '', proof_url: '' });
             }
         } catch {}
         setSavingEarning(false);
@@ -659,6 +659,9 @@ export default function ManagerPage() {
                         <input type="text" placeholder="Note (optional)" value={earnForm.note}
                             onChange={e => setEarnForm(prev => ({ ...prev, note: e.target.value }))}
                             className={`w-full bg-transparent border-b focus:border-[#37352f] text-[12px] font-serif outline-none pb-1 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-[#37352f] border-[#ededeb] placeholder:text-[#9b9a97]'}`} />
+                        <input type="url" placeholder="Proof URL — invoice, screenshot (optional)" value={earnForm.proof_url}
+                            onChange={e => setEarnForm(prev => ({ ...prev, proof_url: e.target.value }))}
+                            className={`w-full bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none pb-1 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-[#37352f] border-[#ededeb] placeholder:text-[#9b9a97]'}`} />
                         <button
                             onClick={handleLogEarning}
                             disabled={savingEarning || !earnForm.amount}

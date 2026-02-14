@@ -441,7 +441,7 @@ interface EarningsStore {
 
 export async function addEarning(
     username: string,
-    data: { amount: number; currency?: string; client_name?: string; showcase_id?: string; note?: string },
+    data: { amount: number; currency?: string; client_name?: string; showcase_id?: string; note?: string; proof_url?: string },
     token?: string,
 ): Promise<Earning | null> {
     const t = token || appToken();
@@ -458,6 +458,7 @@ export async function addEarning(
         client_name: data.client_name || '',
         showcase_id: data.showcase_id || '',
         note: data.note || '',
+        proof_url: data.proof_url || '',
         created_at: new Date().toISOString(),
     };
 

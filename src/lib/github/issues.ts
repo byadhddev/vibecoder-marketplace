@@ -71,6 +71,7 @@ export interface ShowcaseFeedback {
 const LABEL_HIRE_REQUEST = 'hire-request';
 const LABEL_SHOWCASE_FEEDBACK = 'showcase-feedback';
 const LABEL_REVIEW = 'review';
+const LABEL_ENDORSEMENT = 'endorsement';
 
 async function ensureLabel(name: string, color: string, description: string, token?: string): Promise<void> {
     const t = token || appToken();
@@ -93,6 +94,7 @@ export async function ensureLabels(token?: string): Promise<void> {
         ensureLabel(LABEL_HIRE_REQUEST, 'D80018', 'Hire request from a seeker', token),
         ensureLabel(LABEL_SHOWCASE_FEEDBACK, '1D76DB', 'Feedback on a showcase', token),
         ensureLabel(LABEL_REVIEW, '0E8A16', 'Builder review from a seeker', token),
+        ensureLabel(LABEL_ENDORSEMENT, 'BFD4F2', 'Showcase endorsement from a builder', token),
     ]);
 }
 
@@ -467,6 +469,141 @@ export async function getBuilderReviews(builderUsername: string, token?: string)
             reviewer_avatar: issue.user?.avatar_url || '',
         };
     });
+}
+
+// ─── Response Time ───────────────────────────────────────────
+
+/** Calculate avg response time for a builder (time to first comment on hire-request Issues) */
+export async function getAvgResponseTime(builderUsername: string, token?: string): Promise<{ avgHours: number; count: number } | null> {
+    const t = token || appToken();
+    const labels = `${LABEL_HIRE_REQUEST},builder:${builderUsername}`;
+    const res = await fetch(
+        `${API}/repos/${DATA_OWNER()}/${DATA_NAME()}/issues?labels=${encodeURIComponent(labels)}&state=all&sort=created&direction=desc&per_page=10`,
+        { headers: headers(t), cache: 'no-store' },
+    );
+    if (!res.ok) return null;
+    const issues: GitHubIssue[] = await res.json();
+    if (issues.length === 0) return null;
+
+    const responseTimes: number[] = [];
+    for (const issue of issues.slice(0, 5)) {
+        if (issue.comments === 0) continue;
+        // Fetch first comment
+        const commentsRes = await fetch(
+            `${API}/repos/${DATA_OWNER()}/${DATA_NAME()}/issues/${issue.number}/comments?per_page=1`,
+            { headers: headers(t), cache: 'no-store' },
+        );
+        if (!commentsRes.ok) continue;
+        const comments = await commentsRes.json();
+        if (comments.length > 0) {
+            const created = new Date(issue.created_at).getTime();
+            const replied = new Date(comments[0].created_at).getTime();
+            const hours = (replied - created) / (1000 * 60 * 60);
+            if (hours >= 0) responseTimes.push(hours);
+        }
+    }
+
+    if (responseTimes.length === 0) return null;
+    const avg = responseTimes.reduce((sum, h) => sum + h, 0) / responseTimes.length;
+    return { avgHours: Math.round(avg * 10) / 10, count: responseTimes.length };
+}
+
+// ─── Endorsements (Issues) ───────────────────────────────────
+
+export interface Endorsement {
+    issue_number: number;
+    html_url: string;
+    endorser: string;
+    endorser_avatar: string;
+    created_at: string;
+}
+
+/** Endorse a showcase (one Issue per endorser per showcase) */
+export async function endorseShowcase(
+    builderUsername: string,
+    showcaseSlug: string,
+    showcaseTitle: string,
+    endorserGithub: string,
+    token?: string,
+): Promise<{ issue_number: number; html_url: string } | null> {
+    const t = token || appToken();
+    await ensureLabels(t);
+
+    const title = `[Endorse] @${endorserGithub} endorses "${showcaseTitle}" by ${builderUsername}`;
+    const labels = [LABEL_ENDORSEMENT, `builder:${builderUsername}`, `showcase:${showcaseSlug}`];
+    const body = `**@${endorserGithub}** endorses [${showcaseTitle}](${process.env.NEXTAUTH_URL || ''}/m/${builderUsername}/${showcaseSlug}) — this is legit. ✅`;
+
+    const res = await fetch(`${API}/repos/${DATA_OWNER()}/${DATA_NAME()}/issues`, {
+        method: 'POST',
+        headers: headers(t),
+        body: JSON.stringify({ title, body, labels }),
+    });
+    if (!res.ok) return null;
+    const issue = await res.json();
+    return { issue_number: issue.number, html_url: issue.html_url };
+}
+
+/** Get endorsements for a showcase */
+export async function getShowcaseEndorsements(
+    builderUsername: string,
+    showcaseSlug: string,
+    token?: string,
+): Promise<Endorsement[]> {
+    const t = token || appToken();
+    const labels = `${LABEL_ENDORSEMENT},showcase:${showcaseSlug},builder:${builderUsername}`;
+    const res = await fetch(
+        `${API}/repos/${DATA_OWNER()}/${DATA_NAME()}/issues?labels=${encodeURIComponent(labels)}&state=all&per_page=50`,
+        { headers: headers(t), cache: 'no-store' },
+    );
+    if (!res.ok) return [];
+    const issues: GitHubIssue[] = await res.json();
+    return issues.map(i => ({
+        issue_number: i.number,
+        html_url: i.html_url,
+        endorser: i.user?.login || '',
+        endorser_avatar: i.user?.avatar_url || '',
+        created_at: i.created_at,
+    }));
+}
+
+/** Get total endorsement count for a builder */
+export async function getBuilderEndorsementCount(
+    builderUsername: string,
+    token?: string,
+): Promise<number> {
+    const t = token || appToken();
+    const labels = `${LABEL_ENDORSEMENT},builder:${builderUsername}`;
+    const res = await fetch(
+        `${API}/repos/${DATA_OWNER()}/${DATA_NAME()}/issues?labels=${encodeURIComponent(labels)}&state=all&per_page=1`,
+        { headers: headers(t), cache: 'no-store' },
+    );
+    if (!res.ok) return 0;
+    const issues = await res.json();
+    return Array.isArray(issues) ? issues.length : 0;
+}
+
+// ─── Repeat Hired (for badges) ───────────────────────────────
+
+/** Check if any seeker has hired this builder 3+ times (for Repeat Hired badge) */
+export async function getRepeatHiredCount(builderUsername: string, token?: string): Promise<number> {
+    const t = token || appToken();
+    const labels = `${LABEL_HIRE_REQUEST},builder:${builderUsername}`;
+    const res = await fetch(
+        `${API}/repos/${DATA_OWNER()}/${DATA_NAME()}/issues?labels=${encodeURIComponent(labels)}&state=all&per_page=100`,
+        { headers: headers(t), cache: 'no-store' },
+    );
+    if (!res.ok) return 0;
+    const issues: GitHubIssue[] = await res.json();
+
+    // Count requests per seeker
+    const seekerCounts: Record<string, number> = {};
+    for (const issue of issues) {
+        const seeker = issue.user?.login || '';
+        if (seeker) seekerCounts[seeker] = (seekerCounts[seeker] || 0) + 1;
+    }
+
+    // Return number of seekers who have 3+ requests
+    return Object.values(seekerCounts).filter(c => c >= 3).length;
 }
 
 // ─── Data Repo URL Helpers ───────────────────────────────────

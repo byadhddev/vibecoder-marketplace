@@ -90,6 +90,7 @@ export interface Earning {
     client_name: string;
     showcase_id: string;
     note: string;
+    proof_url: string;
     created_at: string;
 }
 

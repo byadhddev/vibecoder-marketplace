@@ -7,6 +7,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { VIBE_RAW_COLORS, ACCENTS, GRID_CLASSES } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
+import { computeBadges } from '@/lib/badges';
 
 interface Builder {
     username: string;
@@ -18,9 +19,11 @@ interface Builder {
     showcase_count: number;
     total_views: number;
     hourly_rate: number;
+    created_at: string;
 }
 
 type SortField = 'showcases' | 'views';
+type TimeFilter = 'all-time' | 'this-month';
 type TileVariant = 'artode' | 'title' | 'filler' | 'sort' | 'builder';
 
 interface Tile {
@@ -35,6 +38,7 @@ interface Tile {
 export default function LeaderboardPage() {
     const [builders, setBuilders] = useState<Builder[]>([]);
     const [sortBy, setSortBy] = useState<SortField>('showcases');
+    const [timeFilter, setTimeFilter] = useState<TimeFilter>('all-time');
     const [vibeLocked, setVibeLocked] = useState(false);
     const [hovered, setHovered] = useState(false);
     const [avatarColors, setAvatarColors] = useState<Record<string, ExtractedColors>>({});
@@ -56,7 +60,14 @@ export default function LeaderboardPage() {
         });
     }, [builders]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const sorted = [...builders].sort((a, b) => {
+    // Filter by time
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const filtered = timeFilter === 'this-month'
+        ? builders.filter(b => b.created_at >= monthStart)
+        : builders;
+
+    const sorted = [...filtered].sort((a, b) => {
         if (sortBy === 'views') return (b.total_views || 0) - (a.total_views || 0);
         return (b.showcase_count || 0) - (a.showcase_count || 0);
     });
@@ -107,6 +118,16 @@ export default function LeaderboardPage() {
             case 'sort':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center gap-2 p-4 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex gap-2 mb-1">
+                            <button onClick={() => setTimeFilter('all-time')}
+                                className={`text-[8px] font-mono uppercase tracking-[0.15em] px-2 py-0.5 rounded-sm transition-colors ${timeFilter === 'all-time' ? 'bg-[#242423] text-white' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                All Time
+                            </button>
+                            <button onClick={() => setTimeFilter('this-month')}
+                                className={`text-[8px] font-mono uppercase tracking-[0.15em] px-2 py-0.5 rounded-sm transition-colors ${timeFilter === 'this-month' ? 'bg-[#242423] text-white' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                This Month
+                            </button>
+                        </div>
                         <button onClick={() => setSortBy('showcases')}
                             className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${sortBy === 'showcases' ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
                             By Showcases
@@ -164,6 +185,15 @@ export default function LeaderboardPage() {
                             <span className={`text-[10px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? { color: accent } : undefined}>
                                 {b.total_views} views
                             </span>
+                            {(() => {
+                                const badges = computeBadges({ showcases: [], leaderboardRank: rank });
+                                return badges.map(badge => (
+                                    <span key={badge.id} className={`text-[8px] font-mono px-1.5 py-0.5 rounded-sm ${isVibe ? 'opacity-60' : 'bg-[#f7f6f3] text-[#37352f]'}`}
+                                        style={isVibe ? { backgroundColor: `${accent}20`, color: accent } : undefined}>
+                                        {badge.emoji} {badge.label}
+                                    </span>
+                                ));
+                            })()}
                         </div>
                     </div>
                 );

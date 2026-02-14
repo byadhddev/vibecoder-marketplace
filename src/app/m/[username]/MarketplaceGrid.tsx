@@ -11,8 +11,9 @@ import {
     randomShuffle, GRID_CLASSES,
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
+import { computeBadges, type Badge } from '@/lib/badges';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share' | 'skills' | 'hire' | 'contact-form' | 'rate' | 'earned' | 'reviews';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share' | 'skills' | 'hire' | 'contact-form' | 'rate' | 'earned' | 'reviews' | 'badges';
 
 interface Tile {
     id: string;
@@ -39,6 +40,8 @@ function buildTiles(showcases: Showcase[], username: string, profile: Profile): 
     if ((profile.skills || []).length > 0) {
         decorative.push({ id: 'skills', colSpan: 'col-span-2 md:col-span-2', variant: 'skills' });
     }
+    // Badges tile — always show if basic badges exist or will be fetched from API
+    decorative.push({ id: 'badges', colSpan: 'col-span-2 md:col-span-2', variant: 'badges' });
     if (profile.available_for_hire) {
         decorative.push({ id: 'hire', colSpan: 'col-span-2 md:col-span-2', variant: 'hire' });
         decorative.push({ id: 'contact-form', colSpan: 'col-span-2 md:col-span-2', variant: 'contact-form' });
@@ -66,9 +69,10 @@ function buildTiles(showcases: Showcase[], username: string, profile: Profile): 
 interface MarketplaceGridProps {
     profile: Profile;
     showcases: Showcase[];
+    hasVerifiedEarnings?: boolean;
 }
 
-export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
+export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: MarketplaceGridProps) {
     const [shuffledTiles, setShuffledTiles] = useState<Tile[]>(buildTiles(showcases, profile.username, profile));
     const [vibeLocked, setVibeLocked] = useState(false);
     const [hovered, setHovered] = useState(false);
@@ -81,6 +85,8 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
     const [feedbackCounts, setFeedbackCounts] = useState<Record<string, number>>({});
     const [reviews, setReviews] = useState<{ stars: number; body: string; reviewer: string; html_url: string; created_at: string }[]>([]);
     const [avgStars, setAvgStars] = useState(0);
+    const [responseTime, setResponseTime] = useState<string | null>(null);
+    const [apiBadges, setApiBadges] = useState<Badge[]>([]);
     const isVibe = vibeLocked || hovered;
 
     const handleFeedback = async (showcaseSlug: string, showcaseTitle: string) => {
@@ -96,6 +102,19 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
             if (data.html_url) window.open(data.html_url, '_blank', 'noopener,noreferrer');
             else if (!res.ok) alert(data.error || 'Sign in to leave feedback');
         } catch { alert('Failed to submit feedback'); }
+    };
+
+    const handleEndorse = async (showcaseSlug: string, showcaseTitle: string) => {
+        try {
+            const res = await fetch('/api/marketplace/endorse', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ builder_username: profile.username, showcase_slug: showcaseSlug, showcase_title: showcaseTitle }),
+            });
+            const data = await res.json();
+            if (data.html_url) window.open(data.html_url, '_blank', 'noopener,noreferrer');
+            else if (!res.ok) alert(data.error || 'Sign in to endorse');
+        } catch { alert('Failed to endorse'); }
     };
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
 
@@ -129,6 +148,16 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                 setReviews(d.reviews || []);
                 setAvgStars(d.avg_stars || 0);
             })
+            .catch(() => {});
+        // Fetch response time for hire badge
+        fetch(`/api/marketplace/response-time?builder=${encodeURIComponent(profile.username)}`)
+            .then(r => r.ok ? r.json() : {})
+            .then((d: { label?: string }) => { if (d.label) setResponseTime(d.label); })
+            .catch(() => {});
+        // Fetch badges (includes server-computed repeat-hired)
+        fetch(`/api/marketplace/badges?builder=${encodeURIComponent(profile.username)}`)
+            .then(r => r.ok ? r.json() : { badges: [] })
+            .then((d: { badges: Badge[] }) => setApiBadges(d.badges || []))
             .catch(() => {});
     }, [profile.username]);
 
@@ -345,11 +374,18 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                             <div className="w-2 h-2 bg-brand-red rounded-full animate-pulse" />
                             <span className="text-[11px] font-mono text-white uppercase tracking-[0.15em]">Available for Hire</span>
                         </div>
-                        {rate > 0 && (
-                            <span className="text-[12px] font-mono text-white/70">
-                                ${rate}{rateLabel}
-                            </span>
-                        )}
+                        <div className="flex items-center gap-4">
+                            {responseTime && (
+                                <span className="text-[9px] font-mono text-white/40 uppercase tracking-wider">
+                                    Responds {responseTime}
+                                </span>
+                            )}
+                            {rate > 0 && (
+                                <span className="text-[12px] font-mono text-white/70">
+                                    ${rate}{rateLabel}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 );
             }
@@ -489,13 +525,40 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                     </div>
                 );
             }
+            case 'badges': {
+                const localBadges = computeBadges({ showcases, totalEarned: profile.total_earned });
+                const b = apiBadges.length > 0 ? apiBadges : localBadges;
+                if (b.length === 0) return <div className={`${tile.colSpan} hidden`} />;
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col gap-2 min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : ACCENTS[0] }}>Badges</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${ACCENTS[0]}20` }} />
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {b.map(badge => (
+                                <span key={badge.id} className={`text-[10px] font-mono px-2 py-1 rounded-sm transition-colors duration-300 ${isVibe ? 'opacity-80' : 'bg-[#f7f6f3] text-[#37352f]'}`}
+                                    style={isVibe ? { backgroundColor: `${palColor}20`, color: palColor } : undefined}
+                                    title={badge.description}>
+                                    {badge.emoji} {badge.label}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
             case 'earned':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
                         <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
                             ${(profile.total_earned || 0).toLocaleString()}
                         </span>
-                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Earned</span>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em]">Earned</span>
+                            {hasVerifiedEarnings && (
+                                <span className="text-[8px] font-mono text-green-600 bg-green-50 px-1.5 py-0.5 rounded-sm uppercase tracking-wider">✓ Verified</span>
+                            )}
+                        </div>
                     </div>
                 );
             case 'filler':
@@ -541,26 +604,20 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                                 </div>
                             )}
                         </div>
-                        {(s.source_url || s.post_url) && (
-                            <div className="flex items-center gap-3 mt-2">
-                                {s.source_url && (
-                                    <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); window.open(s.source_url, '_blank', 'noopener,noreferrer'); }}
-                                        className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>Source ↗</button>
-                                )}
-                                {s.post_url && (
-                                    <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); window.open(s.post_url, '_blank', 'noopener,noreferrer'); }}
-                                        className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>Post ↗</button>
-                                )}
-                                <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); handleFeedback(s.slug, s.title); }}
-                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Feedback</button>
-                            </div>
-                        )}
-                        {!(s.source_url || s.post_url) && (
-                            <div className="flex items-center gap-3 mt-2">
-                                <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); handleFeedback(s.slug, s.title); }}
-                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Feedback</button>
-                            </div>
-                        )}
+                        <div className="flex items-center gap-3 mt-2">
+                            {s.source_url && (
+                                <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); window.open(s.source_url, '_blank', 'noopener,noreferrer'); }}
+                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>Source ↗</button>
+                            )}
+                            {s.post_url && (
+                                <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); window.open(s.post_url, '_blank', 'noopener,noreferrer'); }}
+                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>Post ↗</button>
+                            )}
+                            <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); handleFeedback(s.slug, s.title); }}
+                                className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Feedback</button>
+                            <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); handleEndorse(s.slug, s.title); }}
+                                className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-green-600'}`} style={isVibe ? dynTextStyle : undefined}>Endorse ✅</button>
+                        </div>
                     </div>
                 );
             }
