@@ -142,11 +142,14 @@ export default function ManagerPage() {
 
     useEffect(() => {
         if (status !== 'authenticated') return;
+        let showcaseCount = 0;
+        let isNewUser = false;
         // Fetch showcases
         fetch('/api/marketplace/showcases')
             .then(r => r.ok ? r.json() : { showcases: [] })
             .then(d => {
                 setShowcases(d.showcases || []);
+                showcaseCount = (d.showcases || []).length;
                 if (d.username) setUsername(d.username);
             })
             .catch(() => {})
@@ -169,6 +172,13 @@ export default function ManagerPage() {
                         rate_type: d.profile.rate_type || 'negotiable',
                     });
                     setTotalViews(d.profile.total_views || 0);
+                    isNewUser = !d.profile.role && (d.profile.skills || []).length === 0;
+                } else {
+                    isNewUser = true;
+                }
+                // Redirect new users to onboarding
+                if (isNewUser && showcaseCount === 0) {
+                    router.push('/manager/onboard');
                 }
             })
             .catch(() => {});
