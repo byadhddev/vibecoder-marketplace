@@ -86,9 +86,9 @@ export default function LandingPage() {
         <div className="min-h-screen w-full bg-vc-bg text-vc-text relative">
             <CursorGlow isVibe={isVibe} vibeColor={pal(0)} />
 
-            {/* Background dot pattern */}
+            {/* Background grid pattern */}
             <div className="fixed inset-0 pointer-events-none opacity-[0.3]" style={{
-                backgroundImage: `radial-gradient(circle, var(--vc-border) 1px, transparent 1px)`,
+                backgroundImage: `linear-gradient(var(--vc-border) 1px, transparent 1px), linear-gradient(90deg, var(--vc-border) 1px, transparent 1px)`,
                 backgroundSize: '20px 20px',
             }} />
 
