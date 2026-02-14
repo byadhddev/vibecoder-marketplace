@@ -53,10 +53,10 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
             <div className="flex flex-col items-center gap-3">
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-[#D80018] animate-pulse" />
-                    <span className="text-sm font-mono" style={isVibe && vibeColor ? { color: vibeColor } : { color: 'var(--vc-text)' }}>{message}</span>
+                    <span className="text-sm font-sans" style={isVibe && vibeColor ? { color: vibeColor } : { color: 'var(--vc-text)' }}>{message}</span>
                 </div>
                 {count > 0 && (
-                    <span className="text-[10px] font-mono text-vc-text-secondary uppercase tracking-[0.2em]">
+                    <span className="text-[10px] font-sans text-vc-text-secondary uppercase tracking-[0.2em]">
                         {count}+ builders already waiting
                     </span>
                 )}
@@ -73,22 +73,22 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
                     onChange={e => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
-                    className="flex-1 px-4 py-3 border border-vc-border-subtle bg-vc-surface text-sm font-mono text-vc-text placeholder:text-vc-text-secondary focus:outline-none focus:border-[#D80018] focus:ring-1 focus:ring-[#D80018]/20 transition-all duration-300"
+                    className="flex-1 px-4 py-3 border border-vc-border-subtle bg-vc-surface text-sm font-sans text-vc-text placeholder:text-vc-text-secondary focus:outline-none focus:border-[#D80018] focus:ring-1 focus:ring-[#D80018]/20 transition-all duration-300"
                     disabled={state === 'loading'}
                 />
                 <button
                     type="submit"
                     disabled={state === 'loading'}
-                    className="px-6 py-3 bg-[#D80018] text-white text-xs font-mono uppercase tracking-[0.15em] hover:bg-[#b80015] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
+                    className="px-6 py-3 bg-[#D80018] text-white text-xs font-sans uppercase tracking-[0.15em] hover:bg-[#b80015] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
                 >
                     {state === 'loading' ? 'Joining...' : 'Join the Waitlist'}
                 </button>
             </div>
             {state === 'error' && (
-                <span className="text-[11px] font-mono text-[#D80018]">{message}</span>
+                <span className="text-[11px] font-sans text-[#D80018]">{message}</span>
             )}
             {count > 0 && (
-                <span className="text-[10px] font-mono text-vc-text-secondary uppercase tracking-[0.2em]">
+                <span className="text-[10px] font-sans text-vc-text-secondary uppercase tracking-[0.2em]">
                     {count}+ builders already waiting
                 </span>
             )}
@@ -145,10 +145,21 @@ export default function LandingPage() {
     const [founderVibed, setFounderVibed] = useState(false);
     const [founderHovered, setFounderHovered] = useState(false);
     const [openSection, setOpenSection] = useState<string | null>(null);
+    const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const isVibe = vibeLocked || hovered;
     const isFounderVibe = isVibe || founderVibed || founderHovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
-    const toggleSection = useCallback((id: string) => setOpenSection(prev => prev === id ? null : id), []);
+    const toggleSection = useCallback((id: string) => {
+        setOpenSection(prev => {
+            const next = prev === id ? null : id;
+            if (next) {
+                setTimeout(() => {
+                    sectionRefs.current[next]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+            return next;
+        });
+    }, []);
 
     useEffect(() => {
         fetch('/api/waitlist')
@@ -195,7 +206,7 @@ export default function LandingPage() {
                     <div className="flex items-center gap-4">
                         <Link
                             href="/home"
-                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-vc-text-secondary hover:text-vc-text transition-colors duration-300"
+                            className="text-[10px] font-sans uppercase tracking-[0.15em] text-vc-text-secondary hover:text-vc-text transition-colors duration-300"
                         >
                             Marketplace →
                         </Link>
@@ -208,7 +219,7 @@ export default function LandingPage() {
                 <section className="mb-24 md:mb-36">
                     <div className="flex flex-col items-center text-center">
                         <span
-                            className={`text-[10px] font-mono uppercase tracking-[0.3em] mb-6 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
+                            className={`text-[10px] font-sans uppercase tracking-[0.3em] mb-6 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
                             style={textStyle(1)}
                         >
                             The Marketplace for AI Builders
@@ -255,12 +266,12 @@ export default function LandingPage() {
                                 }`}
                                 style={isVibe && openSection === s.id ? { background: darkBg(i) } : isVibe ? { background: bg(i) } : undefined}
                             >
-                                <span className="text-[9px] font-mono uppercase tracking-[0.12em] leading-tight">{s.label}</span>
-                                <span className={`text-[10px] font-mono transition-transform duration-300 ${openSection === s.id ? 'rotate-45' : ''}`}>+</span>
+                                <span className="text-[11px] font-serif leading-tight">{s.label}</span>
+                                <span className={`text-xs transition-transform duration-300 ${openSection === s.id ? 'rotate-45' : ''}`}>+</span>
                             </button>
                         ))}
                         <div className="col-span-1 bg-vc-surface-raised p-4 flex items-center justify-center">
-                            <span className="text-[8px] font-mono uppercase tracking-[0.15em] text-vc-text-muted">{openSection ? 'Click to collapse' : 'Click to explore'}</span>
+                            <span className="text-[10px] font-serif italic text-vc-text-muted">{openSection ? 'Click to collapse' : 'Click to explore'}</span>
                         </div>
                     </div>
                 </nav>
@@ -268,7 +279,7 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    THE PROBLEM — collapsible
                    ══════════════════════════════════════════════ */}
-                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'problem' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                <div ref={el => { sectionRefs.current['problem'] = el; }} className={`grid transition-all duration-500 ease-in-out ${openSection === 'problem' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
                 <section>
                     <FadeIn>
@@ -278,7 +289,7 @@ export default function LandingPage() {
                                 style={{ background: darkBg(2) }}
                             >
                                 <span
-                                    className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-4 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/30'}`}
+                                    className={`text-[9px] font-sans uppercase tracking-[0.2em] mb-4 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/30'}`}
                                     style={isVibe ? textStyle(3) : undefined}
                                 >The Problem</span>
                                 <p
@@ -288,7 +299,7 @@ export default function LandingPage() {
                                     Millions of tokens are burned every day. Most build nothing anyone needs.
                                 </p>
                                 <p
-                                    className={`text-sm mt-4 font-mono leading-relaxed max-w-lg transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-white/50'}`}
+                                    className={`text-sm mt-4 font-sans leading-relaxed max-w-lg transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-white/50'}`}
                                     style={isVibe ? textStyle(4) : undefined}
                                 >
                                     Vibe coding is powerful — but without direction, it&apos;s just expensive experimentation.
@@ -304,7 +315,7 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    FOR BUILDERS & SEEKERS — collapsible
                    ══════════════════════════════════════════════ */}
-                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'value' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                <div ref={el => { sectionRefs.current['value'] = el; }} className={`grid transition-all duration-500 ease-in-out ${openSection === 'value' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
                 <section>
                     <div className={GRID}>
@@ -315,7 +326,7 @@ export default function LandingPage() {
                             >
                                 <div>
                                     <span
-                                        className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 block transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
+                                        className={`text-[9px] font-sans uppercase tracking-[0.2em] mb-3 block transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
                                         style={textStyle(0)}
                                     >For Builders</span>
                                     <h2
@@ -336,7 +347,7 @@ export default function LandingPage() {
                                     {['Showcase Portfolio', 'Set Your Rate', 'Get Hired', 'Earn Transparently'].map((tag, i) => (
                                         <span
                                             key={tag}
-                                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-vc-border-subtle text-vc-text-secondary'}`}
+                                            className={`text-[9px] font-sans uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-vc-border-subtle text-vc-text-secondary'}`}
                                             style={isVibe ? { color: pal(i % VIBE_COLORS.length) } : undefined}
                                         >
                                             {tag}
@@ -352,7 +363,7 @@ export default function LandingPage() {
                             >
                                 <div>
                                     <span
-                                        className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 block transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
+                                        className={`text-[9px] font-sans uppercase tracking-[0.2em] mb-3 block transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
                                         style={textStyle(1)}
                                     >For Seekers</span>
                                     <h2
@@ -373,7 +384,7 @@ export default function LandingPage() {
                                     {['Browse Builders', 'See Real Work', 'Transparent Hiring', 'Open Reviews'].map((tag, i) => (
                                         <span
                                             key={tag}
-                                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-vc-border-subtle text-vc-text-secondary'}`}
+                                            className={`text-[9px] font-sans uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-vc-border-subtle text-vc-text-secondary'}`}
                                             style={isVibe ? { color: pal((i + 2) % VIBE_COLORS.length) } : undefined}
                                         >
                                             {tag}
@@ -390,12 +401,12 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    HOW IT WORKS — collapsible
                    ══════════════════════════════════════════════ */}
-                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'how' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                <div ref={el => { sectionRefs.current['how'] = el; }} className={`grid transition-all duration-500 ease-in-out ${openSection === 'how' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
                 <section>
                     <FadeIn>
                         <div className="text-center mb-10">
-                            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-vc-text-secondary">How It Works</span>
+                            <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-vc-text-secondary">How It Works</span>
                         </div>
                     </FadeIn>
                     <div className={GRID}>
@@ -419,7 +430,7 @@ export default function LandingPage() {
                                     >{item.title}</h3>
                                     <p className={`text-[13px] leading-relaxed flex-1 transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-vc-text-secondary'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{item.desc}</p>
                                     <span
-                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
+                                        className={`text-[9px] font-sans uppercase tracking-[0.15em] mt-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
                                         style={textStyle(i)}
                                     >{item.detail}</span>
                                 </div>
@@ -441,7 +452,7 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    PHILOSOPHY — collapsible
                    ══════════════════════════════════════════════ */}
-                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'philosophy' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                <div ref={el => { sectionRefs.current['philosophy'] = el; }} className={`grid transition-all duration-500 ease-in-out ${openSection === 'philosophy' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
                 <section>
                     <FadeIn>
@@ -457,7 +468,7 @@ export default function LandingPage() {
                             </p>
                             <div className="flex items-center gap-3 mt-6">
                                 <div className="w-6 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? pal(0) : 'rgba(216,0,24,0.3)' }} />
-                                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-vc-text-secondary">Our Philosophy</span>
+                                <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-vc-text-secondary">Our Philosophy</span>
                                 <div className="w-6 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? pal(0) : 'rgba(216,0,24,0.3)' }} />
                             </div>
                         </div>
@@ -469,12 +480,12 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    MEET THE VIBELOPER — collapsible
                    ══════════════════════════════════════════════ */}
-                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'founder' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                <div ref={el => { sectionRefs.current['founder'] = el; }} className={`grid transition-all duration-500 ease-in-out ${openSection === 'founder' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
                 <section>
                     <FadeIn>
                         <div className="flex items-center gap-3 mb-6">
-                            <span className={`text-xl font-normal font-mono transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-muted'}`} style={isFounderVibe ? fText(1) : undefined}>#</span>
+                            <span className={`text-xl font-normal font-sans transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-muted'}`} style={isFounderVibe ? fText(1) : undefined}>#</span>
                             <h2 className="text-2xl font-semibold tracking-tight text-vc-text font-serif">
                                 <span className={`transition-colors duration-300`} style={fText(1)}>Meet the</span>{' '}
                                 <span className="line-through opacity-40">Developer</span>{' '}
@@ -504,7 +515,7 @@ export default function LandingPage() {
                                         <span className="md:inline block"><span className="italic opacity-60 text-[11px] md:text-inherit">aka</span> adhd.dev</span>
                                     </span>
                                 </h4>
-                                <p className="text-[9px] md:text-[10px] font-mono text-[#D80018] uppercase tracking-widest leading-none mt-1">Founder &amp; Vibeloper</p>
+                                <p className="text-[9px] md:text-[10px] font-sans text-[#D80018] uppercase tracking-widest leading-none mt-1">Founder &amp; Vibeloper</p>
                             </div>
 
                             {/* Twitter/X */}
@@ -551,13 +562,13 @@ export default function LandingPage() {
 
                             {/* Focus Tag */}
                             <div className="col-span-1 md:row-span-2 p-6 flex flex-col items-center justify-center text-center transition-all duration-300" style={{ background: fBg(1) }}>
-                                <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-[0.2em] mb-3">Focus</span>
+                                <span className="text-[9px] font-sans text-vc-text-secondary uppercase tracking-[0.2em] mb-3">Focus</span>
                                 <span className={`text-[11px] font-bold uppercase tracking-widest leading-tight transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text'}`} style={fText(1)}>Physics<br />Driven UI</span>
                             </div>
 
                             {/* Note Label */}
                             <div className="col-span-1 flex items-center justify-center p-4 transition-all duration-300" style={{ background: fBg(0) }}>
-                                <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-all duration-300 ${isFounderVibe ? '' : 'text-[#D80018]'}`} style={isFounderVibe ? fText(0) : undefined}>Note</span>
+                                <span className={`text-[10px] font-sans uppercase tracking-[0.3em] font-bold transition-all duration-300 ${isFounderVibe ? '' : 'text-[#D80018]'}`} style={isFounderVibe ? fText(0) : undefined}>Note</span>
                             </div>
 
                             {/* LinkedIn */}
@@ -586,12 +597,12 @@ export default function LandingPage() {
 
                             {/* Contact */}
                             <a href="mailto:adhd.paws@gmail.com" className="col-span-2 p-8 flex flex-col justify-center group/mail hover:bg-vc-surface transition-all duration-300" style={{ background: isFounderVibe ? fBg(0) : 'var(--vc-bg)' }}>
-                                <span className="text-[9px] font-mono text-vc-text-secondary uppercase tracking-widest mb-3">Direct Contact</span>
+                                <span className="text-[9px] font-sans text-vc-text-secondary uppercase tracking-widest mb-3">Direct Contact</span>
                                 <div className="flex items-center gap-3">
                                     <svg className={`w-4 h-4 transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/mail:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(0) } : undefined} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
                                     </svg>
-                                    <span className={`text-[12px] font-mono border-b transition-colors duration-300 ${isFounderVibe ? '' : 'border-vc-border text-vc-text'}`} style={isFounderVibe ? { color: pal(0), borderColor: `${pal(0)}4D` } : undefined}>adhd.paws@gmail.com</span>
+                                    <span className={`text-[12px] font-sans border-b transition-colors duration-300 ${isFounderVibe ? '' : 'border-vc-border text-vc-text'}`} style={isFounderVibe ? { color: pal(0), borderColor: `${pal(0)}4D` } : undefined}>adhd.paws@gmail.com</span>
                                 </div>
                             </a>
 
@@ -606,12 +617,12 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    PLATFORM FEATURES — collapsible
                    ══════════════════════════════════════════════ */}
-                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'features' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                <div ref={el => { sectionRefs.current['features'] = el; }} className={`grid transition-all duration-500 ease-in-out ${openSection === 'features' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
                 <section>
                     <FadeIn>
                         <div className="text-center mb-10">
-                            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-vc-text-secondary">Platform Features</span>
+                            <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-vc-text-secondary">Platform Features</span>
                         </div>
                     </FadeIn>
                     <div className={GRID}>
@@ -641,7 +652,7 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    FINAL CTA — collapsible
                    ══════════════════════════════════════════════ */}
-                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'cta' ? 'grid-rows-[1fr] opacity-100 mb-20' : 'grid-rows-[0fr] opacity-0'}`}>
+                <div ref={el => { sectionRefs.current['cta'] = el; }} className={`grid transition-all duration-500 ease-in-out ${openSection === 'cta' ? 'grid-rows-[1fr] opacity-100 mb-20' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
                 <section>
                     <FadeIn>
@@ -660,7 +671,7 @@ export default function LandingPage() {
                                 style={{ background: darkBg(4) }}
                             >
                                 <span
-                                    className={`text-[9px] font-mono uppercase tracking-[0.3em] mb-4 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/30'}`}
+                                    className={`text-[9px] font-sans uppercase tracking-[0.3em] mb-4 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/30'}`}
                                     style={isVibe ? textStyle(3) : undefined}
                                 >Early Access</span>
                                 <h2
