@@ -148,7 +148,6 @@ export default function LandingPage() {
     const [founderVibed, setFounderVibed] = useState(false);
     const [founderHovered, setFounderHovered] = useState(false);
     const [openSection, setOpenSection] = useState<string | null>(null);
-    const [celebrating, setCelebrating] = useState(false);
     const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const isVibe = vibeLocked || hovered;
     const isFounderVibe = isVibe || founderVibed || founderHovered;
@@ -181,11 +180,6 @@ export default function LandingPage() {
     // Founder section helpers — respond to avatar hover/click OR global vibe
     function fBg(index: number) { return isFounderVibe ? vibeGradient(pal(index)) : 'var(--vc-surface)'; }
     function fText(index: number) { return isFounderVibe ? { color: pal(index) } : undefined; }
-
-    const triggerCelebration = useCallback(() => {
-        setCelebrating(true);
-        setTimeout(() => setCelebrating(false), 2000);
-    }, []);
 
     return (
         <div className="min-h-screen w-full bg-vc-bg text-vc-text relative transition-colors">
@@ -242,13 +236,13 @@ export default function LandingPage() {
                     {/* Waitlist form */}
                     <StaggerIn delay={400}>
                     <div className="max-w-sm mx-auto mb-16">
-                        <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} onSuccess={triggerCelebration} />
+                        <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} />
                     </div>
                     </StaggerIn>
 
                     {/* Living Grid with cursor magnetism + celebration */}
                     <StaggerIn delay={600}>
-                    <LiveGrid isVibe={isVibe} celebrating={celebrating} />
+                    <LiveGrid isVibe={isVibe} />
                     </StaggerIn>
                 </section>
 
