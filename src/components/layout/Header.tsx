@@ -123,9 +123,14 @@ export function Header({ breadcrumbs, rightContent, className = '', showAuth = t
             <div className="flex items-center text-[#9b9a97]">
                 <div className="hidden md:flex items-center gap-4 mr-4">
                     {rightContent || (
-                        <Link href="/explore" className="hover:text-[#37352f] transition-colors">
-                            Explore
-                        </Link>
+                        <>
+                            <Link href="/explore" className="hover:text-[#37352f] transition-colors">
+                                Explore
+                            </Link>
+                            <Link href="/leaderboard" className="hover:text-[#37352f] transition-colors">
+                                Leaderboard
+                            </Link>
+                        </>
                     )}
                 </div>
 

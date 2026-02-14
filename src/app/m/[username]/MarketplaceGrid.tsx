@@ -12,7 +12,7 @@ import {
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share' | 'skills' | 'hire' | 'contact-form' | 'rate';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share' | 'skills' | 'hire' | 'contact-form' | 'rate' | 'earned';
 
 interface Tile {
     id: string;
@@ -47,6 +47,9 @@ function buildTiles(showcases: Showcase[], username: string, profile: Profile): 
     }
     if (totalClicks > 0) {
         decorative.push({ id: 'clicks', colSpan: 'col-span-1', variant: 'clicks' });
+    }
+    if ((profile.total_earned || 0) > 0) {
+        decorative.push({ id: 'earned', colSpan: 'col-span-1', variant: 'earned' });
     }
     decorative.push({ id: 'filler', colSpan: 'col-span-1', variant: 'filler' });
     const showcaseTiles: Tile[] = showcases.map(s => ({
@@ -383,6 +386,15 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                     </div>
                 );
             }
+            case 'earned':
+                return (
+                    <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-2xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            ${(profile.total_earned || 0).toLocaleString()}
+                        </span>
+                        <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Earned</span>
+                    </div>
+                );
             case 'filler':
                 return (
                     <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : '#f0f0ef' }} />
