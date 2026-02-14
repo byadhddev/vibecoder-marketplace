@@ -19,10 +19,10 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
     title: {
-        default: 'VibeCoder Marketplace — Ship Fast. Get Found. Get Paid.',
+        default: 'VibeCoder — Where Vibe Coders Meet Their Next Build',
         template: '%s | VibeCoder',
     },
-    description: 'The marketplace for vibe coders who build with AI and founders who need it done. Browse live projects, see real speed, hire with confidence.',
+    description: 'The transparent marketplace for AI-native builders and the founders who need them. Showcase real projects, get hired through GitHub Issues, earn transparently.',
     keywords: ['vibe coding', 'AI developer', 'freelance', 'marketplace', 'hire developer', 'showcase', 'portfolio'],
     openGraph: {
         title: 'VibeCoder Marketplace',
