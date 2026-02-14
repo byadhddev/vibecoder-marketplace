@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { RotatingWord, LiveGrid, FloatingParticles } from '@/components/hero/HeroAnimations';
+import { LiveGrid } from '@/components/hero/HeroAnimations';
 
 /* ─── Vibe Palette ───────────────────────────────────────── */
 const VIBE_COLORS = ['#B3201F', '#122BB2', '#a16207', '#dc2626', '#1e40af'];
@@ -216,33 +216,10 @@ export default function LandingPage() {
                 </nav>
 
                 {/* ══════════════════════════════════════════════
-                   HERO — Minimal, low-friction
+                   HERO — Living Grid
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36 relative">
-                    <FloatingParticles isVibe={isVibe} />
-
-                    <div className="flex flex-col items-center text-center relative z-10">
-                        {/* Simple statement */}
-                        <p
-                            className={`text-base md:text-lg max-w-md leading-relaxed mb-8 font-light transition-colors duration-300 ${isVibe ? 'opacity-80' : 'text-vc-text-secondary'}`}
-                            style={isVibe ? textStyle(2) : undefined}
-                        >
-                            A place for AI-native builders to showcase work, get discovered, and land projects — transparently.
-                        </p>
-
-                        {/* Rotating word as accent */}
-                        <div className="mb-10">
-                            <RotatingWord isVibe={isVibe} vibeColor={pal(1)} />
-                        </div>
-
-                        {/* Waitlist — the main thing */}
-                        <div className="w-full max-w-md mb-12">
-                            <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} />
-                        </div>
-
-                        {/* Living Grid — visual texture */}
-                        <LiveGrid isVibe={isVibe} />
-                    </div>
+                <section className="mb-24 md:mb-36">
+                    <LiveGrid isVibe={isVibe} />
                 </section>
 
                 {/* ══════════════════════════════════════════════
