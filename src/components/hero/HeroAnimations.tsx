@@ -1,54 +1,86 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
-/* ─── ROTATING WORD ────────────────────────────────────────
-   Cycles through words with a vertical slide + fade.
+/* ─── MOUSE POSITION HOOK ─────────────────────────────────
+   Tracks cursor position relative to a container element.
    ───────────────────────────────────────────────────────── */
 
-const ROTATE_WORDS = [
-  { text: 'Get Hired', color: '#B3201F' },
-  { text: 'Ship Faster', color: '#122BB2' },
-  { text: 'Get Paid', color: '#a16207' },
-  { text: 'Own Your Code', color: '#dc2626' },
-];
-
-export function RotatingWord({ isVibe, vibeColor }: { isVibe: boolean; vibeColor?: string }) {
-  const [index, setIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
+export function useMousePosition() {
+  const [pos, setPos] = useState({ x: -1000, y: -1000 });
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setIndex(i => (i + 1) % ROTATE_WORDS.length);
-        setIsTransitioning(false);
-      }, 400);
-    }, 3000);
-    return () => clearInterval(interval);
+    const onMove = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY });
+    const onLeave = () => setPos({ x: -1000, y: -1000 });
+    window.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseleave', onLeave);
+    return () => { window.removeEventListener('mousemove', onMove); document.removeEventListener('mouseleave', onLeave); };
   }, []);
+  return pos;
+}
 
-  const word = ROTATE_WORDS[index];
-  const color = isVibe ? vibeColor || word.color : word.color;
+/* ─── CURSOR GLOW ─────────────────────────────────────────
+   Soft ambient spotlight that follows the cursor.
+   ───────────────────────────────────────────────────────── */
+
+export function CursorGlow({ isVibe, vibeColor }: { isVibe: boolean; vibeColor?: string }) {
+  const pos = useMousePosition();
+  const color = isVibe && vibeColor ? vibeColor : 'var(--vc-brand)';
+  return (
+    <div
+      className="fixed pointer-events-none z-[1] transition-opacity duration-500"
+      style={{
+        left: pos.x - 200,
+        top: pos.y - 200,
+        width: 400,
+        height: 400,
+        borderRadius: '50%',
+        background: `radial-gradient(circle, ${color}08 0%, transparent 70%)`,
+        opacity: pos.x === -1000 ? 0 : 1,
+      }}
+    />
+  );
+}
+
+/* ─── INTERACTIVE WORD ────────────────────────────────────
+   Each word in a sentence lights up on hover individually.
+   ───────────────────────────────────────────────────────── */
+
+export function InteractiveText({
+  text, isVibe, className = '',
+}: {
+  text: string; isVibe: boolean; className?: string;
+}) {
+  const [hoveredIdx, setHoveredIdx] = useState(-1);
+  const words = text.split(' ');
+  const VIBE = ['#B3201F', '#122BB2', '#a16207', '#dc2626', '#1e40af'];
 
   return (
-    <span className="inline-flex relative overflow-hidden h-[1.15em] align-bottom">
-      <span
-        className="inline-block transition-all duration-400 ease-out whitespace-nowrap"
-        style={{
-          transform: isTransitioning ? 'translateY(-110%)' : 'translateY(0)',
-          opacity: isTransitioning ? 0 : 1,
-          color,
-        }}
-      >
-        {word.text}
-      </span>
-    </span>
+    <p className={className}>
+      {words.map((word, i) => (
+        <span
+          key={i}
+          onMouseEnter={() => setHoveredIdx(i)}
+          onMouseLeave={() => setHoveredIdx(-1)}
+          className="inline-block transition-all duration-300 cursor-default mx-[2px]"
+          style={{
+            color: hoveredIdx === i
+              ? (isVibe ? VIBE[i % VIBE.length] : 'var(--vc-text)')
+              : undefined,
+            opacity: hoveredIdx === -1 ? undefined : hoveredIdx === i ? 1 : 0.4,
+            transform: hoveredIdx === i ? 'translateY(-1px)' : 'translateY(0)',
+          }}
+        >
+          {word}
+        </span>
+      ))}
+    </p>
   );
 }
 
 /* ─── LIVE GRID ────────────────────────────────────────────
-   4×3 animated mini-tile grid showing marketplace "activity".
+   4×3 animated grid with cursor-proximity magnetism.
+   Tiles glow + scale when cursor is near.
+   Ripples on celebration trigger.
    ───────────────────────────────────────────────────────── */
 
 interface TileContent {
@@ -100,7 +132,7 @@ const ALT_CONTENTS: TileContent[][] = [
 
 const VIBE_COLORS = ['#B3201F', '#122BB2', '#a16207', '#dc2626', '#1e40af'];
 
-function tileColor(type: TileContent['type'], i: number, isVibe: boolean) {
+function tileTextColor(type: TileContent['type'], i: number, isVibe: boolean) {
   if (isVibe) return VIBE_COLORS[i % VIBE_COLORS.length];
   switch (type) {
     case 'status': return '#D80018';
@@ -111,7 +143,7 @@ function tileColor(type: TileContent['type'], i: number, isVibe: boolean) {
   }
 }
 
-function tileBg(type: TileContent['type'], i: number, isVibe: boolean) {
+function tileBgColor(type: TileContent['type'], i: number, isVibe: boolean) {
   if (type === 'block')
     return isVibe ? `${VIBE_COLORS[i % VIBE_COLORS.length]}18` : 'var(--vc-dark)';
   if (type === 'status')
@@ -119,11 +151,45 @@ function tileBg(type: TileContent['type'], i: number, isVibe: boolean) {
   return 'var(--vc-surface)';
 }
 
-export function LiveGrid({ isVibe }: { isVibe: boolean }) {
+export function LiveGrid({ isVibe, celebrating = false }: { isVibe: boolean; celebrating?: boolean }) {
   const [grid, setGrid] = useState(TILE_CONTENTS);
   const [swapping, setSwapping] = useState<Set<string>>(new Set());
+  const [ripple, setRipple] = useState<number[]>([]);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const tileRectsRef = useRef<DOMRect[]>([]);
+  const mouseRef = useRef({ x: -1000, y: -1000 });
+  const [, forceRender] = useState(0);
 
+  // Track mouse for proximity effect
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY };
+      forceRender(n => n + 1);
+    };
+    const onLeave = () => {
+      mouseRef.current = { x: -1000, y: -1000 };
+      forceRender(n => n + 1);
+    };
+    window.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseleave', onLeave);
+    return () => { window.removeEventListener('mousemove', onMove); document.removeEventListener('mouseleave', onLeave); };
+  }, []);
+
+  // Cache tile positions
+  useEffect(() => {
+    function measure() {
+      if (!gridRef.current) return;
+      const tiles = gridRef.current.querySelectorAll('[data-tile]');
+      tileRectsRef.current = Array.from(tiles).map(t => t.getBoundingClientRect());
+    }
+    measure();
+    window.addEventListener('resize', measure);
+    window.addEventListener('scroll', measure);
+    return () => { window.removeEventListener('resize', measure); window.removeEventListener('scroll', measure); };
+  }, []);
+
+  // Content swap cycle
   useEffect(() => {
     function scheduleSwaps() {
       for (let r = 0; r < 3; r++) {
@@ -152,31 +218,84 @@ export function LiveGrid({ isVibe }: { isVibe: boolean }) {
     return () => { clearInterval(interval); timeoutsRef.current.forEach(clearTimeout); timeoutsRef.current = []; };
   }, []);
 
+  // Celebration ripple
+  useEffect(() => {
+    if (!celebrating) return;
+    const total = 12;
+    const center = 5; // center-ish tile index
+    const delays: number[] = [];
+    for (let i = 0; i < total; i++) {
+      const row = Math.floor(i / 4), col = i % 4;
+      const cr = Math.floor(center / 4), cc = center % 4;
+      const dist = Math.abs(row - cr) + Math.abs(col - cc);
+      delays.push(dist * 80);
+    }
+    // Stagger ripple
+    const ids: ReturnType<typeof setTimeout>[] = [];
+    delays.forEach((d, i) => {
+      ids.push(setTimeout(() => setRipple(prev => [...prev, i]), d));
+      ids.push(setTimeout(() => setRipple(prev => prev.filter(x => x !== i)), d + 500));
+    });
+    return () => ids.forEach(clearTimeout);
+  }, [celebrating]);
+
+  // Calculate proximity factor (0-1) for each tile
+  function getProximity(i: number): number {
+    const rect = tileRectsRef.current[i];
+    if (!rect || mouseRef.current.x === -1000) return 0;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = mouseRef.current.x - cx;
+    const dy = mouseRef.current.y - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const maxDist = 180;
+    return Math.max(0, 1 - dist / maxDist);
+  }
+
   return (
-    <div className="grid grid-cols-4 gap-px bg-vc-border border border-vc-border rounded-lg overflow-hidden w-full max-w-[380px] mx-auto hero-animated">
+    <div ref={gridRef} className="grid grid-cols-4 gap-px bg-vc-border border border-vc-border rounded-lg overflow-hidden w-full max-w-[380px] mx-auto hero-animated">
       {grid.flat().map((tile, i) => {
         const key = `${Math.floor(i / 4)}-${i % 4}`;
         const isSwapping = swapping.has(key);
+        const prox = getProximity(i);
+        const isRippling = ripple.includes(i);
+        const vibeColor = VIBE_COLORS[i % VIBE_COLORS.length];
+
         return (
           <div
             key={key}
-            className="aspect-square flex items-center justify-center transition-all duration-300 relative overflow-hidden"
-            style={{ background: tileBg(tile.type, i, isVibe) }}
+            data-tile
+            className="aspect-square flex items-center justify-center relative overflow-hidden"
+            style={{
+              background: isRippling
+                ? `${vibeColor}30`
+                : tileBgColor(tile.type, i, isVibe),
+              transform: `scale(${1 + prox * 0.08})`,
+              boxShadow: prox > 0.1
+                ? `inset 0 0 ${20 * prox}px ${isVibe ? vibeColor : 'var(--vc-brand)'}${Math.round(prox * 25).toString(16).padStart(2, '0')}`
+                : 'none',
+              transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.3s',
+              zIndex: prox > 0.5 ? 2 : 1,
+            }}
           >
             {tile.type === 'block' ? (
               <div
-                className="w-4 h-4 rounded-sm transition-colors duration-500"
-                style={{ backgroundColor: isVibe ? VIBE_COLORS[i % VIBE_COLORS.length] : 'var(--vc-dark)' }}
+                className="w-4 h-4 rounded-sm transition-all duration-500"
+                style={{
+                  backgroundColor: isRippling ? vibeColor : isVibe ? vibeColor : 'var(--vc-dark)',
+                  transform: `scale(${1 + prox * 0.3})`,
+                }}
               />
             ) : (
               <span
-                className={`text-[9px] md:text-[10px] font-sans tracking-wide transition-all duration-300 text-center px-1 leading-tight ${
+                className={`text-[9px] md:text-[10px] font-sans tracking-wide text-center px-1 leading-tight ${
                   tile.type === 'status' ? 'font-semibold' : tile.type === 'stat' ? 'font-bold text-[11px] md:text-xs' : ''
                 }`}
                 style={{
-                  color: tileColor(tile.type, i, isVibe),
+                  color: isRippling ? vibeColor : tileTextColor(tile.type, i, isVibe),
                   opacity: isSwapping ? 0 : 1,
                   transform: isSwapping ? 'translateY(-6px)' : 'translateY(0)',
+                  transition: 'all 0.3s ease-out',
                 }}
               >
                 {tile.text}
@@ -189,107 +308,24 @@ export function LiveGrid({ isVibe }: { isVibe: boolean }) {
   );
 }
 
-/* ─── ANIMATED COUNTER ─────────────────────────────────────
-   Counts from 0 → target with easeOutExpo on scroll-into-view.
+/* ─── STAGGERED ENTRANCE ───────────────────────────────────
+   Wraps children with a staggered fade-in from bottom.
    ───────────────────────────────────────────────────────── */
 
-function easeOutExpo(t: number): number {
-  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-}
-
-export function AnimatedCounter({
-  target, duration = 2000, prefix = '', suffix = '', className = '', style,
-}: {
-  target: number; duration?: number; prefix?: string; suffix?: string; className?: string; style?: React.CSSProperties;
+export function StaggerIn({ children, delay = 0, className = '' }: {
+  children: React.ReactNode; delay?: number; className?: string;
 }) {
-  const [count, setCount] = useState(0);
-  const [hasStarted, setHasStarted] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting && !hasStarted) setHasStarted(true); },
-      { threshold: 0.3 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [hasStarted]);
-
-  useEffect(() => {
-    if (!hasStarted || target === 0) return;
-    let start: number | null = null;
-    let raf: number;
-    function step(ts: number) {
-      if (!start) start = ts;
-      const progress = Math.min((ts - start) / duration, 1);
-      setCount(Math.floor(easeOutExpo(progress) * target));
-      if (progress < 1) raf = requestAnimationFrame(step);
-    }
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [hasStarted, target, duration]);
-
+    const id = setTimeout(() => setVisible(true), delay);
+    return () => clearTimeout(id);
+  }, [delay]);
   return (
-    <span ref={ref} className={className} style={style}>
-      {prefix}{count.toLocaleString()}{suffix}
-    </span>
-  );
-}
-
-/* ─── FLOATING PARTICLES ───────────────────────────────────
-   CSS-only animated small squares drifting in the hero bg.
-   ───────────────────────────────────────────────────────── */
-
-const PARTICLES = [
-  { size: 6, x: '12%', y: '20%', delay: 0, dur: 8, color: '#B3201F' },
-  { size: 4, x: '78%', y: '35%', delay: 1.5, dur: 10, color: '#122BB2' },
-  { size: 5, x: '45%', y: '70%', delay: 3, dur: 7, color: '#a16207' },
-  { size: 3, x: '88%', y: '15%', delay: 4.5, dur: 9, color: '#dc2626' },
-  { size: 4, x: '25%', y: '80%', delay: 2, dur: 11, color: '#1e40af' },
-];
-
-export function FloatingParticles({ isVibe }: { isVibe: boolean }) {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none hero-animated" aria-hidden="true">
-      {PARTICLES.map((p, i) => (
-        <div
-          key={i}
-          className="absolute rounded-[1px]"
-          style={{
-            width: p.size,
-            height: p.size,
-            left: p.x,
-            top: p.y,
-            backgroundColor: isVibe ? p.color : 'var(--vc-brand)',
-            opacity: isVibe ? 0.2 : 'var(--hero-particle-opacity)',
-            animation: `hero-float ${p.dur}s ease-in-out ${p.delay}s infinite`,
-          }}
-        />
-      ))}
+    <div
+      className={`transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} ${className}`}
+    >
+      {children}
     </div>
   );
 }
 
-/* ─── STAT PILL ────────────────────────────────────────────
-   Small stat block with animated counter.
-   ───────────────────────────────────────────────────────── */
-
-export function StatPill({
-  label, value, suffix = '+', isVibe, vibeColor,
-}: {
-  label: string; value: number; suffix?: string; isVibe: boolean; vibeColor?: string;
-}) {
-  return (
-    <div className="flex flex-col items-center gap-0.5">
-      <AnimatedCounter
-        target={value}
-        suffix={suffix}
-        className="text-lg md:text-xl font-sans font-bold tabular-nums transition-colors duration-300"
-        style={{ color: isVibe && vibeColor ? vibeColor : 'var(--vc-text)' }}
-      />
-      <span className="text-[9px] font-sans uppercase tracking-[0.15em] text-vc-text-secondary">{label}</span>
-    </div>
-  );
-}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { LiveGrid } from '@/components/hero/HeroAnimations';
+import { LiveGrid, CursorGlow, InteractiveText, StaggerIn } from '@/components/hero/HeroAnimations';
 
 /* ─── Vibe Palette ───────────────────────────────────────── */
 const VIBE_COLORS = ['#B3201F', '#122BB2', '#a16207', '#dc2626', '#1e40af'];
@@ -18,8 +18,8 @@ function vibeGradient(color: string) {
 /* ─────────────────────────────────────────────────────────
    WAITLIST INPUT
    ───────────────────────────────────────────────────────── */
-function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }: {
-    count: number; variant?: 'default' | 'bottom'; isVibe?: boolean; vibeColor?: string;
+function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor, onSuccess }: {
+    count: number; variant?: 'default' | 'bottom'; isVibe?: boolean; vibeColor?: string; onSuccess?: () => void;
 }) {
     const [email, setEmail] = useState('');
     const [state, setState] = useState<'idle' | 'loading' | 'success' | 'error' | 'duplicate'>('idle');
@@ -37,8 +37,10 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
             });
             const data = await res.json();
             if (res.ok && data.ok) {
-                setState(data.message?.includes('already') ? 'duplicate' : 'success');
+                const isNew = !data.message?.includes('already');
+                setState(isNew ? 'success' : 'duplicate');
                 setMessage(data.message);
+                if (isNew && onSuccess) onSuccess();
             } else {
                 setState('error');
                 setMessage(data.error || 'Something went wrong');
@@ -146,6 +148,7 @@ export default function LandingPage() {
     const [founderVibed, setFounderVibed] = useState(false);
     const [founderHovered, setFounderHovered] = useState(false);
     const [openSection, setOpenSection] = useState<string | null>(null);
+    const [celebrating, setCelebrating] = useState(false);
     const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const isVibe = vibeLocked || hovered;
     const isFounderVibe = isVibe || founderVibed || founderHovered;
@@ -179,8 +182,16 @@ export default function LandingPage() {
     function fBg(index: number) { return isFounderVibe ? vibeGradient(pal(index)) : 'var(--vc-surface)'; }
     function fText(index: number) { return isFounderVibe ? { color: pal(index) } : undefined; }
 
+    const triggerCelebration = useCallback(() => {
+        setCelebrating(true);
+        setTimeout(() => setCelebrating(false), 2000);
+    }, []);
+
     return (
         <div className="min-h-screen w-full bg-vc-bg text-vc-text relative transition-colors">
+            {/* Cursor spotlight */}
+            <CursorGlow isVibe={isVibe} vibeColor={pal(0)} />
+
             {/* Background grid pattern */}
             <div
                 className="fixed inset-0 pointer-events-none opacity-[0.4]"
@@ -193,9 +204,9 @@ export default function LandingPage() {
             <div className="relative mx-auto max-w-[900px] px-6 py-8 md:px-20 md:py-16 bg-vc-surface min-h-screen shadow-[0_0_50px_-12px_rgba(0,0,0,0.08)] border-x border-vc-border">
 
                 {/* ── Nav ─────────────────────────────────── */}
+                <StaggerIn delay={0}>
                 <nav className="flex items-center justify-between mb-12 md:mb-16">
                     <div className="flex items-center gap-3">
-                        {/* Artode toggle — click to activate vibe mode */}
                         <div
                             className={`w-4 h-4 cursor-pointer transition-all duration-300 bg-[var(--vc-brand)] ${vibeLocked ? 'scale-110 ring-2 ring-[var(--vc-brand)]/30' : ''}`}
                             onMouseEnter={() => setHovered(true)}
@@ -213,26 +224,32 @@ export default function LandingPage() {
                         </Link>
                     </div>
                 </nav>
+                </StaggerIn>
 
                 {/* ══════════════════════════════════════════════
-                   HERO — Waitlist: logo → one-liner → form → grid
+                   HERO — Interactive waitlist experience
                    ══════════════════════════════════════════════ */}
                 <section className="mb-20 md:mb-28">
-                    {/* One-liner — what this is */}
-                    <p
+                    {/* Interactive one-liner — words light up on hover */}
+                    <StaggerIn delay={200}>
+                    <InteractiveText
+                        text="Where AI-native builders showcase work, get found, and land projects."
+                        isVibe={isVibe}
                         className={`text-sm md:text-base text-center max-w-sm mx-auto leading-relaxed mb-10 transition-colors duration-300 ${isVibe ? 'opacity-80' : 'text-vc-text-secondary'}`}
-                        style={isVibe ? textStyle(2) : undefined}
-                    >
-                        Where AI-native builders showcase work, get found, and land projects.
-                    </p>
+                    />
+                    </StaggerIn>
 
-                    {/* Waitlist form — the whole point */}
+                    {/* Waitlist form */}
+                    <StaggerIn delay={400}>
                     <div className="max-w-sm mx-auto mb-16">
-                        <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} />
+                        <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} onSuccess={triggerCelebration} />
                     </div>
+                    </StaggerIn>
 
-                    {/* Living Grid — visual intrigue */}
-                    <LiveGrid isVibe={isVibe} />
+                    {/* Living Grid with cursor magnetism + celebration */}
+                    <StaggerIn delay={600}>
+                    <LiveGrid isVibe={isVibe} celebrating={celebrating} />
+                    </StaggerIn>
                 </section>
 
                 {/* ══════════════════════════════════════════════
