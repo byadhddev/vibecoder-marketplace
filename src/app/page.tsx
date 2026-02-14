@@ -81,7 +81,6 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
                     type="submit"
                     disabled={state === 'loading'}
                     className="px-6 py-3 bg-[#D80018] text-white text-xs font-sans uppercase tracking-[0.15em] hover:bg-[#b80015] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
-                    style={{ animation: 'hero-pulse-ring 2s ease-in-out infinite' }}
                 >
                     {state === 'loading' ? 'Joining...' : 'Claim Your Spot'}
                 </button>
@@ -194,7 +193,7 @@ export default function LandingPage() {
             <div className="relative mx-auto max-w-[900px] px-6 py-8 md:px-20 md:py-16 bg-vc-surface min-h-screen shadow-[0_0_50px_-12px_rgba(0,0,0,0.08)] border-x border-vc-border">
 
                 {/* ── Nav ─────────────────────────────────── */}
-                <nav className="flex items-center justify-between mb-20 md:mb-32">
+                <nav className="flex items-center justify-between mb-12 md:mb-16">
                     <div className="flex items-center gap-3">
                         {/* Artode toggle — click to activate vibe mode */}
                         <div
@@ -216,9 +215,23 @@ export default function LandingPage() {
                 </nav>
 
                 {/* ══════════════════════════════════════════════
-                   HERO — Living Grid
+                   HERO — Waitlist: logo → one-liner → form → grid
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
+                <section className="mb-20 md:mb-28">
+                    {/* One-liner — what this is */}
+                    <p
+                        className={`text-sm md:text-base text-center max-w-sm mx-auto leading-relaxed mb-10 transition-colors duration-300 ${isVibe ? 'opacity-80' : 'text-vc-text-secondary'}`}
+                        style={isVibe ? textStyle(2) : undefined}
+                    >
+                        Where AI-native builders showcase work, get found, and land projects.
+                    </p>
+
+                    {/* Waitlist form — the whole point */}
+                    <div className="max-w-sm mx-auto mb-16">
+                        <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} />
+                    </div>
+
+                    {/* Living Grid — visual intrigue */}
                     <LiveGrid isVibe={isVibe} />
                 </section>
 
