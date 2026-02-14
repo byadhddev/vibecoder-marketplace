@@ -90,7 +90,9 @@ export async function GET(req: NextRequest) {
 
         results.sort((a, b) => b.score - a.score);
 
-        return NextResponse.json({ results: results.slice(0, 20), query: q });
+        return NextResponse.json({ results: results.slice(0, 20), query: q }, {
+            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120' },
+        });
     } catch {
         return NextResponse.json({ results: [], query: q });
     }

@@ -10,5 +10,7 @@ export async function GET(req: NextRequest) {
     if (!result) return NextResponse.json({ avg_hours: null, label: null });
 
     const label = result.avgHours < 1 ? '< 1h' : result.avgHours < 24 ? `~${Math.round(result.avgHours)}h` : `~${Math.round(result.avgHours / 24)}d`;
-    return NextResponse.json({ avg_hours: result.avgHours, count: result.count, label });
+    return NextResponse.json({ avg_hours: result.avgHours, count: result.count, label }, {
+        headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
+    });
 }

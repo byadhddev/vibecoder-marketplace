@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getMarketplaceByUsername, getEarnings } from '@/lib/github/queries';
 import type { Metadata } from 'next';
 import { MarketplaceGrid } from './MarketplaceGrid';
+import ProfileLoading from './loading';
 
 interface PageProps { params: Promise<{ username: string }>; }
 
@@ -50,7 +51,7 @@ export default async function UserMarketplacePage({ params }: PageProps) {
     return (
         <>
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-            <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><span className="text-sm font-mono text-[#9b9a97]">Loading profile...</span></div>}>
+            <Suspense fallback={<ProfileLoading />}>
                 <MarketplaceGrid profile={profile} showcases={showcases} hasVerifiedEarnings={hasVerifiedEarnings} />
             </Suspense>
         </>

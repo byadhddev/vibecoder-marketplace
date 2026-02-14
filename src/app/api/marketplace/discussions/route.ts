@@ -31,6 +31,8 @@ export async function GET() {
                 discussions: getDiscussionsUrl(),
                 new: getNewDiscussionUrl(),
             },
+        }, {
+            headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300' },
         });
     } catch {
         return NextResponse.json({ enabled: false, discussions: [], categories: [] });

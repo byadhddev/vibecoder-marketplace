@@ -42,6 +42,7 @@ async function readRegistry(token?: string): Promise<{ data: Registry; sha: stri
 }
 
 export async function getRegistry(): Promise<Registry> {
+    'use cache';
     const { data } = await readRegistry();
     return data;
 }
@@ -59,6 +60,7 @@ async function updateRegistry(
 // ─── Profiles ────────────────────────────────────────────────
 
 export async function getProfileByUsername(username: string): Promise<Profile | null> {
+    'use cache';
     const branch = userBranch(username);
     const result = await readJSON<Omit<Profile, 'id' | 'user_id'>>('profile.json', branch, undefined, 60);
     if (!result) return null;
@@ -176,6 +178,7 @@ export async function getOrCreateDevProfile(): Promise<Profile | null> {
 }
 
 export async function listPublicProfiles(opts: { limit?: number; offset?: number } = {}): Promise<{ profiles: Profile[]; total: number }> {
+    'use cache';
     const { limit = 24, offset = 0 } = opts;
     const { data: registry } = await readRegistry();
     const total = registry.users.length;
@@ -205,6 +208,7 @@ async function readShowcase(username: string, slug: string, token?: string, reva
 }
 
 export async function getMarketplaceByUsername(username: string): Promise<PublicMarketplace | null> {
+    'use cache';
     const profile = await getProfileByUsername(username);
     if (!profile) return null;
 
@@ -240,6 +244,7 @@ export async function getShowcasesByProfileId(profileId: string, includeAll = fa
 }
 
 export async function getShowcaseBySlug(username: string, slug: string): Promise<{ profile: Profile; showcase: Showcase } | null> {
+    'use cache';
     const profile = await getProfileByUsername(username);
     if (!profile) return null;
     const sc = await readShowcase(username, slug, undefined, 60);
@@ -480,6 +485,7 @@ export async function addEarning(
 }
 
 export async function getEarnings(username: string, token?: string): Promise<EarningsStore> {
+    'use cache';
     const t = token || appToken();
     const branch = userBranch(username);
     const result = await readJSON<EarningsStore>('earnings.json', branch, t);

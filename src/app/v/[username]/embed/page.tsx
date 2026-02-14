@@ -25,7 +25,7 @@ export default async function EmbedPage({ params }: PageProps) {
     const data = await getMarketplaceByUsername(username);
     if (!data) notFound();
     return (
-        <Suspense fallback={<div className="w-[400px] h-[200px] animate-pulse bg-[#f5f5f5] rounded-lg" />}>
+        <Suspense fallback={<div className="w-[400px] h-[200px] rounded-lg overflow-hidden"><div className="w-full h-full animate-pulse bg-[#f0f0ef]" /></div>}>
             <EmbedCard profile={data.profile} showcases={data.showcases} />
         </Suspense>
     );

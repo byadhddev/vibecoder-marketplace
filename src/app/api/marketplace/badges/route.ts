@@ -27,7 +27,9 @@ export async function GET(req: NextRequest) {
             repeatHiredCount: repeatHired,
         });
 
-        return NextResponse.json({ badges });
+        return NextResponse.json({ badges }, {
+            headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
+        });
     } catch {
         return NextResponse.json({ badges: [] });
     }

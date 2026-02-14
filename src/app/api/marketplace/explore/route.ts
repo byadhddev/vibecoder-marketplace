@@ -50,6 +50,8 @@ export async function GET(req: Request) {
                 total_views: p!.total_views || 0, available_for_hire: p!.available_for_hire || false,
                 created_at: p!.created_at || '',
             })),
+        }, {
+            headers: { 'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300' },
         });
     } catch (error) {
         console.error('Explore API error:', error);

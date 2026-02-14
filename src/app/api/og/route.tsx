@@ -2,8 +2,6 @@ import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 import { getMarketplaceByUsername, getShowcaseBySlug } from '@/lib/github/queries';
 
-export const runtime = 'edge';
-
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const username = searchParams.get('username');
