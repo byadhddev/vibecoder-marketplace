@@ -20,28 +20,30 @@ const playfair = Playfair_Display({
 });
 
 // Inline script to prevent flash of wrong theme
-const themeScript = `(function(){try{var t=localStorage.getItem('vc-theme');var d=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})()`;
+const themeScript = `(function(){try{var t=localStorage.getItem('vc-theme');var d=t==='light'?false:(t==='dark'||true);if(d)document.documentElement.classList.add('dark')}catch(e){document.documentElement.classList.add('dark')}})()`;
 
 export const metadata: Metadata = {
+    metadataBase: new URL('https://vibeminis.byadhd.dev'),
     title: {
-        default: 'VibeCoder — Where Vibe Coders Meet Their Next Build',
-        template: '%s | VibeCoder',
+        default: 'vibeminis — Where Vibe Coders Meet Their Next Build',
+        template: '%s | vibeminis',
     },
-    description: 'The transparent marketplace for AI-native builders and the founders who need them. Showcase real projects, get hired through GitHub Issues, earn transparently.',
+    description: 'The waitlist for AI-native builders. Showcase real projects, get discovered, earn what you deserve.',
     keywords: ['vibe coding', 'AI developer', 'freelance', 'marketplace', 'hire developer', 'showcase', 'portfolio'],
     openGraph: {
-        title: 'VibeCoder Marketplace',
-        description: 'The marketplace for vibe coders who build with AI and founders who need it done yesterday.',
+        title: 'vibeminis',
+        description: 'The waitlist for AI-native builders. Get discovered. Land real projects.',
         type: 'website',
-        siteName: 'VibeCoder',
+        siteName: 'vibeminis',
+        url: 'https://vibeminis.byadhd.dev',
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'VibeCoder Marketplace',
-        description: 'Ship Fast. Get Found. Get Paid.',
+        title: 'vibeminis',
+        description: 'Get discovered. Land real projects. Earn what you deserve.',
     },
     robots: { index: true, follow: true },
-    alternates: { canonical: '/' },
+    alternates: { canonical: 'https://vibeminis.byadhd.dev' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -30,15 +30,15 @@ function applyTheme(resolved: 'light' | 'dark') {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [theme, setThemeState] = useState<Theme>('system');
-    const [resolved, setResolved] = useState<'light' | 'dark'>('light');
+    const [theme, setThemeState] = useState<Theme>('dark');
+    const [resolved, setResolved] = useState<'light' | 'dark'>('dark');
 
-    // Init from localStorage
+    // Init from localStorage (default to dark)
     useEffect(() => {
         const stored = localStorage.getItem('vc-theme') as Theme | null;
-        const t = stored || 'system';
+        const t = stored || 'dark';
         setThemeState(t);
-        const r = t === 'system' ? getSystemTheme() : t;
+        const r = t === 'system' ? getSystemTheme() : (t === 'light' ? 'light' : 'dark');
         setResolved(r);
         applyTheme(r);
     }, []);

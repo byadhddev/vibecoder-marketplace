@@ -153,6 +153,14 @@ h1, h2, h3, h4, h5, h6 {
    CUSTOM SCROLLBAR
    ============================================================================= */
 
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
