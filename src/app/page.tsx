@@ -144,9 +144,11 @@ export default function LandingPage() {
     const [hovered, setHovered] = useState(false);
     const [founderVibed, setFounderVibed] = useState(false);
     const [founderHovered, setFounderHovered] = useState(false);
+    const [openSection, setOpenSection] = useState<string | null>(null);
     const isVibe = vibeLocked || hovered;
     const isFounderVibe = isVibe || founderVibed || founderHovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
+    const toggleSection = useCallback((id: string) => setOpenSection(prev => prev === id ? null : id), []);
 
     useEffect(() => {
         fetch('/api/waitlist')
@@ -230,9 +232,45 @@ export default function LandingPage() {
                 </section>
 
                 {/* ══════════════════════════════════════════════
-                   THE PROBLEM
+                   SECTION NAV — click to expand
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
+                <nav className="mb-16 md:mb-24">
+                    <div className={GRID}>
+                        {[
+                            { id: 'problem', label: 'The Problem' },
+                            { id: 'value', label: 'For Builders & Seekers' },
+                            { id: 'how', label: 'How It Works' },
+                            { id: 'philosophy', label: 'Our Philosophy' },
+                            { id: 'founder', label: 'Vibeloper' },
+                            { id: 'features', label: 'Platform Features' },
+                            { id: 'cta', label: 'Join Waitlist' },
+                        ].map((s, i) => (
+                            <button
+                                key={s.id}
+                                onClick={() => toggleSection(s.id)}
+                                className={`col-span-1 p-4 md:p-5 flex items-center justify-between gap-2 transition-all duration-300 text-left ${
+                                    openSection === s.id
+                                        ? 'bg-vc-dark text-[var(--vc-dark-text-strong)]'
+                                        : 'bg-vc-surface hover:bg-vc-surface-raised text-vc-text-secondary hover:text-vc-text'
+                                }`}
+                                style={isVibe && openSection === s.id ? { background: darkBg(i) } : isVibe ? { background: bg(i) } : undefined}
+                            >
+                                <span className="text-[9px] font-mono uppercase tracking-[0.12em] leading-tight">{s.label}</span>
+                                <span className={`text-[10px] font-mono transition-transform duration-300 ${openSection === s.id ? 'rotate-45' : ''}`}>+</span>
+                            </button>
+                        ))}
+                        <div className="col-span-1 bg-vc-surface-raised p-4 flex items-center justify-center">
+                            <span className="text-[8px] font-mono uppercase tracking-[0.15em] text-vc-text-muted">{openSection ? 'Click to collapse' : 'Click to explore'}</span>
+                        </div>
+                    </div>
+                </nav>
+
+                {/* ══════════════════════════════════════════════
+                   THE PROBLEM — collapsible
+                   ══════════════════════════════════════════════ */}
+                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'problem' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden">
+                <section>
                     <FadeIn>
                         <div className={GRID}>
                             <div
@@ -260,11 +298,15 @@ export default function LandingPage() {
                         </div>
                     </FadeIn>
                 </section>
+                    </div>
+                </div>
 
                 {/* ══════════════════════════════════════════════
-                   FOR BUILDERS & SEEKERS
+                   FOR BUILDERS & SEEKERS — collapsible
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
+                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'value' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden">
+                <section>
                     <div className={GRID}>
                         <FadeIn className="contents" delay={0}>
                             <div
@@ -342,11 +384,15 @@ export default function LandingPage() {
                         </FadeIn>
                     </div>
                 </section>
+                    </div>
+                </div>
 
                 {/* ══════════════════════════════════════════════
-                   HOW IT WORKS
+                   HOW IT WORKS — collapsible
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
+                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'how' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden">
+                <section>
                     <FadeIn>
                         <div className="text-center mb-10">
                             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-vc-text-secondary">How It Works</span>
@@ -389,11 +435,15 @@ export default function LandingPage() {
                         </FadeIn>
                     </div>
                 </section>
+                    </div>
+                </div>
 
                 {/* ══════════════════════════════════════════════
-                   PHILOSOPHY
+                   PHILOSOPHY — collapsible
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
+                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'philosophy' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden">
+                <section>
                     <FadeIn>
                         <div
                             className="py-16 md:py-24 flex flex-col items-center text-center border-y transition-colors duration-300"
@@ -413,11 +463,15 @@ export default function LandingPage() {
                         </div>
                     </FadeIn>
                 </section>
+                    </div>
+                </div>
 
                 {/* ══════════════════════════════════════════════
-                   MEET THE VIBELOPER
+                   MEET THE VIBELOPER — collapsible
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
+                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'founder' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden">
+                <section>
                     <FadeIn>
                         <div className="flex items-center gap-3 mb-6">
                             <span className={`text-xl font-normal font-mono transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-muted'}`} style={isFounderVibe ? fText(1) : undefined}>#</span>
@@ -546,11 +600,15 @@ export default function LandingPage() {
                         </div>
                     </FadeIn>
                 </section>
+                    </div>
+                </div>
 
                 {/* ══════════════════════════════════════════════
-                   PLATFORM FEATURES
+                   PLATFORM FEATURES — collapsible
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
+                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'features' ? 'grid-rows-[1fr] opacity-100 mb-24 md:mb-36' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden">
+                <section>
                     <FadeIn>
                         <div className="text-center mb-10">
                             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-vc-text-secondary">Platform Features</span>
@@ -577,11 +635,15 @@ export default function LandingPage() {
                         ))}
                     </div>
                 </section>
+                    </div>
+                </div>
 
                 {/* ══════════════════════════════════════════════
-                   FINAL CTA
+                   FINAL CTA — collapsible
                    ══════════════════════════════════════════════ */}
-                <section className="mb-20">
+                <div className={`grid transition-all duration-500 ease-in-out ${openSection === 'cta' ? 'grid-rows-[1fr] opacity-100 mb-20' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden">
+                <section>
                     <FadeIn>
                         <div className={GRID}>
                             {/* Signature tile */}
@@ -621,6 +683,8 @@ export default function LandingPage() {
                         </div>
                     </FadeIn>
                 </section>
+                    </div>
+                </div>
 
                 {/* ── Footer ───────────────────────────────── */}
                 <footer className="pt-8 border-t border-vc-border text-vc-text-secondary text-sm flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 pb-8">
