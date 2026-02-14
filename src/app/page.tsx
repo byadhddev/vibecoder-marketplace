@@ -140,6 +140,8 @@ export default function LandingPage() {
     const [hovered, setHovered] = useState(false);
     const isVibe = vibeLocked || hovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
+    const heroRef = useRef<HTMLElement>(null);
+    const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
 
     useEffect(() => {
         fetch('/api/waitlist')
@@ -186,8 +188,26 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    HERO — Tile grid with artode toggle
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
-                    <div className={GRID}>
+                <section
+                    ref={heroRef}
+                    className="mb-24 md:mb-36 relative"
+                    onMouseMove={(e) => {
+                        const rect = heroRef.current?.getBoundingClientRect();
+                        if (!rect) return;
+                        setMousePos({
+                            x: ((e.clientX - rect.left) / rect.width) * 100,
+                            y: ((e.clientY - rect.top) / rect.height) * 100,
+                        });
+                    }}
+                >
+                    {/* Subtle mouse-following glow */}
+                    <div
+                        className="absolute -inset-8 pointer-events-none rounded-2xl"
+                        style={{
+                            background: `radial-gradient(600px circle at ${mousePos.x}% ${mousePos.y}%, ${isVibe ? `${pal(0)}12` : 'rgba(216,0,24,0.03)'} 0%, transparent 60%)`,
+                        }}
+                    />
+                    <div className={`${GRID} relative z-[1]`}>
                         {/* Artode toggle */}
                         <div
                             className={`col-span-1 aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-[#D80018]/50' : ''}`}
