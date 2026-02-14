@@ -146,7 +146,7 @@ export default function ExploreClient({ initialData }: {
         const palColor = palette[index % palette.length];
         const dynBg = `radial-gradient(circle at center, ${palColor}26 0%, rgba(255,255,255,0) 70%)`;
         const dynTextStyle = { color: palColor };
-        const bg = isVibe ? dynBg : 'white';
+        const bg = isVibe ? dynBg : 'var(--vc-surface)';
 
         switch (tile.variant) {
             case 'artode':

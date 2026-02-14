@@ -95,7 +95,7 @@ export default function HomeClient({ initialVibelopers }: {
         // Determine readable text class for this palette color
         const dynTextStyle = { color: palColor };
 
-        const bg = isVibe ? dynBg : 'white';
+        const bg = isVibe ? dynBg : 'var(--vc-surface)';
 
         switch (tile.variant) {
             case 'artode':

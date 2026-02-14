@@ -272,7 +272,7 @@ export default function ManagerPage() {
 
     function renderTile(tile: Tile, index: number) {
         const vt = vibeText(index);
-        const bg = isVibe ? vibeColor(index) : 'white';
+        const bg = isVibe ? vibeColor(index) : 'var(--vc-surface)';
 
         switch (tile.variant) {
             case 'artode':

@@ -125,7 +125,7 @@ export function AdminDashboard() {
                     {/* Stat tiles */}
                     {statTiles.map((s) => (
                         <div key={s.label} className="col-span-1 p-4 flex flex-col items-center justify-center min-h-[100px] transition-all duration-300"
-                            style={{ background: isVibe ? `radial-gradient(circle, ${s.accent}15 0%, white 70%)` : 'white' }}>
+                            style={{ background: isVibe ? `radial-gradient(circle, ${s.accent}15 0%, var(--vc-surface) 70%)` : 'var(--vc-surface)' }}>
                             <span className="text-2xl font-bold font-mono transition-colors" style={{ color: isVibe ? s.accent : 'var(--vc-text)' }}>
                                 {s.value.toLocaleString()}
                             </span>

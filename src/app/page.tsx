@@ -69,7 +69,7 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
                     onChange={e => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
-                    className="flex-1 px-4 py-3 border border-vc-border-subtle bg-vc-surface text-sm font-mono text-vc-text placeholder:text-[#c8c6c4] focus:outline-none focus:border-[#D80018] focus:ring-1 focus:ring-[#D80018]/20 transition-all duration-300"
+                    className="flex-1 px-4 py-3 border border-vc-border-subtle bg-vc-surface text-sm font-mono text-vc-text placeholder:text-vc-text-secondary focus:outline-none focus:border-[#D80018] focus:ring-1 focus:ring-[#D80018]/20 transition-all duration-300"
                     disabled={state === 'loading'}
                 />
                 <button
@@ -153,12 +153,12 @@ export default function LandingPage() {
 
     // Per-tile vibe style helpers
     function pal(index: number) { return VIBE_COLORS[index % VIBE_COLORS.length]; }
-    function bg(index: number) { return isVibe ? vibeGradient(pal(index)) : 'white'; }
+    function bg(index: number) { return isVibe ? vibeGradient(pal(index)) : 'var(--vc-surface)'; }
     function darkBg(index: number) { return isVibe ? vibeGradient(pal(index)) : 'var(--vc-dark)'; }
     function textStyle(index: number) { return isVibe ? { color: pal(index) } : undefined; }
 
     // Founder section helpers — respond to avatar hover/click OR global vibe
-    function fBg(index: number) { return isFounderVibe ? vibeGradient(pal(index)) : 'white'; }
+    function fBg(index: number) { return isFounderVibe ? vibeGradient(pal(index)) : 'var(--vc-surface)'; }
     function fText(index: number) { return isFounderVibe ? { color: pal(index) } : undefined; }
 
     return (

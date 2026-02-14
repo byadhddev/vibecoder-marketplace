@@ -27,7 +27,7 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
 
     const dynBg = `radial-gradient(circle at center, ${palColor}26 0%, rgba(255,255,255,0) 70%)`;
     const dynTextStyle = { color: palColor };
-    const bg = isVibe ? dynBg : 'white';
+    const bg = isVibe ? dynBg : 'var(--vc-surface)';
     const accentBg = isVibe ? dynBg : 'var(--vc-dark)';
     const accentTextCls = isVibe ? '' : 'text-white';
 
