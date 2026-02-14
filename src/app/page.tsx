@@ -19,7 +19,7 @@ interface VibeloperSummary {
     showcase_count: number;
 }
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'signature' | 'philosophy' | 'filler' | 'vibeloper';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'signature' | 'philosophy' | 'filler' | 'vibeloper' | 'cta-builder' | 'cta-seeker';
 
 interface Tile {
     id: string;
@@ -34,9 +34,11 @@ function buildTiles(vibelopers: VibeloperSummary[]): Tile[] {
         { id: 'artode', colSpan: 'col-span-1', variant: 'artode' },
         { id: 'title', colSpan: 'col-span-2 md:col-span-2', variant: 'title' },
         { id: 'counter', colSpan: 'col-span-1', variant: 'counter' },
+        { id: 'cta-builder', colSpan: 'col-span-2 md:col-span-2', variant: 'cta-builder' },
+        { id: 'cta-seeker', colSpan: 'col-span-2 md:col-span-2', variant: 'cta-seeker' },
         { id: 'status', colSpan: 'col-span-1', variant: 'status' },
-        { id: 'signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
         { id: 'philosophy', colSpan: 'col-span-2 md:col-span-2', variant: 'philosophy' },
+        { id: 'signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
         { id: 'filler', colSpan: 'col-span-1', variant: 'filler' },
     ];
     const vibeloperTiles: Tile[] = vibelopers.map(v => ({
@@ -109,7 +111,7 @@ export default function HomePage() {
                         style={{ background: isVibe ? dynBg : '#242423' }}
                     >
                         <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/40'}`} style={isVibe ? dynTextStyle : undefined}>VibeCoder</span>
-                        <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? '' : 'text-white'}`} style={isVibe ? dynTextStyle : undefined}>Marketplace</span>
+                        <span className={`text-lg md:text-xl font-serif leading-tight transition-colors duration-300 ${isVibe ? '' : 'text-white'}`} style={isVibe ? dynTextStyle : undefined}>Ship Fast. Get Found. Get Paid.</span>
                     </div>
                 );
             case 'counter':
@@ -139,8 +141,32 @@ export default function HomePage() {
                 return (
                     <div className={`${tile.colSpan} p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
                         <p className={`text-[13px] leading-relaxed font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] opacity-70'}`} style={isVibe ? dynTextStyle : undefined}>
-                            Plug-and-play portfolios. Showcase your work from anywhere.
+                            Every token burned should build something someone needs.
                         </p>
+                    </div>
+                );
+            case 'cta-builder':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-2 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>For Builders</span>
+                        <p className={`text-[13px] leading-relaxed font-serif transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            Your showcases are your storefront. Set your rate, prove your speed, get discovered.
+                        </p>
+                        <Link href="/manager" className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-3 transition-colors ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            Showcase Your Work →
+                        </Link>
+                    </div>
+                );
+            case 'cta-seeker':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-2 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>For Seekers</span>
+                        <p className={`text-[13px] leading-relaxed font-serif transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            Browse real projects, not PDF portfolios. See how fast they build. Hire with confidence.
+                        </p>
+                        <Link href="/explore" className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-3 transition-colors ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            Find a Builder →
+                        </Link>
                     </div>
                 );
             case 'filler':
