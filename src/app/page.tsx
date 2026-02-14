@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { RotatingWord, LiveGrid, FloatingParticles, StatPill } from '@/components/hero/HeroAnimations';
-import { MagnetLines } from '@/components/hero/MagnetLines';
 
 /* ─── Vibe Palette ───────────────────────────────────────── */
 const VIBE_COLORS = ['#B3201F', '#122BB2', '#a16207', '#dc2626', '#1e40af'];
@@ -183,17 +182,14 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen w-full bg-vc-bg text-vc-text relative transition-colors">
-            {/* MagnetLines full-page background */}
-            <div className="fixed inset-0 pointer-events-none opacity-90 z-0">
-                <MagnetLines
-                    rows={96}
-                    cols={64}
-                    lineColor={isVibe ? pal(0) : 'var(--vc-magnet-line)'}
-                    lineWidth={0.2}
-                    lineLength={4}
-                    baseAngle={0}
-                />
-            </div>
+            {/* Background grid pattern */}
+            <div
+                className="fixed inset-0 pointer-events-none opacity-[0.4]"
+                style={{
+                    backgroundImage: 'linear-gradient(var(--vc-border) 1px, transparent 1px), linear-gradient(90deg, var(--vc-border) 1px, transparent 1px)',
+                    backgroundSize: '24px 24px',
+                }}
+            />
 
             <div className="relative mx-auto max-w-[900px] px-6 py-8 md:px-20 md:py-16 bg-vc-surface min-h-screen shadow-[0_0_50px_-12px_rgba(0,0,0,0.08)] border-x border-vc-border">
 
