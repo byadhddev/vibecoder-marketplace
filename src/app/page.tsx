@@ -93,79 +93,9 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
 }
 
 /* ─────────────────────────────────────────────────────────
-   SCROLL REVEAL — Grid-aware tile entrance system
+   SCROLL FADE
    ───────────────────────────────────────────────────────── */
-
-// Entrance directions tiles can arrive from
-const ENTRANCES: Array<{ x: number; y: number; rotate: number; scale: number }> = [
-    { x: -40, y: 30, rotate: -3, scale: 0.92 },    // slide from left
-    { x: 40, y: 20, rotate: 2, scale: 0.9 },       // slide from right
-    { x: 0, y: 50, rotate: 0, scale: 0.88 },       // rise from below
-    { x: -30, y: -30, rotate: -2, scale: 0.93 },   // drop from top-left
-    { x: 30, y: -20, rotate: 3, scale: 0.91 },     // drop from top-right
-    { x: -50, y: 0, rotate: -4, scale: 0.85 },     // fly from far left
-    { x: 50, y: 0, rotate: 4, scale: 0.85 },       // fly from far right
-    { x: 0, y: 60, rotate: 1, scale: 0.8 },        // rise from deep below
-];
-
-function getEntrance(index: number) {
-    return ENTRANCES[index % ENTRANCES.length];
-}
-
-/** Observes a container, reveals children tiles with staggered entrances */
-function useGridReveal(tileCount: number) {
-    const ref = useRef<HTMLDivElement>(null);
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-        const observer = new IntersectionObserver(
-            ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-            { threshold: 0.08, rootMargin: '0px 0px -40px 0px' },
-        );
-        observer.observe(el);
-        return () => observer.disconnect();
-    }, []);
-
-    return { ref, isVisible };
-}
-
-/** Wraps a tile grid — each direct child tile animates in */
-function RevealGrid({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-    const childArray = Array.isArray(children) ? children : [children];
-    const { ref, isVisible } = useGridReveal(childArray.length);
-
-    return (
-        <div ref={ref} className={className}>
-            {childArray.map((child, i) => {
-                const entrance = getEntrance(i);
-                const stagger = 60 + i * 70; // ms between each tile
-                return (
-                    <div
-                        key={i}
-                        className="transition-all ease-out contents-none"
-                        style={{
-                            transitionProperty: 'opacity, transform',
-                            transitionDuration: '600ms',
-                            transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
-                            transitionDelay: isVisible ? `${stagger}ms` : '0ms',
-                            opacity: isVisible ? 1 : 0,
-                            transform: isVisible
-                                ? 'translate(0, 0) rotate(0deg) scale(1)'
-                                : `translate(${entrance.x}px, ${entrance.y}px) rotate(${entrance.rotate}deg) scale(${entrance.scale})`,
-                        }}
-                    >
-                        {child}
-                    </div>
-                );
-            })}
-        </div>
-    );
-}
-
-/** Simple section-level fade for non-grid content */
-function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+function useScrollFade() {
     const ref = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -180,6 +110,11 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
         return () => observer.disconnect();
     }, []);
 
+    return { ref, isVisible };
+}
+
+function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+    const { ref, isVisible } = useScrollFade();
     return (
         <div
             ref={ref}
@@ -252,7 +187,7 @@ export default function LandingPage() {
                    HERO — Tile grid with artode toggle
                    ══════════════════════════════════════════════ */}
                 <section className="mb-24 md:mb-36">
-                    <RevealGrid className={GRID}>
+                    <div className={GRID}>
                         {/* Artode toggle */}
                         <div
                             className={`col-span-1 aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-[#D80018]/50' : ''}`}
@@ -343,18 +278,19 @@ export default function LandingPage() {
                             className="col-span-1 min-h-[70px] transition-all duration-300"
                             style={{ backgroundColor: isVibe ? `${pal(0)}1A` : '#f0f0ef' }}
                         />
-                    </RevealGrid>
+                    </div>
                 </section>
 
                 {/* ══════════════════════════════════════════════
                    THE PROBLEM
                    ══════════════════════════════════════════════ */}
                 <section className="mb-24 md:mb-36">
-                    <RevealGrid className={GRID}>
-                        <div
-                            className="col-span-2 md:col-span-4 p-8 md:p-12 flex flex-col justify-center min-h-[200px] transition-all duration-300"
-                            style={{ background: darkBg(2) }}
-                        >
+                    <FadeIn>
+                        <div className={GRID}>
+                            <div
+                                className="col-span-2 md:col-span-4 p-8 md:p-12 flex flex-col justify-center min-h-[200px] transition-all duration-300"
+                                style={{ background: darkBg(2) }}
+                            >
                                 <span
                                     className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-4 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/30'}`}
                                     style={isVibe ? textStyle(3) : undefined}
@@ -372,19 +308,21 @@ export default function LandingPage() {
                                     Vibe coding is powerful — but without direction, it&apos;s just expensive experimentation.
                                     We connect builders who ship with people who need things built.
                                 </p>
+                            </div>
                         </div>
-                    </RevealGrid>
+                    </FadeIn>
                 </section>
 
                 {/* ══════════════════════════════════════════════
                    FOR BUILDERS & SEEKERS
                    ══════════════════════════════════════════════ */}
                 <section className="mb-24 md:mb-36">
-                    <RevealGrid className={GRID}>
-                        <div
-                            className="col-span-2 p-6 md:p-8 flex flex-col justify-between min-h-[240px] transition-all duration-300"
-                            style={{ background: bg(0) }}
-                        >
+                    <div className={GRID}>
+                        <FadeIn className="contents" delay={0}>
+                            <div
+                                className="col-span-2 p-6 md:p-8 flex flex-col justify-between min-h-[240px] transition-all duration-300"
+                                style={{ background: bg(0) }}
+                            >
                                 <div>
                                     <span
                                         className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 block transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
@@ -415,43 +353,46 @@ export default function LandingPage() {
                                         </span>
                                     ))}
                                 </div>
-                        </div>
-                        <div
-                            className="col-span-2 p-6 md:p-8 flex flex-col justify-between min-h-[240px] transition-all duration-300"
-                            style={{ background: bg(1) }}
-                        >
-                            <div>
-                                <span
-                                    className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 block transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
-                                    style={textStyle(1)}
-                                >For Seekers</span>
-                                <h2
-                                    className={`text-2xl md:text-3xl font-serif leading-tight mb-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`}
-                                    style={textStyle(1)}
-                                >
-                                    Proof,<br />not promises.
-                                </h2>
-                                <p
-                                    className={`text-sm leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`}
-                                    style={isVibe ? textStyle(3) : undefined}
-                                >
-                                    Browse real projects, not PDF portfolios. See how fast they build, what tools they use,
-                                    what others say. Hire with confidence — every interaction is a public record.
-                                </p>
                             </div>
-                            <div className="mt-6 flex flex-wrap gap-2">
-                                {['Browse Builders', 'See Real Work', 'Transparent Hiring', 'Open Reviews'].map((tag, i) => (
+                        </FadeIn>
+                        <FadeIn className="contents" delay={150}>
+                            <div
+                                className="col-span-2 p-6 md:p-8 flex flex-col justify-between min-h-[240px] transition-all duration-300"
+                                style={{ background: bg(1) }}
+                            >
+                                <div>
                                     <span
-                                        key={tag}
-                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-[#e7e5e4] text-[#78716c]'}`}
-                                        style={isVibe ? { color: pal((i + 2) % VIBE_COLORS.length) } : undefined}
+                                        className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 block transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
+                                        style={textStyle(1)}
+                                    >For Seekers</span>
+                                    <h2
+                                        className={`text-2xl md:text-3xl font-serif leading-tight mb-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`}
+                                        style={textStyle(1)}
                                     >
-                                        {tag}
-                                    </span>
-                                ))}
+                                        Proof,<br />not promises.
+                                    </h2>
+                                    <p
+                                        className={`text-sm leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`}
+                                        style={isVibe ? textStyle(3) : undefined}
+                                    >
+                                        Browse real projects, not PDF portfolios. See how fast they build, what tools they use,
+                                        what others say. Hire with confidence — every interaction is a public record.
+                                    </p>
+                                </div>
+                                <div className="mt-6 flex flex-wrap gap-2">
+                                    {['Browse Builders', 'See Real Work', 'Transparent Hiring', 'Open Reviews'].map((tag, i) => (
+                                        <span
+                                            key={tag}
+                                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-[#e7e5e4] text-[#78716c]'}`}
+                                            style={isVibe ? { color: pal((i + 2) % VIBE_COLORS.length) } : undefined}
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    </RevealGrid>
+                        </FadeIn>
+                    </div>
                 </section>
 
                 {/* ══════════════════════════════════════════════
@@ -463,39 +404,42 @@ export default function LandingPage() {
                             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#9b9a97]">How It Works</span>
                         </div>
                     </FadeIn>
-                    <RevealGrid className={GRID}>
+                    <div className={GRID}>
                         {[
                             { step: '01', title: 'Create Your Profile', desc: 'Sign in with GitHub. Your data lives on your own branch — you own it completely.', detail: 'GitHub-backed identity' },
                             { step: '02', title: 'Showcase Real Projects', desc: 'Add live demos, build hours, AI tools used. Every showcase is verifiable proof.', detail: 'Live demos + metrics' },
                             { step: '03', title: 'Get Hired Transparently', desc: 'Hire requests are GitHub Issues. Reviews are public. Everything is auditable.', detail: 'Open GitHub Issues' },
                         ].map((item, i) => (
-                            <div
-                                key={item.step}
-                                className={`${i < 2 ? 'col-span-1' : 'col-span-2 md:col-span-2'} p-6 md:p-8 flex flex-col min-h-[200px] transition-all duration-300`}
-                                style={{ background: bg(i) }}
-                            >
-                                <span
-                                    className={`text-[32px] md:text-[40px] font-serif leading-none mb-4 transition-colors duration-300 ${isVibe ? 'opacity-30' : 'text-[#ededeb]'}`}
-                                    style={isVibe ? textStyle(i) : undefined}
-                                >{item.step}</span>
-                                <h3
-                                    className={`text-base md:text-lg font-serif mb-2 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`}
-                                    style={textStyle(i)}
-                                >{item.title}</h3>
-                                <p className={`text-[13px] leading-relaxed flex-1 transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{item.desc}</p>
-                                <span
-                                    className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
-                                    style={textStyle(i)}
-                                >{item.detail}</span>
-                            </div>
+                            <FadeIn key={item.step} className="contents" delay={i * 100}>
+                                <div
+                                    className={`${i < 2 ? 'col-span-1' : 'col-span-2 md:col-span-2'} p-6 md:p-8 flex flex-col min-h-[200px] transition-all duration-300`}
+                                    style={{ background: bg(i) }}
+                                >
+                                    <span
+                                        className={`text-[32px] md:text-[40px] font-serif leading-none mb-4 transition-colors duration-300 ${isVibe ? 'opacity-30' : 'text-[#ededeb]'}`}
+                                        style={isVibe ? textStyle(i) : undefined}
+                                    >{item.step}</span>
+                                    <h3
+                                        className={`text-base md:text-lg font-serif mb-2 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`}
+                                        style={textStyle(i)}
+                                    >{item.title}</h3>
+                                    <p className={`text-[13px] leading-relaxed flex-1 transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{item.desc}</p>
+                                    <span
+                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
+                                        style={textStyle(i)}
+                                    >{item.detail}</span>
+                                </div>
+                            </FadeIn>
                         ))}
-                        <div
-                            className={`col-span-1 md:col-span-1 flex items-center justify-center p-6 min-h-[200px] transition-all duration-300 ${vibeLocked ? 'ring-2 ring-inset ring-[#D80018]/30' : ''}`}
-                            style={{ background: darkBg(3) }}
-                        >
-                            <div className={`w-8 h-8 transition-all duration-300 ${isVibe ? 'bg-[#D80018] scale-105' : 'bg-[#D80018]'}`} />
-                        </div>
-                    </RevealGrid>
+                        <FadeIn className="contents" delay={300}>
+                            <div
+                                className={`col-span-1 md:col-span-1 flex items-center justify-center p-6 min-h-[200px] transition-all duration-300 ${vibeLocked ? 'ring-2 ring-inset ring-[#D80018]/30' : ''}`}
+                                style={{ background: darkBg(3) }}
+                            >
+                                <div className={`w-8 h-8 transition-all duration-300 ${isVibe ? 'bg-[#D80018] scale-105' : 'bg-[#D80018]'}`} />
+                            </div>
+                        </FadeIn>
+                    </div>
                 </section>
 
                 {/* ══════════════════════════════════════════════
@@ -526,7 +470,8 @@ export default function LandingPage() {
                    TRUST & TRANSPARENCY
                    ══════════════════════════════════════════════ */}
                 <section className="mb-24 md:mb-36">
-                    <RevealGrid className={GRID}>
+                    <FadeIn>
+                        <div className={GRID}>
                             <div className="col-span-2 md:col-span-2 p-6 md:p-8 flex flex-col min-h-[180px] transition-all duration-300" style={{ background: bg(3) }}>
                                 <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? textStyle(4) : undefined}>Built on GitHub</span>
                                 <h3 className={`text-lg md:text-xl font-serif mb-2 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`} style={textStyle(3)}>Fully auditable. No black boxes.</h3>
@@ -545,7 +490,8 @@ export default function LandingPage() {
                                 </svg>
                                 <span className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-2 transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-white/40'}`} style={isVibe ? textStyle(2) : undefined}>Powered by</span>
                             </div>
-                    </RevealGrid>
+                        </div>
+                    </FadeIn>
                 </section>
 
                 {/* ══════════════════════════════════════════════
@@ -557,7 +503,7 @@ export default function LandingPage() {
                             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#9b9a97]">Platform Features</span>
                         </div>
                     </FadeIn>
-                    <RevealGrid className={GRID}>
+                    <div className={GRID}>
                         {[
                             { icon: '◈', title: 'Vibe Tiles', desc: 'Beautiful, unique tile layouts for every builder profile' },
                             { icon: '◉', title: 'Verified Badges', desc: 'Fast Shipper, Top Builder, Repeat Hired — earned not bought' },
@@ -568,55 +514,59 @@ export default function LandingPage() {
                             { icon: '◇', title: 'Leaderboard', desc: 'Top builders ranked by showcases, reviews, and earnings' },
                             { icon: '↗', title: 'Onboarding Wizard', desc: 'Guided setup: profile → showcase → rate → publish in minutes' },
                         ].map((feature, i) => (
-                            <div key={feature.title} className="col-span-1 p-5 md:p-6 flex flex-col min-h-[140px] transition-all duration-300" style={{ background: bg(i) }}>
-                                <span className={`text-lg mb-3 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`} style={textStyle(i)}>{feature.icon}</span>
-                                <h4 className={`text-[13px] font-serif mb-1 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`} style={textStyle(i)}>{feature.title}</h4>
-                                <p className={`text-[11px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{feature.desc}</p>
-                            </div>
+                            <FadeIn key={feature.title} className="contents" delay={i * 50}>
+                                <div className="col-span-1 p-5 md:p-6 flex flex-col min-h-[140px] transition-all duration-300" style={{ background: bg(i) }}>
+                                    <span className={`text-lg mb-3 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`} style={textStyle(i)}>{feature.icon}</span>
+                                    <h4 className={`text-[13px] font-serif mb-1 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`} style={textStyle(i)}>{feature.title}</h4>
+                                    <p className={`text-[11px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{feature.desc}</p>
+                                </div>
+                            </FadeIn>
                         ))}
-                    </RevealGrid>
+                    </div>
                 </section>
 
                 {/* ══════════════════════════════════════════════
                    FINAL CTA
                    ══════════════════════════════════════════════ */}
                 <section className="mb-20">
-                    <RevealGrid className={GRID}>
-                        {/* Signature tile */}
-                        <div className="col-span-2 md:col-span-1 p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300" style={{ background: bg(2) }}>
-                            <div className="flex items-center gap-4">
-                                <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? pal(2) : 'rgba(216,0,24,0.3)' }} />
-                                <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={textStyle(2)}>vibecoder.dev</span>
+                    <FadeIn>
+                        <div className={GRID}>
+                            {/* Signature tile */}
+                            <div className="col-span-2 md:col-span-1 p-6 md:p-8 flex items-center min-h-[80px] transition-all duration-300" style={{ background: bg(2) }}>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? pal(2) : 'rgba(216,0,24,0.3)' }} />
+                                    <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={textStyle(2)}>vibecoder.dev</span>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* CTA */}
-                        <div
-                            className="col-span-2 md:col-span-3 p-8 md:p-12 flex flex-col items-center text-center min-h-[280px] justify-center transition-all duration-300"
-                            style={{ background: darkBg(4) }}
-                        >
-                            <span
-                                className={`text-[9px] font-mono uppercase tracking-[0.3em] mb-4 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/30'}`}
-                                style={isVibe ? textStyle(3) : undefined}
-                            >Early Access</span>
-                            <h2
-                                className={`text-2xl md:text-4xl font-serif leading-tight mb-3 transition-colors duration-300 ${isVibe ? '' : 'text-white'}`}
-                                style={textStyle(4)}
+                            {/* CTA */}
+                            <div
+                                className="col-span-2 md:col-span-3 p-8 md:p-12 flex flex-col items-center text-center min-h-[280px] justify-center transition-all duration-300"
+                                style={{ background: darkBg(4) }}
                             >
-                                Be the first to <span className="italic">vibe</span>.
-                            </h2>
-                            <p
-                                className={`text-sm max-w-md mb-8 leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/50'}`}
-                                style={isVibe ? textStyle(1) : undefined}
-                            >
-                                We&apos;re onboarding builders and seekers in small batches.
-                                Join the waitlist to get early access and shape the platform.
-                            </p>
-                            <div className="w-full max-w-md [&_input]:border-white/20 [&_input]:bg-white/5 [&_input]:text-white [&_input]:placeholder:text-white/30 [&_input:focus]:border-[#D80018] [&_input:focus]:ring-[#D80018]/20 [&_span]:text-white/40">
-                                <WaitlistInput count={waitlistCount} variant="bottom" isVibe={isVibe} vibeColor={pal(4)} />
+                                <span
+                                    className={`text-[9px] font-mono uppercase tracking-[0.3em] mb-4 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/30'}`}
+                                    style={isVibe ? textStyle(3) : undefined}
+                                >Early Access</span>
+                                <h2
+                                    className={`text-2xl md:text-4xl font-serif leading-tight mb-3 transition-colors duration-300 ${isVibe ? '' : 'text-white'}`}
+                                    style={textStyle(4)}
+                                >
+                                    Be the first to <span className="italic">vibe</span>.
+                                </h2>
+                                <p
+                                    className={`text-sm max-w-md mb-8 leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/50'}`}
+                                    style={isVibe ? textStyle(1) : undefined}
+                                >
+                                    We&apos;re onboarding builders and seekers in small batches.
+                                    Join the waitlist to get early access and shape the platform.
+                                </p>
+                                <div className="w-full max-w-md [&_input]:border-white/20 [&_input]:bg-white/5 [&_input]:text-white [&_input]:placeholder:text-white/30 [&_input:focus]:border-[#D80018] [&_input:focus]:ring-[#D80018]/20 [&_span]:text-white/40">
+                                    <WaitlistInput count={waitlistCount} variant="bottom" isVibe={isVibe} vibeColor={pal(4)} />
+                                </div>
                             </div>
                         </div>
-                    </RevealGrid>
+                    </FadeIn>
                 </section>
 
                 {/* ── Footer ───────────────────────────────── */}
