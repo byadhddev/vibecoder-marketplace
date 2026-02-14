@@ -9,6 +9,9 @@ out/
 .env
 .env.local
 .env.*.local
+.env.dev
+.env.ppe
+.env.prod
 
 # debug
 npm-debug.log*
