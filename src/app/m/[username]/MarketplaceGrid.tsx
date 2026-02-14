@@ -6,14 +6,13 @@ import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import type { Profile, Showcase } from '@/lib/db/types';
-import { VibeloperCard } from '@/components/card/VibeloperCard';
 import {
     ACCENTS, VIBE_RAW_COLORS,
     randomShuffle, GRID_CLASSES,
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'card';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks';
 
 interface Tile {
     id: string;
@@ -39,7 +38,6 @@ function buildTiles(showcases: Showcase[], username: string, profile: Profile): 
         decorative.push({ id: 'clicks', colSpan: 'col-span-1', variant: 'clicks' });
     }
     decorative.push({ id: 'filler', colSpan: 'col-span-1', variant: 'filler' });
-    decorative.push({ id: 'card', colSpan: 'col-span-2 md:col-span-2', variant: 'card' });
     const showcaseTiles: Tile[] = showcases.map(s => ({
         id: s.id,
         colSpan: 'col-span-2 md:col-span-2',
@@ -209,12 +207,6 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
             case 'filler':
                 return (
                     <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : '#f0f0ef' }} />
-                );
-            case 'card':
-                return (
-                    <div className={`${tile.colSpan} transition-all duration-300`} style={{ background: bg }}>
-                        <VibeloperCard profile={profile} showcases={showcases} compact />
-                    </div>
                 );
             case 'showcase': {
                 const s = tile.showcase!;
