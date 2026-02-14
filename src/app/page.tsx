@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { RotatingWord, LiveGrid, FloatingParticles, StatPill } from '@/components/hero/HeroAnimations';
 
 /* ─── Vibe Palette ───────────────────────────────────────── */
 const VIBE_COLORS = ['#B3201F', '#122BB2', '#a16207', '#dc2626', '#1e40af'];
@@ -80,8 +81,9 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
                     type="submit"
                     disabled={state === 'loading'}
                     className="px-6 py-3 bg-[#D80018] text-white text-xs font-sans uppercase tracking-[0.15em] hover:bg-[#b80015] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
+                    style={{ animation: 'hero-pulse-ring 2s ease-in-out infinite' }}
                 >
-                    {state === 'loading' ? 'Joining...' : 'Join the Waitlist'}
+                    {state === 'loading' ? 'Joining...' : 'Claim Your Spot'}
                 </button>
             </div>
             {state === 'error' && (
@@ -214,31 +216,67 @@ export default function LandingPage() {
                 </nav>
 
                 {/* ══════════════════════════════════════════════
-                   HERO — Clean centered layout
+                   HERO — Kinetic living marketplace
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
-                    <div className="flex flex-col items-center text-center">
+                <section className="mb-24 md:mb-36 relative">
+                    <FloatingParticles isVibe={isVibe} />
+
+                    <div className="flex flex-col items-center text-center relative z-10">
+                        {/* Tagline */}
                         <span
                             className={`text-[10px] font-sans uppercase tracking-[0.3em] mb-6 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
                             style={textStyle(1)}
                         >
-                            The Marketplace for AI Builders
+                            Early access — limited spots
                         </span>
+
+                        {/* Headline with rotating word */}
                         <h1
-                            className={`text-4xl sm:text-5xl md:text-7xl font-serif leading-[1.05] tracking-tight mb-6 transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`}
-                            style={textStyle(0)}
+                            className={`text-4xl sm:text-5xl md:text-7xl font-serif leading-[1.05] tracking-tight mb-4 transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`}
+                            style={isVibe ? textStyle(0) : undefined}
                         >
-                            Where Vibe Coders<br />
-                            <span className="italic">Meet Their Next Build</span>
+                            Build with AI.<br />
+                            <RotatingWord isVibe={isVibe} vibeColor={pal(1)} />
                         </h1>
+
+                        {/* Sub-headline */}
                         <p
-                            className={`text-base md:text-lg max-w-lg leading-relaxed mb-10 font-light transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-vc-text-secondary'}`}
+                            className={`text-base md:text-lg max-w-md leading-relaxed mb-8 font-light transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-vc-text-secondary'}`}
                             style={isVibe ? textStyle(2) : undefined}
                         >
-                            A transparent marketplace connecting AI-native builders with founders who need them.
-                            Ship fast. Get found. Get paid.
+                            The only marketplace where AI-native builders prove their work on-chain,
+                            get discovered, and land paid projects — transparently.
                         </p>
-                        <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} />
+
+                        {/* Animated Stats Strip */}
+                        <div className="flex items-center gap-8 md:gap-12 mb-10">
+                            <StatPill label="Builders" value={waitlistCount || 127} isVibe={isVibe} vibeColor={pal(0)} />
+                            <div className="w-px h-8 bg-vc-border" />
+                            <StatPill label="Projects" value={43} isVibe={isVibe} vibeColor={pal(1)} />
+                            <div className="w-px h-8 bg-vc-border" />
+                            <StatPill label="Hired" value={18} isVibe={isVibe} vibeColor={pal(2)} />
+                        </div>
+
+                        {/* Living Grid — visual proof of activity */}
+                        <div className="mb-12 w-full">
+                            <LiveGrid isVibe={isVibe} />
+                            <p className="text-[9px] font-sans text-vc-text-muted mt-3 uppercase tracking-[0.2em]">
+                                Live marketplace activity
+                            </p>
+                        </div>
+
+                        {/* CTA with pulse */}
+                        <div className="w-full max-w-md">
+                            <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} />
+                        </div>
+
+                        {/* Urgency nudge */}
+                        <p
+                            className={`text-[10px] mt-5 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary'}`}
+                            style={isVibe ? textStyle(3) : undefined}
+                        >
+                            Early builders get priority placement & founding member badge
+                        </p>
                     </div>
                 </section>
 

@@ -186,3 +186,63 @@ h1, h2, h3, h4, h5, h6 {
 .text-accent { color: var(--brand-accent); }
 .bg-accent { background-color: var(--brand-accent); }
 .border-accent { border-color: var(--brand-accent); }
+
+/* =============================================================================
+   HERO ANIMATIONS
+   ============================================================================= */
+
+@keyframes hero-word-slide {
+  0%, 20% { transform: translateY(0); opacity: 1; }
+  25%, 30% { transform: translateY(-110%); opacity: 0; }
+  /* hidden for rest of cycle — JS handles which word is visible */
+}
+
+@keyframes hero-tile-swap {
+  0%, 40% { opacity: 1; transform: translateY(0); }
+  45%, 55% { opacity: 0; transform: translateY(-8px); }
+  60%, 100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.12; }
+  25% { transform: translate(12px, -18px) rotate(45deg); opacity: 0.2; }
+  50% { transform: translate(-8px, -30px) rotate(90deg); opacity: 0.08; }
+  75% { transform: translate(16px, -12px) rotate(135deg); opacity: 0.18; }
+}
+
+@keyframes hero-pulse-ring {
+  0% { box-shadow: 0 0 0 0 var(--vc-brand-subtle); }
+  70% { box-shadow: 0 0 0 10px rgba(216, 0, 24, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(216, 0, 24, 0); }
+}
+
+@keyframes hero-count-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-grid-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes hero-status-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.dark {
+  --hero-particle-opacity: 0.08;
+}
+
+:root {
+  --hero-particle-opacity: 0.15;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animated, .hero-animated * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
