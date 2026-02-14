@@ -404,34 +404,6 @@ export default function LandingPage() {
                 </section>
 
                 {/* ══════════════════════════════════════════════
-                   TRUST & TRANSPARENCY
-                   ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36">
-                    <FadeIn>
-                        <div className={GRID}>
-                            <div className="col-span-2 md:col-span-2 p-6 md:p-8 flex flex-col min-h-[180px] transition-all duration-300" style={{ background: bg(3) }}>
-                                <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-3 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? textStyle(4) : undefined}>Built on GitHub</span>
-                                <h3 className={`text-lg md:text-xl font-serif mb-2 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`} style={textStyle(3)}>Fully auditable. No black boxes.</h3>
-                                <p className={`text-[13px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`} style={isVibe ? textStyle(1) : undefined}>
-                                    Your profile lives on a GitHub branch you control. Hire requests are Issues.
-                                    Reviews are public. We chose radical transparency over convenience.
-                                </p>
-                            </div>
-                            <div className="col-span-1 p-6 md:p-8 flex flex-col items-center justify-center min-h-[180px] transition-all duration-300" style={{ background: bg(4) }}>
-                                <span className={`text-[32px] font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#ededeb]'}`} style={textStyle(4)}>{'{ }'}</span>
-                                <span className="text-[9px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] mt-2">JSON on Git</span>
-                            </div>
-                            <div className="col-span-1 p-6 md:p-8 flex flex-col items-center justify-center min-h-[180px] transition-all duration-300" style={{ background: darkBg(0) }}>
-                                <svg className={`w-8 h-8 transition-colors duration-300 ${isVibe ? '' : 'text-white/60'}`} style={isVibe ? { color: pal(0) } : undefined} fill="currentColor" viewBox="0 0 24 24">
-                                    <path fillRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" clipRule="evenodd" />
-                                </svg>
-                                <span className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-2 transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-white/40'}`} style={isVibe ? textStyle(2) : undefined}>Powered by</span>
-                            </div>
-                        </div>
-                    </FadeIn>
-                </section>
-
-                {/* ══════════════════════════════════════════════
                    PLATFORM FEATURES
                    ══════════════════════════════════════════════ */}
                 <section className="mb-24 md:mb-36">
