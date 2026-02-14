@@ -183,7 +183,7 @@ export default function LandingPage() {
                     <div className="flex items-center gap-3">
                         {/* Artode toggle — click to activate vibe mode */}
                         <div
-                            className={`w-4 h-4 cursor-pointer transition-all duration-300 ${vibeLocked ? 'bg-[#D80018] scale-110 ring-2 ring-[#D80018]/30' : isVibe ? 'bg-[#D80018]' : 'bg-vc-dark'}`}
+                            className={`w-4 h-4 cursor-pointer transition-all duration-300 bg-[var(--vc-brand)] ${vibeLocked ? 'scale-110 ring-2 ring-[var(--vc-brand)]/30' : ''}`}
                             onMouseEnter={() => setHovered(true)}
                             onMouseLeave={() => setHovered(false)}
                             onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
