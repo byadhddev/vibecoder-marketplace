@@ -184,13 +184,13 @@ export default function LandingPage() {
     return (
         <div className="min-h-screen w-full bg-vc-bg text-vc-text relative transition-colors">
             {/* MagnetLines full-page background */}
-            <div className="fixed inset-0 pointer-events-none opacity-60 z-0">
+            <div className="fixed inset-0 pointer-events-none opacity-90 z-0">
                 <MagnetLines
-                    rows={40}
-                    cols={25}
+                    rows={60}
+                    cols={40}
                     lineColor={isVibe ? pal(0) : 'var(--vc-text-muted)'}
                     lineWidth={1}
-                    lineLength={10}
+                    lineLength={8}
                     baseAngle={0}
                 />
             </div>
