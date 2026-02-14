@@ -1,4 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "ignoreCommand": "if [[ \"$VERCEL_GIT_COMMIT_REF\" =~ ^(prod|dev|ppe)/(registry|user/|waitlist) ]]; then exit 0; else exit 1; fi"
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "dev": true,
+      "ppe": true
+    }
+  }
 }
