@@ -121,7 +121,7 @@ export default function ManagerPage() {
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
     const [username, setUsername] = useState<string | undefined>(undefined);
     // Profile state
-    const [profile, setProfile] = useState<ProfileInput>({ name: '', role: '', bio: '', website: '', location: '', social_links: {}, skills: [], available_for_hire: false, hourly_rate: 0, rate_type: 'negotiable' });
+    const [profile, setProfile] = useState<ProfileInput>({ name: '', role: '', bio: '', website: '', location: '', social_links: {}, skills: [], available_for_hire: false, hourly_rate: 0, rate_type: 'negotiable', email_notifications: true });
     const [totalViews, setTotalViews] = useState(0);
     const [savingProfile, setSavingProfile] = useState(false);
     const [profileDirty, setProfileDirty] = useState(false);
@@ -170,6 +170,7 @@ export default function ManagerPage() {
                         available_for_hire: d.profile.available_for_hire || false,
                         hourly_rate: d.profile.hourly_rate || 0,
                         rate_type: d.profile.rate_type || 'negotiable',
+                        email_notifications: d.profile.email_notifications !== false,
                     });
                     setTotalViews(d.profile.total_views || 0);
                     isNewUser = !d.profile.role && (d.profile.skills || []).length === 0;
@@ -426,6 +427,12 @@ export default function ManagerPage() {
                                     <option value="negotiable">negotiable</option>
                                 </select>
                             </div>
+                            <label className="flex items-center gap-3 cursor-pointer mt-1">
+                                <input type="checkbox" checked={profile.email_notifications !== false}
+                                    onChange={e => { setProfile(prev => ({ ...prev, email_notifications: e.target.checked })); setProfileDirty(true); }}
+                                    className="w-3 h-3 accent-brand-red" />
+                                <span className="text-[10px] font-mono text-[#9b9a97]">Email notifications</span>
+                            </label>
                         </div>
                     </div>
                 );

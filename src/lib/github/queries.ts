@@ -105,6 +105,7 @@ export async function createProfile(
         total_clicks: 0,
         total_earned: 0,
         plan: 'free',
+        email_notifications: true,
         created_at: now,
         updated_at: now,
     };

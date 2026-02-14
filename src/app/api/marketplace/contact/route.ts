@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { createHireRequest, getHireRequests, updateHireRequestStatus } from '@/lib/github/issues';
 import { getProfileByUsername } from '@/lib/github/queries';
+import { sendHireRequestNotification } from '@/lib/email/send';
 
 export async function POST(req: NextRequest) {
     const { username, name, email, description, budget, timeline } = await req.json();
@@ -9,12 +10,20 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'username, name, email, description required' }, { status: 400 });
     }
 
-    // Get builder's skills for labels
     const profile = await getProfileByUsername(username);
     const skills = profile?.skills || [];
 
     const result = await createHireRequest(username, { name, email, description, budget: budget || '', timeline: timeline || '' }, skills);
     if (!result) return NextResponse.json({ error: 'Failed to create request' }, { status: 500 });
+
+    // Send instant email notification (non-blocking)
+    if (profile && profile.email_notifications !== false && process.env.RESEND_API_KEY) {
+        sendHireRequestNotification(
+            `${username}@users.noreply.github.com`,
+            { builderName: profile.name, seekerName: name, description, issueUrl: result.html_url, username },
+        ).catch(() => {});
+    }
+
     return NextResponse.json({ ok: true, issue_number: result.issue_number, html_url: result.html_url });
 }
 

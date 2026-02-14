@@ -29,6 +29,7 @@ export interface Profile {
     total_clicks: number;
     total_earned: number;
     plan: 'free' | 'pro';
+    email_notifications: boolean;
     created_at: string;
     updated_at: string;
 }
@@ -44,6 +45,7 @@ export interface ProfileInput {
     available_for_hire?: boolean;
     hourly_rate?: number;
     rate_type?: 'hourly' | 'project' | 'negotiable';
+    email_notifications?: boolean;
 }
 
 export interface Showcase {
