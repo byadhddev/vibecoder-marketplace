@@ -168,9 +168,15 @@ export default function LandingPage() {
             <div className="relative mx-auto max-w-[900px] px-6 py-8 md:px-20 md:py-16 bg-white min-h-screen shadow-[0_0_50px_-12px_rgba(0,0,0,0.08)] border-x border-[#ededeb]">
 
                 {/* ── Nav ─────────────────────────────────── */}
-                <nav className="flex items-center justify-between mb-12 md:mb-16">
-                    <div className="flex items-center gap-2">
-                        <div className={`w-3 h-3 transition-all duration-300 ${vibeLocked ? 'bg-[#D80018] scale-110' : 'bg-[#D80018]'}`} />
+                <nav className="flex items-center justify-between mb-20 md:mb-32">
+                    <div className="flex items-center gap-3">
+                        {/* Artode toggle — click to activate vibe mode */}
+                        <div
+                            className={`w-4 h-4 cursor-pointer transition-all duration-300 ${vibeLocked ? 'bg-[#D80018] scale-110 ring-2 ring-[#D80018]/30' : isVibe ? 'bg-[#D80018]' : 'bg-[#242423]'}`}
+                            onMouseEnter={() => setHovered(true)}
+                            onMouseLeave={() => setHovered(false)}
+                            onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
+                        />
                         <span className="text-sm font-serif italic transition-colors duration-300" style={isVibe ? { color: pal(0) } : { color: '#37352f' }}>VibeCoder</span>
                     </div>
                     <div className="flex items-center gap-4">
@@ -184,100 +190,31 @@ export default function LandingPage() {
                 </nav>
 
                 {/* ══════════════════════════════════════════════
-                   HERO — Tile grid with artode toggle
+                   HERO — Clean centered layout
                    ══════════════════════════════════════════════ */}
                 <section className="mb-24 md:mb-36">
-                    <div className={GRID}>
-                        {/* Artode toggle */}
-                        <div
-                            className={`col-span-1 aspect-square flex items-center justify-center cursor-pointer transition-all duration-300 bg-[#242423] ${vibeLocked ? 'ring-2 ring-inset ring-[#D80018]/50' : ''}`}
-                            onMouseEnter={() => setHovered(true)}
-                            onMouseLeave={() => setHovered(false)}
-                            onClick={(e) => { e.stopPropagation(); toggleVibe(); }}
+                    <div className="flex flex-col items-center text-center">
+                        <span
+                            className={`text-[10px] font-mono uppercase tracking-[0.3em] mb-6 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
+                            style={textStyle(1)}
                         >
-                            <div className={`w-10 h-10 transition-all duration-300 ${vibeLocked ? 'bg-[#D80018] scale-110' : isVibe ? 'bg-[#D80018] scale-105' : 'bg-white'}`} />
-                        </div>
-
-                        {/* Hero headline */}
-                        <div
-                            className="col-span-1 md:col-span-3 p-6 md:p-10 flex flex-col justify-center min-h-[200px] md:min-h-[260px] transition-all duration-300"
-                            style={{ background: darkBg(0) }}
+                            The Marketplace for AI Builders
+                        </span>
+                        <h1
+                            className={`text-4xl sm:text-5xl md:text-7xl font-serif leading-[1.05] tracking-tight mb-6 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`}
+                            style={textStyle(0)}
                         >
-                            <span
-                                className={`text-[9px] font-mono uppercase tracking-[0.3em] mb-4 transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-white/30'}`}
-                                style={isVibe ? textStyle(1) : undefined}
-                            >
-                                The Marketplace for AI Builders
-                            </span>
-                            <h1
-                                className={`text-3xl sm:text-4xl md:text-5xl font-serif leading-[1.1] tracking-tight mb-4 transition-colors duration-300 ${isVibe ? '' : 'text-white'}`}
-                                style={isVibe ? textStyle(0) : undefined}
-                            >
-                                Where Vibe Coders<br />
-                                <span className="italic">Meet Their Next Build</span>
-                            </h1>
-                            <p
-                                className={`text-sm max-w-md leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-white/50'}`}
-                                style={isVibe ? textStyle(2) : undefined}
-                            >
-                                A transparent marketplace connecting AI-native builders with founders who need them.
-                            </p>
-                        </div>
-
-                        {/* Waitlist tile */}
-                        <div
-                            className="col-span-2 md:col-span-3 p-6 md:p-8 flex flex-col justify-center min-h-[140px] transition-all duration-300"
-                            style={{ background: bg(3) }}
+                            Where Vibe Coders<br />
+                            <span className="italic">Meet Their Next Build</span>
+                        </h1>
+                        <p
+                            className={`text-base md:text-lg max-w-lg leading-relaxed mb-10 font-light transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`}
+                            style={isVibe ? textStyle(2) : undefined}
                         >
-                            <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} />
-                        </div>
-
-                        {/* Counter tile */}
-                        <div
-                            className="col-span-1 flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300"
-                            style={{ background: bg(4) }}
-                        >
-                            <span
-                                className={`text-3xl font-bold font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`}
-                                style={textStyle(4)}
-                            >
-                                {waitlistCount || '∞'}
-                            </span>
-                            <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Waiting</span>
-                        </div>
-
-                        {/* Tagline tile */}
-                        <div
-                            className="col-span-2 md:col-span-2 p-5 md:p-6 flex items-center min-h-[70px] transition-all duration-300"
-                            style={{ background: bg(1) }}
-                        >
-                            <p
-                                className={`text-[13px] font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] opacity-70'}`}
-                                style={textStyle(1)}
-                            >
-                                Ship fast. Get found. Get paid.
-                            </p>
-                        </div>
-
-                        {/* Status tile */}
-                        <div
-                            className="col-span-1 flex flex-col items-center justify-center p-4 min-h-[70px] transition-all duration-300"
-                            style={{ background: bg(2) }}
-                        >
-                            <span
-                                className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
-                                style={textStyle(2)}
-                            >
-                                Active
-                            </span>
-                            <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mt-1">Feb 2026</span>
-                        </div>
-
-                        {/* Filler */}
-                        <div
-                            className="col-span-1 min-h-[70px] transition-all duration-300"
-                            style={{ backgroundColor: isVibe ? `${pal(0)}1A` : '#f0f0ef' }}
-                        />
+                            A transparent marketplace connecting AI-native builders with founders who need them.
+                            Ship fast. Get found. Get paid.
+                        </p>
+                        <WaitlistInput count={waitlistCount} isVibe={isVibe} vibeColor={pal(3)} />
                     </div>
                 </section>
 
