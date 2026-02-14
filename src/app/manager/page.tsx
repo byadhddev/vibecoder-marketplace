@@ -142,53 +142,47 @@ export default function ManagerPage() {
 
     useEffect(() => {
         if (status !== 'authenticated') return;
-        let showcaseCount = 0;
-        let isNewUser = false;
-        // Fetch showcases
-        fetch('/api/marketplace/showcases')
+        // Fetch showcases + profile in parallel, then decide redirect
+        const showcaseP = fetch('/api/marketplace/showcases')
             .then(r => r.ok ? r.json() : { showcases: [] })
-            .then(d => {
-                setShowcases(d.showcases || []);
-                showcaseCount = (d.showcases || []).length;
-                if (d.username) setUsername(d.username);
-            })
-            .catch(() => {})
-            .finally(() => setLoading(false));
-        // Fetch profile
-        fetch('/api/marketplace/profile')
+            .catch(() => ({ showcases: [] }));
+        const profileP = fetch('/api/marketplace/profile')
             .then(r => r.ok ? r.json() : null)
-            .then(d => {
-                if (d?.profile) {
-                    setProfile({
-                        name: d.profile.name || '',
-                        role: d.profile.role || '',
-                        bio: d.profile.bio || '',
-                        website: d.profile.website || '',
-                        location: d.profile.location || '',
-                        social_links: d.profile.social_links || {},
-                        skills: d.profile.skills || [],
-                        available_for_hire: d.profile.available_for_hire || false,
-                        hourly_rate: d.profile.hourly_rate || 0,
-                        rate_type: d.profile.rate_type || 'negotiable',
-                        email_notifications: d.profile.email_notifications !== false,
-                    });
-                    setTotalViews(d.profile.total_views || 0);
-                    isNewUser = !d.profile.role && (d.profile.skills || []).length === 0;
-                } else {
-                    isNewUser = true;
-                }
-                // Redirect new users to onboarding
-                if (isNewUser && showcaseCount === 0) {
-                    router.push('/manager/onboard');
-                }
-            })
-            .catch(() => {});
-        // Fetch requests
+            .catch(() => null);
+
+        Promise.all([showcaseP, profileP]).then(([sData, pData]) => {
+            const sc = sData.showcases || [];
+            setShowcases(sc);
+            if (sData.username) setUsername(sData.username);
+
+            if (pData?.profile) {
+                setProfile({
+                    name: pData.profile.name || '',
+                    role: pData.profile.role || '',
+                    bio: pData.profile.bio || '',
+                    website: pData.profile.website || '',
+                    location: pData.profile.location || '',
+                    social_links: pData.profile.social_links || {},
+                    skills: pData.profile.skills || [],
+                    available_for_hire: pData.profile.available_for_hire || false,
+                    hourly_rate: pData.profile.hourly_rate || 0,
+                    rate_type: pData.profile.rate_type || 'negotiable',
+                    email_notifications: pData.profile.email_notifications !== false,
+                });
+                setTotalViews(pData.profile.total_views || 0);
+                const isNewUser = !pData.profile.role && (pData.profile.skills || []).length === 0;
+                if (isNewUser && sc.length === 0) router.push('/manager/onboard');
+            } else {
+                if (sc.length === 0) router.push('/manager/onboard');
+            }
+            setLoading(false);
+        });
+
+        // Fetch requests & earnings (independent)
         fetch('/api/marketplace/contact')
             .then(r => r.ok ? r.json() : { requests: [] })
             .then(d => setRequests(d.requests || []))
             .catch(() => {});
-        // Fetch earnings
         fetch('/api/marketplace/earnings')
             .then(r => r.ok ? r.json() : { earnings: [], total: 0 })
             .then(d => { setEarnings(d.earnings || []); setTotalEarned(d.total || 0); })
