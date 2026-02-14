@@ -76,7 +76,23 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
     const [contactForm, setContactForm] = useState({ name: '', email: '', description: '', budget: '', timeline: '' });
     const [contactSending, setContactSending] = useState(false);
     const [contactSent, setContactSent] = useState(false);
+    const [contactIssueUrl, setContactIssueUrl] = useState<string | null>(null);
     const isVibe = vibeLocked || hovered;
+
+    const handleFeedback = async (showcaseSlug: string, showcaseTitle: string) => {
+        const body = window.prompt(`Leave feedback on "${showcaseTitle}":`);
+        if (!body) return;
+        try {
+            const res = await fetch('/api/marketplace/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ builder_username: profile.username, showcase_slug: showcaseSlug, showcase_title: showcaseTitle, body }),
+            });
+            const data = await res.json();
+            if (data.html_url) window.open(data.html_url, '_blank', 'noopener,noreferrer');
+            else if (!res.ok) alert(data.error || 'Sign in to leave feedback');
+        } catch { alert('Failed to submit feedback'); }
+    };
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
 
     useEffect(() => {
@@ -320,22 +336,31 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                     if (!contactForm.name || !contactForm.email || !contactForm.description) return;
                     setContactSending(true);
                     try {
-                        await fetch('/api/marketplace/contact', {
+                        const res = await fetch('/api/marketplace/contact', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ username: profile.username, ...contactForm }),
                         });
+                        const data = await res.json();
                         setContactSent(true);
+                        if (data.html_url) setContactIssueUrl(data.html_url);
                         setContactForm({ name: '', email: '', description: '', budget: '', timeline: '' });
                     } catch {}
                     setContactSending(false);
                 };
                 if (contactSent) {
                     return (
-                        <div className={`${tile.colSpan} p-5 md:p-6 flex items-center justify-center min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col items-center justify-center gap-2 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
                             <span className={`text-[13px] font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
                                 Request sent ✓ — {profile.name} will be in touch.
                             </span>
+                            {contactIssueUrl && (
+                                <a href={contactIssueUrl} target="_blank" rel="noopener noreferrer"
+                                    className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`}
+                                    style={isVibe ? dynTextStyle : undefined}>
+                                    Track on GitHub ↗
+                                </a>
+                            )}
                         </div>
                     );
                 }
@@ -364,6 +389,9 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                                 onChange={e => setContactForm(prev => ({ ...prev, timeline: e.target.value }))}
                                 className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
                         </div>
+                        <span className={`text-[8px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>
+                            ● This request will be public on GitHub for transparency
+                        </span>
                         <button
                             onClick={handleContactSubmit}
                             disabled={contactSending || !contactForm.name || !contactForm.email || !contactForm.description}
@@ -445,6 +473,14 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                                     <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); window.open(s.post_url, '_blank', 'noopener,noreferrer'); }}
                                         className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>Post ↗</button>
                                 )}
+                                <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); handleFeedback(s.slug, s.title); }}
+                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Feedback</button>
+                            </div>
+                        )}
+                        {!(s.source_url || s.post_url) && (
+                            <div className="flex items-center gap-3 mt-2">
+                                <button type="button" onClick={e => { e.stopPropagation(); e.preventDefault(); handleFeedback(s.slug, s.title); }}
+                                    className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Feedback</button>
                             </div>
                         )}
                     </div>

@@ -88,12 +88,12 @@ function buildStatsTiles(showcases: Showcase[], totalViews: number): Tile[] {
     ];
 }
 
-function buildRequestTiles(requests: { id: string; name: string; email: string; description: string; budget: string; timeline: string; status: string; created_at: string; }[]): Tile[] {
-    const active = requests.filter(r => r.status !== 'archived');
+function buildRequestTiles(requests: { issue_number: number; name: string; email: string; description: string; budget: string; timeline: string; status: string; html_url: string; created_at: string; comments: number; }[]): Tile[] {
+    const active = requests.filter(r => r.status !== 'closed');
     if (active.length === 0) return [];
     return [
         { id: 'req-artode', colSpan: 'col-span-1', variant: 'artode' },
-        ...active.map(r => ({ id: `req-${r.id}`, colSpan: 'col-span-2 md:col-span-2' as const, variant: 'request' as const })),
+        ...active.map(r => ({ id: `req-${r.issue_number}`, colSpan: 'col-span-2 md:col-span-2' as const, variant: 'request' as const })),
         { id: 'req-filler', colSpan: 'col-span-1', variant: 'filler' },
     ];
 }
@@ -126,7 +126,7 @@ export default function ManagerPage() {
     const [savingProfile, setSavingProfile] = useState(false);
     const [profileDirty, setProfileDirty] = useState(false);
     // Requests & Earnings
-    interface ContactReq { id: string; name: string; email: string; description: string; budget: string; timeline: string; status: string; created_at: string; }
+    interface ContactReq { issue_number: number; name: string; email: string; description: string; budget: string; timeline: string; status: string; html_url: string; created_at: string; comments: number; seeker_github: string; }
     interface EarningEntry { id: string; amount: number; currency: string; client_name: string; showcase_id: string; note: string; created_at: string; }
     const [requests, setRequests] = useState<ContactReq[]>([]);
     const [earnings, setEarnings] = useState<EarningEntry[]>([]);
@@ -184,9 +184,9 @@ export default function ManagerPage() {
             .catch(() => {});
     }, [status]);
 
-    const handleArchiveRequest = async (id: string) => {
-        await fetch('/api/marketplace/contact', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ request_id: id, status: 'archived' }) });
-        setRequests(prev => prev.filter(r => r.id !== id));
+    const handleArchiveRequest = async (issueNumber: number) => {
+        await fetch('/api/marketplace/contact', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ issue_number: issueNumber, state: 'closed' }) });
+        setRequests(prev => prev.filter(r => r.issue_number !== issueNumber));
     };
     const handleLogEarning = async () => {
         if (!earnForm.amount) return;
@@ -607,15 +607,16 @@ export default function ManagerPage() {
                 );
             }
             case 'request': {
-                const reqId = tile.id.replace('req-', '');
-                const req = requests.find(r => r.id === reqId);
+                const reqNum = parseInt(tile.id.replace('req-', ''));
+                const req = requests.find(r => r.issue_number === reqNum);
                 if (!req) return null;
                 return (
                     <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col gap-2 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[index % ACCENTS.length] }}>Request</span>
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[index % ACCENTS.length] }}>Request #{req.issue_number}</span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[index % ACCENTS.length]}20` }} />
                             <span className={`text-[8px] font-mono uppercase tracking-wider ${isVibe ? `${vt} opacity-40` : 'text-[#9b9a97]'}`}>{new Date(req.created_at).toLocaleDateString()}</span>
+                            {req.comments > 0 && <span className={`text-[8px] font-mono ${isVibe ? `${vt} opacity-40` : 'text-[#9b9a97]'}`}>{req.comments} 💬</span>}
                         </div>
                         <p className={`text-sm font-serif transition-colors duration-300 ${isVibe ? vt : 'text-[#37352f]'}`}>{req.description}</p>
                         <div className="flex items-center gap-4 mt-1">
@@ -624,9 +625,11 @@ export default function ManagerPage() {
                             {req.timeline && <span className={`text-[10px] font-mono ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97]'}`}>Timeline: {req.timeline}</span>}
                         </div>
                         <div className="flex items-center gap-3 mt-2">
-                            <a href={`mailto:${req.email}?subject=Re: Your VibeCoder request`} className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? vt : 'text-brand-red hover:text-[#37352f]'}`}>Reply ↗</a>
+                            <a href={req.html_url} target="_blank" rel="noopener noreferrer" className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? vt : 'text-brand-red hover:text-[#37352f]'}`}>View on GitHub ↗</a>
                             <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : '#ededeb' }} />
-                            <button onClick={() => handleArchiveRequest(req.id)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Archive</button>
+                            <a href={`mailto:${req.email}?subject=Re: Your VibeCoder request`} className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Reply ↗</a>
+                            <div className="w-3 h-px" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}30` : '#ededeb' }} />
+                            <button onClick={() => handleArchiveRequest(req.issue_number)} className={`text-[9px] font-mono uppercase tracking-[0.2em] transition-colors ${isVibe ? `${vt} opacity-60` : 'text-[#9b9a97] hover:text-[#37352f]'}`}>Close</button>
                         </div>
                     </div>
                 );

@@ -29,7 +29,15 @@ interface Builder {
     showcase_count: number;
 }
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'filter' | 'filler' | 'showcase' | 'builder';
+type TileVariant = 'artode' | 'title' | 'counter' | 'filter' | 'filler' | 'showcase' | 'builder' | 'open-requests';
+
+interface HireRequestPreview {
+    issue_number: number;
+    description: string;
+    html_url: string;
+    created_at: string;
+    builder?: string;
+}
 
 interface Tile {
     id: string;
@@ -50,6 +58,7 @@ export default function ExplorePage() {
     const [availableOnly, setAvailableOnly] = useState(false);
     const [viewMode, setViewMode] = useState<'showcases' | 'builders'>('showcases');
     const [shuffledTiles, setShuffledTiles] = useState<Tile[]>([]);
+    const [openRequests, setOpenRequests] = useState<HireRequestPreview[]>([]);
     const [vibeLocked, setVibeLocked] = useState(false);
     const [hovered, setHovered] = useState(false);
     const [avatarColors, setAvatarColors] = useState<Record<string, ExtractedColors>>({});
@@ -76,6 +85,13 @@ export default function ExplorePage() {
     }, [activeTag, activeSkill, availableOnly]);
 
     useEffect(() => {
+        fetch('/api/marketplace/explore/requests')
+            .then(r => r.ok ? r.json() : { requests: [] })
+            .then(d => setOpenRequests(d.requests || []))
+            .catch(() => {});
+    }, []);
+
+    useEffect(() => {
         const users = new Map<string, string>();
         showcases.forEach(s => { if (s._user.avatar_url) users.set(s._user.username, s._user.avatar_url); });
         builders.forEach(b => { if (b.avatar_url) users.set(b.username, b.avatar_url); });
@@ -93,6 +109,9 @@ export default function ExplorePage() {
             { id: 'counter', colSpan: 'col-span-1', variant: 'counter' },
             { id: 'filter', colSpan: 'col-span-2 md:col-span-4', variant: 'filter' },
         ];
+        if (openRequests.length > 0) {
+            decorative.push({ id: 'open-requests', colSpan: 'col-span-2 md:col-span-4', variant: 'open-requests' });
+        }
         if (viewMode === 'builders') {
             const builderTiles: Tile[] = builders.map(b => ({
                 id: `builder-${b.username}`,
@@ -114,7 +133,7 @@ export default function ExplorePage() {
             if (scTiles.length % 2 !== 0) scTiles.push({ id: 'filler', colSpan: 'col-span-2 md:col-span-2', variant: 'filler' });
             setShuffledTiles([...decorative, ...scTiles]);
         }
-    }, [showcases, builders, viewMode]);
+    }, [showcases, builders, viewMode, openRequests]);
 
     function renderTile(tile: Tile, index: number) {
         const extractedHexes = Object.values(avatarColors).flatMap(c => [c.primary, c.secondary]);
@@ -188,6 +207,28 @@ export default function ExplorePage() {
                                     </button>
                                 ))
                             )}
+                        </div>
+                    </div>
+                );
+            case 'open-requests':
+                return (
+                    <div className={`${tile.colSpan} p-4 md:p-5 flex flex-col gap-2 min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : ACCENTS[0] }}>●</span>
+                            <span className={`text-[10px] font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                                {openRequests.length} open hire request{openRequests.length !== 1 ? 's' : ''} right now
+                            </span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${ACCENTS[0]}20` }} />
+                            <span className={`text-[8px] font-mono uppercase tracking-wider ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>Live</span>
+                        </div>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1">
+                            {openRequests.slice(0, 4).map(r => (
+                                <a key={r.issue_number} href={r.html_url} target="_blank" rel="noopener noreferrer"
+                                    className={`text-[9px] font-serif italic transition-colors truncate max-w-[200px] ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-brand-red'}`}
+                                    style={isVibe ? dynTextStyle : undefined}>
+                                    &ldquo;{r.description.slice(0, 50)}{r.description.length > 50 ? '…' : ''}&rdquo;
+                                </a>
+                            ))}
                         </div>
                     </div>
                 );
