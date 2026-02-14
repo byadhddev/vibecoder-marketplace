@@ -97,44 +97,46 @@ export function StaggerIn({ children, delay = 0, className = '' }: {
 }
 
 /* ─── LIVE GRID ────────────────────────────────────────────
-   4×4 tile grid. Avatars fly in one-by-one from off-screen,
-   land in a tile, and vibe it up with color. The grid
-   progressively fills, creating a "marketplace coming alive"
-   feeling.
+   4×3 tile grid inspired by the VibeloperCard layout.
+   Tiles start empty, then builder profiles "arrive" one by
+   one — sliding in from below. Each tile starts grayscale/
+   muted and then vibes up with color (like the studio's
+   avatar → vibe transition). The grid cycles endlessly.
    ───────────────────────────────────────────────────────── */
 
 const VIBE_COLORS = ['#B3201F', '#122BB2', '#a16207', '#dc2626', '#1e40af'];
 
-interface AvatarTile {
+interface Builder {
+  initial: string;
   name: string;
-  avatar: string;
   role: string;
+  bg: string; // dark color for the avatar block
 }
 
-const BUILDERS: AvatarTile[] = [
-  { name: 'sarah.dev', avatar: 'https://i.pravatar.cc/150?img=1', role: 'React' },
-  { name: 'kai.ts', avatar: 'https://i.pravatar.cc/150?img=3', role: 'Rust' },
-  { name: 'luna.rs', avatar: 'https://i.pravatar.cc/150?img=5', role: 'ML' },
-  { name: 'alex.py', avatar: 'https://i.pravatar.cc/150?img=8', role: 'Design' },
-  { name: 'mira.go', avatar: 'https://i.pravatar.cc/150?img=9', role: 'Backend' },
-  { name: 'dev.sol', avatar: 'https://i.pravatar.cc/150?img=11', role: 'Web3' },
-  { name: 'nova.ai', avatar: 'https://i.pravatar.cc/150?img=16', role: 'AI' },
-  { name: 'zed.cpp', avatar: 'https://i.pravatar.cc/150?img=12', role: 'Systems' },
-  { name: 'rio.vue', avatar: 'https://i.pravatar.cc/150?img=14', role: 'Frontend' },
-  { name: 'ash.rb', avatar: 'https://i.pravatar.cc/150?img=20', role: 'Full Stack' },
-  { name: 'zen.go', avatar: 'https://i.pravatar.cc/150?img=22', role: 'DevOps' },
-  { name: 'ivy.ml', avatar: 'https://i.pravatar.cc/150?img=25', role: 'Data' },
+const BUILDERS: Builder[] = [
+  { initial: 'S', name: 'sarah.dev', role: 'React', bg: '#2d1b2e' },
+  { initial: 'K', name: 'kai.ts', role: 'Rust', bg: '#1b2433' },
+  { initial: 'L', name: 'luna.rs', role: 'ML', bg: '#2b2218' },
+  { initial: 'A', name: 'alex.py', role: 'Design', bg: '#1e2b2b' },
+  { initial: 'M', name: 'mira.go', role: 'Backend', bg: '#2a1a1e' },
+  { initial: 'D', name: 'dev.sol', role: 'Web3', bg: '#1a2028' },
+  { initial: 'N', name: 'nova.ai', role: 'AI', bg: '#242118' },
+  { initial: 'Z', name: 'zed.cpp', role: 'Systems', bg: '#1e1e28' },
+  { initial: 'R', name: 'rio.vue', role: 'Frontend', bg: '#281e1e' },
+  { initial: 'I', name: 'ivy.ml', role: 'Data', bg: '#1e2822' },
+  { initial: 'J', name: 'jag.tsx', role: 'Full Stack', bg: '#222028' },
+  { initial: 'V', name: 'val.rs', role: 'DevOps', bg: '#28221e' },
 ];
 
-type TileState = 'empty' | 'flying' | 'landed' | 'vibed';
+type TileState = 'empty' | 'entering' | 'landed' | 'vibed';
 
 interface GridTile {
   state: TileState;
-  builder: AvatarTile | null;
+  builder: Builder | null;
   vibeColor: string;
 }
 
-const GRID_SIZE = 12; // 4×3 grid
+const GRID_SIZE = 12;
 
 export function LiveGrid({ isVibe }: { isVibe: boolean }) {
   const [tiles, setTiles] = useState<GridTile[]>(() =>
@@ -145,10 +147,8 @@ export function LiveGrid({ isVibe }: { isVibe: boolean }) {
     }))
   );
   const cycleRef = useRef(0);
-  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Shuffle fill order each cycle
     function shuffle(arr: number[]) {
       const a = [...arr];
       for (let i = a.length - 1; i > 0; i--) {
@@ -160,141 +160,139 @@ export function LiveGrid({ isVibe }: { isVibe: boolean }) {
 
     function runCycle() {
       const order = shuffle(Array.from({ length: GRID_SIZE }, (_, i) => i));
-      const builderOffset = cycleRef.current * GRID_SIZE;
+      const offset = cycleRef.current * GRID_SIZE;
 
-      // Reset all tiles
+      // Reset
       setTiles(Array.from({ length: GRID_SIZE }, (_, i) => ({
-        state: 'empty' as TileState,
-        builder: null,
+        state: 'empty' as TileState, builder: null,
         vibeColor: VIBE_COLORS[i % VIBE_COLORS.length],
       })));
 
-      // Stagger: each tile fills with flying → landed → vibed
-      order.forEach((tileIdx, seqIdx) => {
-        const builder = BUILDERS[(builderOffset + tileIdx) % BUILDERS.length];
-        const baseDelay = seqIdx * 350;
+      const ids: ReturnType<typeof setTimeout>[] = [];
 
-        // Phase 1: flying in
-        setTimeout(() => {
-          setTiles(prev => {
-            const next = [...prev];
-            next[tileIdx] = { ...next[tileIdx], state: 'flying', builder };
-            return next;
-          });
-        }, baseDelay);
+      order.forEach((tileIdx, seq) => {
+        const builder = BUILDERS[(offset + tileIdx) % BUILDERS.length];
+        const base = seq * 300;
 
-        // Phase 2: landed
-        setTimeout(() => {
+        // Enter — slide up from below
+        ids.push(setTimeout(() => {
           setTiles(prev => {
-            const next = [...prev];
-            next[tileIdx] = { ...next[tileIdx], state: 'landed' };
-            return next;
+            const n = [...prev];
+            n[tileIdx] = { ...n[tileIdx], state: 'entering', builder };
+            return n;
           });
-        }, baseDelay + 400);
+        }, base));
 
-        // Phase 3: vibed — tile gets color
-        setTimeout(() => {
+        // Landed — in position, still muted
+        ids.push(setTimeout(() => {
           setTiles(prev => {
-            const next = [...prev];
-            next[tileIdx] = { ...next[tileIdx], state: 'vibed' };
-            return next;
+            const n = [...prev];
+            n[tileIdx] = { ...n[tileIdx], state: 'landed' };
+            return n;
           });
-        }, baseDelay + 800);
+        }, base + 350));
+
+        // Vibed — color comes alive
+        ids.push(setTimeout(() => {
+          setTiles(prev => {
+            const n = [...prev];
+            n[tileIdx] = { ...n[tileIdx], state: 'vibed' };
+            return n;
+          });
+        }, base + 700));
       });
 
       cycleRef.current++;
+      return ids;
     }
 
-    runCycle();
-    // Total cycle time: GRID_SIZE * 350 + 800 (last tile vibes) + 2s pause
-    const cycleDuration = GRID_SIZE * 350 + 800 + 2500;
-    const interval = setInterval(runCycle, cycleDuration);
-    return () => clearInterval(interval);
+    let ids = runCycle();
+    const cycleDuration = GRID_SIZE * 300 + 700 + 3000;
+    const interval = setInterval(() => { ids.forEach(clearTimeout); ids = runCycle(); }, cycleDuration);
+    return () => { clearInterval(interval); ids.forEach(clearTimeout); };
   }, []);
 
   return (
-    <div
-      ref={gridRef}
-      className="grid grid-cols-4 gap-px bg-vc-border border border-vc-border rounded-lg overflow-hidden w-full max-w-[380px] mx-auto"
-    >
+    <div className="grid grid-cols-4 gap-px bg-vc-border border border-vc-border rounded-lg overflow-hidden w-full max-w-[380px] mx-auto">
       {tiles.map((tile, i) => {
-        const vibeColor = isVibe ? VIBE_COLORS[i % VIBE_COLORS.length] : tile.vibeColor;
+        const vc = isVibe ? VIBE_COLORS[i % VIBE_COLORS.length] : tile.vibeColor;
         const isVibed = tile.state === 'vibed';
         const isLanded = tile.state === 'landed' || isVibed;
-        const isFlying = tile.state === 'flying';
+        const isEntering = tile.state === 'entering';
 
         return (
           <div
             key={i}
-            className="aspect-square flex items-center justify-center relative overflow-hidden"
+            className="aspect-square relative overflow-hidden"
             style={{
-              background: isVibed
-                ? `radial-gradient(circle at center, ${vibeColor}20 0%, ${vibeColor}08 70%)`
-                : 'var(--vc-surface)',
-              transition: 'background 0.5s ease-out',
+              background: tile.state === 'empty' ? 'var(--vc-surface)' : tile.builder?.bg || 'var(--vc-dark)',
+              transition: 'background 0.4s ease-out',
             }}
           >
-            {/* Empty state — subtle dot */}
+            {/* Empty — subtle dot */}
             {tile.state === 'empty' && (
-              <div className="w-1.5 h-1.5 rounded-full bg-vc-border transition-opacity duration-300" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-1 h-1 rounded-full bg-vc-border" />
+              </div>
             )}
 
-            {/* Flying in — avatar image fills the tile */}
-            {(isFlying || isLanded) && tile.builder && (
-              <div
-                className="absolute inset-0 transition-all ease-out"
-                style={{
-                  opacity: isFlying ? 0 : 1,
-                  transform: isFlying
-                    ? 'translateY(100%) scale(0.8)'
-                    : 'translateY(0) scale(1)',
-                  transitionDuration: '0.4s',
-                }}
-              >
-                {/* Full-bleed avatar image */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={tile.builder.avatar}
-                  alt={tile.builder.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-all duration-500"
-                  style={{ filter: isVibed ? 'none' : 'grayscale(1)' }}
-                />
-
-                {/* Name + role overlay at bottom */}
+            {/* Builder content */}
+            {tile.builder && (
+              <>
+                {/* Large initial letter — the "avatar" */}
                 <div
-                  className="absolute bottom-0 left-0 right-0 px-1 py-0.5 flex flex-col items-center transition-all duration-500"
+                  className="absolute inset-0 flex items-center justify-center"
                   style={{
-                    background: isVibed
-                      ? `linear-gradient(transparent, ${vibeColor}90)`
-                      : 'linear-gradient(transparent, rgba(0,0,0,0.6))',
-                    opacity: isLanded ? 1 : 0,
+                    opacity: isEntering ? 0 : 1,
+                    transform: isEntering ? 'translateY(100%)' : 'translateY(0)',
+                    transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
                 >
-                  <span className="text-[7px] md:text-[8px] font-sans leading-tight text-white truncate max-w-full">
+                  <span
+                    className="text-2xl md:text-3xl font-serif leading-none select-none"
+                    style={{
+                      color: isVibed ? vc : 'rgba(255,255,255,0.15)',
+                      transition: 'color 0.4s ease-out',
+                    }}
+                  >
+                    {tile.builder.initial}
+                  </span>
+                </div>
+
+                {/* Vibe gradient overlay */}
+                {isVibed && (
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: `radial-gradient(circle at 30% 30%, ${vc}25 0%, transparent 70%)`,
+                      transition: 'opacity 0.5s',
+                    }}
+                  />
+                )}
+
+                {/* Name + role at bottom */}
+                <div
+                  className="absolute bottom-0 left-0 right-0 px-1.5 py-1 flex flex-col"
+                  style={{
+                    opacity: isLanded ? 1 : 0,
+                    transform: isLanded ? 'translateY(0)' : 'translateY(8px)',
+                    transition: 'all 0.3s ease-out',
+                  }}
+                >
+                  <span
+                    className="text-[7px] md:text-[8px] font-sans leading-tight truncate"
+                    style={{ color: isVibed ? vc : 'rgba(255,255,255,0.5)', transition: 'color 0.4s' }}
+                  >
                     {tile.builder.name}
                   </span>
                   <span
-                    className="text-[5px] md:text-[6px] font-sans uppercase tracking-wider leading-tight transition-all duration-500"
-                    style={{
-                      color: isVibed ? '#fff' : 'rgba(255,255,255,0.5)',
-                      opacity: isVibed ? 0.9 : 0.6,
-                    }}
+                    className="text-[5px] md:text-[6px] font-sans uppercase tracking-wider leading-tight"
+                    style={{ color: isVibed ? `${vc}99` : 'rgba(255,255,255,0.25)', transition: 'color 0.4s' }}
                   >
                     {tile.builder.role}
                   </span>
                 </div>
-              </div>
-            )}
-
-            {/* Vibe ring — subtle colored border appears */}
-            {isVibed && (
-              <div
-                className="absolute inset-0 pointer-events-none transition-opacity duration-500"
-                style={{
-                  boxShadow: `inset 0 0 0 1px ${vibeColor}30`,
-                  opacity: 1,
-                }}
-              />
+              </>
             )}
           </div>
         );
