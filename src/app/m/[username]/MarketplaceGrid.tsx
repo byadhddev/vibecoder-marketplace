@@ -12,7 +12,7 @@ import {
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share';
 
 interface Tile {
     id: string;
@@ -32,6 +32,7 @@ function buildTiles(showcases: Showcase[], username: string, profile: Profile): 
         { id: 'views', colSpan: 'col-span-1', variant: 'views' },
         { id: 'socials', colSpan: 'col-span-2 md:col-span-2', variant: 'socials' },
         { id: 'signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
+        { id: 'share', colSpan: 'col-span-2 md:col-span-2', variant: 'share' },
         { id: 'philosophy', colSpan: 'col-span-2 md:col-span-2', variant: 'philosophy' },
     ];
     if (totalClicks > 0) {
@@ -58,6 +59,7 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
     const [vibeLocked, setVibeLocked] = useState(false);
     const [hovered, setHovered] = useState(false);
     const [colors, setColors] = useState<ExtractedColors | null>(null);
+    const [copied, setCopied] = useState<string | null>(null);
     const isVibe = vibeLocked || hovered;
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
 
@@ -204,6 +206,65 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                         </p>
                     </div>
                 );
+            case 'share': {
+                const profileUrl = typeof window !== 'undefined'
+                    ? `${window.location.origin}/m/${profile.username}`
+                    : `/m/${profile.username}`;
+                const embedCode = `<iframe src="${profileUrl.replace('/m/', '/v/')}/embed" width="400" height="400" frameborder="0"></iframe>`;
+                const tweetText = encodeURIComponent(`Check out ${profile.name}'s showcase on VibeCoder ✦`);
+                const tweetUrl = encodeURIComponent(profileUrl);
+                const linkedInUrl = encodeURIComponent(profileUrl);
+
+                const copyToClipboard = (text: string, label: string) => {
+                    navigator.clipboard.writeText(text).then(() => {
+                        setCopied(label);
+                        setTimeout(() => setCopied(null), 2000);
+                    }).catch(() => {});
+                };
+
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3 mb-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : ACCENTS[3] }}>Share</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${ACCENTS[3]}20` }} />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <button
+                                onClick={() => copyToClipboard(profileUrl, 'link')}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                style={isVibe ? dynTextStyle : undefined}
+                            >
+                                {copied === 'link' ? 'Copied ✓' : 'Copy Link'}
+                            </button>
+                            <button
+                                onClick={() => copyToClipboard(embedCode, 'embed')}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                style={isVibe ? dynTextStyle : undefined}
+                            >
+                                {copied === 'embed' ? 'Copied ✓' : 'Embed'}
+                            </button>
+                            <a
+                                href={`https://x.com/intent/tweet?text=${tweetText}&url=${tweetUrl}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                style={isVibe ? dynTextStyle : undefined}
+                            >
+                                Twitter ↗
+                            </a>
+                            <a
+                                href={`https://www.linkedin.com/sharing/share-offsite/?url=${linkedInUrl}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                style={isVibe ? dynTextStyle : undefined}
+                            >
+                                LinkedIn ↗
+                            </a>
+                        </div>
+                    </div>
+                );
+            }
             case 'filler':
                 return (
                     <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : '#f0f0ef' }} />
