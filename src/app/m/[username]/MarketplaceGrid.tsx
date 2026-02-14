@@ -207,19 +207,21 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                     </div>
                 );
             case 'share': {
-                const profileUrl = typeof window !== 'undefined'
-                    ? `${window.location.origin}/m/${profile.username}`
-                    : `/m/${profile.username}`;
-                const embedCode = `<iframe src="${profileUrl.replace('/m/', '/v/')}/embed" width="400" height="400" frameborder="0"></iframe>`;
+                const profilePath = `/m/${profile.username}`;
+                const embedPath = `/v/${profile.username}/embed`;
                 const tweetText = encodeURIComponent(`Check out ${profile.name}'s showcase on VibeCoder ✦`);
-                const tweetUrl = encodeURIComponent(profileUrl);
-                const linkedInUrl = encodeURIComponent(profileUrl);
 
-                const copyToClipboard = (text: string, label: string) => {
-                    navigator.clipboard.writeText(text).then(() => {
+                const getFullUrl = (path: string) => typeof window !== 'undefined' ? `${window.location.origin}${path}` : path;
+
+                const copyToClipboard = (getText: () => string, label: string) => {
+                    navigator.clipboard.writeText(getText()).then(() => {
                         setCopied(label);
                         setTimeout(() => setCopied(null), 2000);
                     }).catch(() => {});
+                };
+
+                const openShare = (buildUrl: () => string) => {
+                    window.open(buildUrl(), '_blank', 'noopener,noreferrer');
                 };
 
                 return (
@@ -230,37 +232,33 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                         </div>
                         <div className="flex flex-wrap items-center gap-3">
                             <button
-                                onClick={() => copyToClipboard(profileUrl, 'link')}
+                                onClick={() => copyToClipboard(() => getFullUrl(profilePath), 'link')}
                                 className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
                                 style={isVibe ? dynTextStyle : undefined}
                             >
                                 {copied === 'link' ? 'Copied ✓' : 'Copy Link'}
                             </button>
                             <button
-                                onClick={() => copyToClipboard(embedCode, 'embed')}
+                                onClick={() => copyToClipboard(() => `<iframe src="${getFullUrl(embedPath)}" width="400" height="400" frameborder="0"></iframe>`, 'embed')}
                                 className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
                                 style={isVibe ? dynTextStyle : undefined}
                             >
                                 {copied === 'embed' ? 'Copied ✓' : 'Embed'}
                             </button>
-                            <a
-                                href={`https://x.com/intent/tweet?text=${tweetText}&url=${tweetUrl}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <button
+                                onClick={() => openShare(() => `https://x.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(getFullUrl(profilePath))}`)}
                                 className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
                                 style={isVibe ? dynTextStyle : undefined}
                             >
                                 Twitter ↗
-                            </a>
-                            <a
-                                href={`https://www.linkedin.com/sharing/share-offsite/?url=${linkedInUrl}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            </button>
+                            <button
+                                onClick={() => openShare(() => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getFullUrl(profilePath))}`)}
                                 className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
                                 style={isVibe ? dynTextStyle : undefined}
                             >
                                 LinkedIn ↗
-                            </a>
+                            </button>
                         </div>
                     </div>
                 );
