@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { RotatingWord, LiveGrid, FloatingParticles, StatPill } from '@/components/hero/HeroAnimations';
+import { MagnetLines } from '@/components/hero/MagnetLines';
 
 /* ─── Vibe Palette ───────────────────────────────────────── */
 const VIBE_COLORS = ['#B3201F', '#122BB2', '#a16207', '#dc2626', '#1e40af'];
@@ -218,7 +219,18 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    HERO — Kinetic living marketplace
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36 relative">
+                <section className="mb-24 md:mb-36 relative overflow-hidden">
+                    {/* MagnetLines canvas background */}
+                    <div className="absolute inset-0 pointer-events-auto z-0">
+                        <MagnetLines
+                            rows={12}
+                            cols={12}
+                            lineColor={isVibe ? pal(0) : 'var(--vc-text-muted)'}
+                            lineWidth={1}
+                            lineLength={18}
+                            baseAngle={0}
+                        />
+                    </div>
                     <FloatingParticles isVibe={isVibe} />
 
                     <div className="flex flex-col items-center text-center relative z-10">
