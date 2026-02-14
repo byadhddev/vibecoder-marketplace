@@ -4,13 +4,26 @@
  * radial gradient vibes, accent lines, and random shuffle.
  */
 
-// Radial gradient backgrounds for vibe mode
+/** Build a vibe radial gradient that respects --vc-vibe-opacity and --vc-vibe-fade CSS vars.
+ *  Light: 15% color wash fading to white-transparent
+ *  Dark: 8% color wash fading to black-transparent (no glow) */
+function hexToRgb(hex: string): string {
+    const h = hex.replace('#', '');
+    return `${parseInt(h.slice(0, 2), 16)}, ${parseInt(h.slice(2, 4), 16)}, ${parseInt(h.slice(4, 6), 16)}`;
+}
+
+export function vibeGradientFromHex(hex: string): string {
+    const rgb = hexToRgb(hex);
+    return `radial-gradient(circle at center, rgba(${rgb}, var(--vc-vibe-opacity)) 0%, var(--vc-vibe-fade) 70%)`;
+}
+
+// Radial gradient backgrounds for vibe mode (static, light-only legacy — prefer vibeGradientFromHex)
 export const VIBE_BGS = [
-    'radial-gradient(circle at center, rgba(179, 32, 31, 0.15) 0%, rgba(255, 255, 255, 0) 70%)',
-    'radial-gradient(circle at center, rgba(18, 43, 178, 0.15) 0%, rgba(255, 255, 255, 0) 70%)',
-    'radial-gradient(circle at center, rgba(202, 138, 4, 0.15) 0%, rgba(255, 255, 255, 0) 70%)',
-    'radial-gradient(circle at center, rgba(220, 38, 38, 0.12) 0%, rgba(255, 255, 255, 0) 70%)',
-    'radial-gradient(circle at center, rgba(30, 64, 175, 0.12) 0%, rgba(255, 255, 255, 0) 70%)',
+    'radial-gradient(circle at center, rgba(179, 32, 31, var(--vc-vibe-opacity)) 0%, var(--vc-vibe-fade) 70%)',
+    'radial-gradient(circle at center, rgba(18, 43, 178, var(--vc-vibe-opacity)) 0%, var(--vc-vibe-fade) 70%)',
+    'radial-gradient(circle at center, rgba(202, 138, 4, var(--vc-vibe-opacity)) 0%, var(--vc-vibe-fade) 70%)',
+    'radial-gradient(circle at center, rgba(220, 38, 38, var(--vc-vibe-opacity)) 0%, var(--vc-vibe-fade) 70%)',
+    'radial-gradient(circle at center, rgba(30, 64, 175, var(--vc-vibe-opacity)) 0%, var(--vc-vibe-fade) 70%)',
 ];
 
 // Tailwind text color classes for vibe mode

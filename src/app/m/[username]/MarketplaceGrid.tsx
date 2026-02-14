@@ -10,6 +10,7 @@ import type { Profile, Showcase } from '@/lib/db/types';
 import {
     ACCENTS, VIBE_RAW_COLORS,
     randomShuffle, GRID_CLASSES,
+    vibeGradientFromHex,
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 import { computeBadges, type Badge } from '@/lib/badges';
@@ -177,7 +178,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
     function renderTile(tile: Tile, index: number) {
         const palette = colors ? [colors.primary, colors.secondary] : VIBE_RAW_COLORS;
         const palColor = palette[index % palette.length];
-        const dynBg = `radial-gradient(circle at center, ${palColor}26 0%, rgba(255,255,255,0) 70%)`;
+        const dynBg = vibeGradientFromHex(palColor);
         const dynTextStyle = { color: palColor };
         const bg = isVibe ? dynBg : 'var(--vc-surface)';
 

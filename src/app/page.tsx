@@ -7,7 +7,11 @@ import Link from 'next/link';
 const VIBE_COLORS = ['#B3201F', '#122BB2', '#a16207', '#dc2626', '#1e40af'];
 
 function vibeGradient(color: string) {
-    return `radial-gradient(circle at center, ${color}26 0%, rgba(255,255,255,0) 70%)`;
+    const h = color.replace('#', '');
+    const r = parseInt(h.slice(0, 2), 16);
+    const g = parseInt(h.slice(2, 4), 16);
+    const b = parseInt(h.slice(4, 6), 16);
+    return `radial-gradient(circle at center, rgba(${r}, ${g}, ${b}, var(--vc-vibe-opacity)) 0%, var(--vc-vibe-fade) 70%)`;
 }
 
 /* ─────────────────────────────────────────────────────────

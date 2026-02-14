@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { VIBE_RAW_COLORS, ACCENTS, GRID_CLASSES } from '@/lib/vibe';
+import { VIBE_RAW_COLORS, ACCENTS, GRID_CLASSES, vibeGradientFromHex } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 import { computeBadges } from '@/lib/badges';
 
@@ -95,7 +95,7 @@ export default function LeaderboardClient({ initialBuilders }: {
         const extractedHexes = Object.values(avatarColors).flatMap(c => [c.primary, c.secondary]);
         const palette = extractedHexes.length > 0 ? extractedHexes : VIBE_RAW_COLORS;
         const palColor = palette[index % palette.length];
-        const dynBg = `radial-gradient(circle at center, ${palColor}26 0%, rgba(255,255,255,0) 70%)`;
+        const dynBg = vibeGradientFromHex(palColor);
         const dynTextStyle = { color: palColor };
         const bg = isVibe ? dynBg : 'var(--vc-surface)';
 

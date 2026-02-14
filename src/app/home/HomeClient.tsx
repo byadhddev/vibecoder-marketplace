@@ -9,6 +9,7 @@ import { Footer } from '@/components/layout/Footer';
 import {
     VIBE_RAW_COLORS,
     randomShuffle, GRID_CLASSES,
+    vibeGradientFromHex,
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
@@ -91,7 +92,7 @@ export default function HomeClient({ initialVibelopers }: {
         const extractedHexes = Object.values(avatarColors).flatMap(c => [c.primary, c.secondary]);
         const palette = extractedHexes.length > 0 ? extractedHexes : VIBE_RAW_COLORS;
         const palColor = palette[index % palette.length];
-        const dynBg = `radial-gradient(circle at center, ${palColor}26 0%, rgba(255,255,255,0) 70%)`;
+        const dynBg = vibeGradientFromHex(palColor);
         // Determine readable text class for this palette color
         const dynTextStyle = { color: palColor };
 

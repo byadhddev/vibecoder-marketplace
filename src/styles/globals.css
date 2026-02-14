@@ -43,6 +43,10 @@
   --border: var(--vc-border-subtle);
   --border-hover: #a8a29e;
 
+  /* ── Vibe mode gradients ── */
+  --vc-vibe-opacity: 0.15;
+  --vc-vibe-fade: rgba(255, 255, 255, 0);
+
   /* Layout */
   --content-max-width: 900px;
 }
@@ -71,6 +75,9 @@
 
   --vc-skeleton: #1e1e21;
   --vc-skeleton-dark: #27272a;
+
+  --vc-vibe-opacity: 0.08;
+  --vc-vibe-fade: rgba(0, 0, 0, 0);
 
   --border-hover: #484f58;
 }

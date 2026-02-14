@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import type { Profile, Showcase } from '@/lib/db/types';
-import { VIBE_RAW_COLORS } from '@/lib/vibe';
+import { VIBE_RAW_COLORS, vibeGradientFromHex } from '@/lib/vibe';
 import { extractColorsFromImage } from '@/lib/colors';
 
 interface ProjectEmbedProps {
@@ -25,7 +25,7 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
         }
     }, [profile.avatar_url]);
 
-    const dynBg = `radial-gradient(circle at center, ${palColor}26 0%, rgba(255,255,255,0) 70%)`;
+    const dynBg = vibeGradientFromHex(palColor);
     const dynTextStyle = { color: palColor };
     const bg = isVibe ? dynBg : 'var(--vc-surface)';
     const accentBg = isVibe ? dynBg : 'var(--vc-dark)';
