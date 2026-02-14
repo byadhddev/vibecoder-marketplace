@@ -47,6 +47,9 @@
   --vc-vibe-opacity: 0.15;
   --vc-vibe-fade: rgba(255, 255, 255, 0);
 
+  /* ── MagnetLines ── */
+  --vc-magnet-line: #c0bfbc;
+
   /* Layout */
   --content-max-width: 900px;
 }
@@ -78,6 +81,8 @@
 
   --vc-vibe-opacity: 0.08;
   --vc-vibe-fade: rgba(0, 0, 0, 0);
+
+  --vc-magnet-line: #52525b;
 
   --border-hover: #484f58;
 }

@@ -186,11 +186,11 @@ export default function LandingPage() {
             {/* MagnetLines full-page background */}
             <div className="fixed inset-0 pointer-events-none opacity-90 z-0">
                 <MagnetLines
-                    rows={60}
-                    cols={40}
-                    lineColor={isVibe ? pal(0) : 'var(--vc-text-muted)'}
-                    lineWidth={1}
-                    lineLength={8}
+                    rows={240}
+                    cols={160}
+                    lineColor={isVibe ? pal(0) : 'var(--vc-magnet-line)'}
+                    lineWidth={0.2}
+                    lineLength={4}
                     baseAngle={0}
                 />
             </div>
