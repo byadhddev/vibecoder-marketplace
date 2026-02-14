@@ -12,7 +12,7 @@ import {
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share' | 'skills' | 'hire';
 
 interface Tile {
     id: string;
@@ -35,6 +35,12 @@ function buildTiles(showcases: Showcase[], username: string, profile: Profile): 
         { id: 'share', colSpan: 'col-span-2 md:col-span-2', variant: 'share' },
         { id: 'philosophy', colSpan: 'col-span-2 md:col-span-2', variant: 'philosophy' },
     ];
+    if ((profile.skills || []).length > 0) {
+        decorative.push({ id: 'skills', colSpan: 'col-span-2 md:col-span-2', variant: 'skills' });
+    }
+    if (profile.available_for_hire) {
+        decorative.push({ id: 'hire', colSpan: 'col-span-2 md:col-span-2', variant: 'hire' });
+    }
     if (totalClicks > 0) {
         decorative.push({ id: 'clicks', colSpan: 'col-span-1', variant: 'clicks' });
     }
@@ -263,6 +269,42 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                     </div>
                 );
             }
+            case 'skills': {
+                const skills = profile.skills || [];
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[80px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3 mb-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : ACCENTS[7 % ACCENTS.length] }}>Stack</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${ACCENTS[7 % ACCENTS.length]}20` }} />
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                            {skills.map(s => (
+                                <span key={s} className={`text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded transition-colors duration-300 ${isVibe ? '' : 'text-[#9b9a97] bg-[#f0f0f0]'}`}
+                                    style={isVibe ? { color: palColor, backgroundColor: `${palColor}15` } : undefined}>
+                                    {s}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+            case 'hire': {
+                const rate = profile.hourly_rate;
+                const rateLabel = profile.rate_type === 'hourly' ? '/hr' : profile.rate_type === 'project' ? '/project' : '';
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex items-center justify-between min-h-[60px] transition-all duration-300 bg-[#242423]`}>
+                        <div className="flex items-center gap-3">
+                            <div className="w-2 h-2 bg-brand-red rounded-full animate-pulse" />
+                            <span className="text-[11px] font-mono text-white uppercase tracking-[0.15em]">Available for Hire</span>
+                        </div>
+                        {rate > 0 && (
+                            <span className="text-[12px] font-mono text-white/70">
+                                ${rate}{rateLabel}
+                            </span>
+                        )}
+                    </div>
+                );
+            }
             case 'filler':
                 return (
                     <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : '#f0f0ef' }} />
@@ -281,6 +323,9 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : accent }}>{numStr}</span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${accent}20` }} />
+                            {s.build_hours > 0 && (
+                                <span className="text-[8px] font-mono text-brand-red uppercase tracking-wider">⚡ {s.build_hours}h</span>
+                            )}
                             {s.tags.length > 0 && (
                                 <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider">{s.tags[0]}</span>
                             )}
@@ -292,6 +337,13 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                             <p className={`text-[12px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>
                                 {s.description}
                             </p>
+                            {(s.ai_tools || []).length > 0 && (
+                                <div className="flex items-center gap-1.5 mt-1.5">
+                                    {(s.ai_tools || []).map(tool => (
+                                        <span key={tool} className="text-[8px] font-mono uppercase tracking-wider text-[#9b9a97] bg-[#f0f0f0] px-1.5 py-0.5 rounded">{tool}</span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                         {(s.source_url || s.post_url) && (
                             <div className="flex items-center gap-3 mt-2">

@@ -20,9 +20,14 @@ export interface Profile {
     website: string;
     location: string;
     social_links: SocialLinks;
+    skills: string[];
+    available_for_hire: boolean;
+    hourly_rate: number;
+    rate_type: 'hourly' | 'project' | 'negotiable';
     showcase_count: number;
     total_views: number;
     total_clicks: number;
+    total_earned: number;
     plan: 'free' | 'pro';
     created_at: string;
     updated_at: string;
@@ -35,6 +40,10 @@ export interface ProfileInput {
     website?: string;
     location?: string;
     social_links?: SocialLinks;
+    skills?: string[];
+    available_for_hire?: boolean;
+    hourly_rate?: number;
+    rate_type?: 'hourly' | 'project' | 'negotiable';
 }
 
 export interface Showcase {
@@ -53,6 +62,8 @@ export interface Showcase {
     sort_order: number;
     clicks_count: number;
     views_count: number;
+    build_hours: number;
+    ai_tools: string[];
     created_at: string;
     updated_at: string;
 }
@@ -68,6 +79,18 @@ export interface ShowcaseInput {
     col_span?: 1 | 2;
     status?: 'published' | 'draft' | 'archived';
     sort_order?: number;
+    build_hours?: number;
+    ai_tools?: string[];
+}
+
+export interface Earning {
+    id: string;
+    amount: number;
+    currency: string;
+    client_name: string;
+    showcase_id: string;
+    note: string;
+    created_at: string;
 }
 
 export interface PublicMarketplace {

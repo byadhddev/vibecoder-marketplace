@@ -14,7 +14,7 @@ import {
     GRID_CLASSES,
 } from '@/lib/vibe';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-save' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav' | 'stat-views' | 'stat-clicks' | 'stat-top';
+type TileVariant = 'artode' | 'title' | 'counter' | 'form-url' | 'form-links' | 'form-details' | 'form-action' | 'form-speed' | 'profile-identity' | 'profile-bio' | 'profile-socials' | 'profile-skills' | 'profile-hire' | 'profile-save' | 'signature' | 'filler' | 'showcase' | 'empty' | 'nav' | 'stat-views' | 'stat-clicks' | 'stat-top';
 
 interface Tile {
     id: string;
@@ -32,9 +32,11 @@ interface FormState {
     post_url: string;
     tags: string;
     status: 'published' | 'draft';
+    build_hours: string;
+    ai_tools: string;
 }
 
-const EMPTY_FORM: FormState = { title: '', description: '', url: '', source_url: '', post_url: '', tags: '', status: 'draft' };
+const EMPTY_FORM: FormState = { title: '', description: '', url: '', source_url: '', post_url: '', tags: '', status: 'draft', build_hours: '', ai_tools: '' };
 
 function buildProfileTiles(): Tile[] {
     return [
@@ -44,6 +46,8 @@ function buildProfileTiles(): Tile[] {
         { id: 'profile-identity', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-identity' },
         { id: 'profile-bio', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-bio' },
         { id: 'profile-socials', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-socials' },
+        { id: 'profile-skills', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-skills' },
+        { id: 'profile-hire', colSpan: 'col-span-2 md:col-span-2', variant: 'profile-hire' },
         { id: 'profile-save', colSpan: 'col-span-1', variant: 'profile-save' },
         { id: 'p-filler', colSpan: 'col-span-1', variant: 'filler' },
     ];
@@ -56,6 +60,7 @@ function buildFormTiles(): Tile[] {
         { id: 'f-filler-top', colSpan: 'col-span-1', variant: 'filler' },
         { id: 'form-links', colSpan: 'col-span-2 md:col-span-2', variant: 'form-links' },
         { id: 'form-details', colSpan: 'col-span-2 md:col-span-2', variant: 'form-details' },
+        { id: 'form-speed', colSpan: 'col-span-2 md:col-span-2', variant: 'form-speed' },
         { id: 'form-action', colSpan: 'col-span-1', variant: 'form-action' },
         { id: 'f-filler', colSpan: 'col-span-1', variant: 'filler' },
     ];
@@ -98,7 +103,7 @@ export default function ManagerPage() {
     const toggleVibe = useCallback(() => setVibeLocked(v => !v), []);
     const [username, setUsername] = useState<string | undefined>(undefined);
     // Profile state
-    const [profile, setProfile] = useState<ProfileInput>({ name: '', role: '', bio: '', website: '', location: '', social_links: {} });
+    const [profile, setProfile] = useState<ProfileInput>({ name: '', role: '', bio: '', website: '', location: '', social_links: {}, skills: [], available_for_hire: false, hourly_rate: 0, rate_type: 'negotiable' });
     const [totalViews, setTotalViews] = useState(0);
     const [savingProfile, setSavingProfile] = useState(false);
     const [profileDirty, setProfileDirty] = useState(false);
@@ -132,6 +137,10 @@ export default function ManagerPage() {
                         website: d.profile.website || '',
                         location: d.profile.location || '',
                         social_links: d.profile.social_links || {},
+                        skills: d.profile.skills || [],
+                        available_for_hire: d.profile.available_for_hire || false,
+                        hourly_rate: d.profile.hourly_rate || 0,
+                        rate_type: d.profile.rate_type || 'negotiable',
                     });
                     setTotalViews(d.profile.total_views || 0);
                 }
@@ -151,7 +160,7 @@ export default function ManagerPage() {
 
     const handleSave = async () => {
         setSaving(true);
-        const body = { ...(editing ? { id: editing } : {}), title: form.title, description: form.description, url: form.url, source_url: form.source_url, post_url: form.post_url, tags: form.tags.split(',').map(t => t.trim()).filter(Boolean), status: form.status };
+        const body = { ...(editing ? { id: editing } : {}), title: form.title, description: form.description, url: form.url, source_url: form.source_url, post_url: form.post_url, tags: form.tags.split(',').map(t => t.trim()).filter(Boolean), status: form.status, build_hours: form.build_hours ? parseFloat(form.build_hours) : 0, ai_tools: form.ai_tools.split(',').map(t => t.trim()).filter(Boolean) };
         const method = editing ? 'PUT' : 'POST';
         const res = await fetch('/api/marketplace/showcases', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         if (res.ok) {
@@ -170,7 +179,7 @@ export default function ManagerPage() {
 
     const startEdit = (s: Showcase) => {
         setEditing(s.id);
-        setForm({ title: s.title, description: s.description, url: s.url, source_url: s.source_url || '', post_url: s.post_url || '', tags: s.tags.join(', '), status: s.status === 'archived' ? 'draft' : s.status });
+        setForm({ title: s.title, description: s.description, url: s.url, source_url: s.source_url || '', post_url: s.post_url || '', tags: s.tags.join(', '), status: s.status === 'archived' ? 'draft' : s.status, build_hours: s.build_hours ? String(s.build_hours) : '', ai_tools: (s.ai_tools || []).join(', ') });
     };
 
     const handleSaveProfile = async () => {
@@ -299,6 +308,62 @@ export default function ManagerPage() {
                         </div>
                     </div>
                 );
+            case 'profile-skills':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[7 % ACCENTS.length] }}>Stack</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[7 % ACCENTS.length]}20` }} />
+                        </div>
+                        <div className="space-y-2">
+                            <input type="text" placeholder="Skills (comma-separated: React, Next.js, Python…)" value={(profile.skills || []).join(', ')}
+                                onChange={e => { setProfile(prev => ({ ...prev, skills: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })); setProfileDirty(true); }}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                            {(profile.skills || []).length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                    {(profile.skills || []).map(s => (
+                                        <span key={s} className="text-[9px] font-mono uppercase tracking-wider text-[#9b9a97] bg-[#f0f0f0] px-1.5 py-0.5 rounded">{s}</span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            case 'profile-hire':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[0] }}>Hire</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[0]}20` }} />
+                        </div>
+                        <div className="space-y-3">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                                <div
+                                    onClick={() => { setProfile(prev => ({ ...prev, available_for_hire: !prev.available_for_hire })); setProfileDirty(true); }}
+                                    className={`w-8 h-4 rounded-full transition-colors duration-200 relative cursor-pointer ${profile.available_for_hire ? 'bg-brand-red' : 'bg-[#ededeb]'}`}
+                                >
+                                    <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform duration-200 ${profile.available_for_hire ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                                </div>
+                                <span className={`text-[11px] font-mono ${profile.available_for_hire ? 'text-brand-red font-medium' : 'text-[#9b9a97]'}`}>
+                                    {profile.available_for_hire ? 'Available for Hire' : 'Not Available'}
+                                </span>
+                            </label>
+                            <div className="flex items-center gap-3">
+                                <input type="number" placeholder="Rate" value={profile.hourly_rate || ''}
+                                    onChange={e => { setProfile(prev => ({ ...prev, hourly_rate: parseFloat(e.target.value) || 0 })); setProfileDirty(true); }}
+                                    className="w-20 bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                                <span className="text-[10px] font-mono text-[#9b9a97]">$</span>
+                                <select value={profile.rate_type || 'negotiable'}
+                                    onChange={e => { setProfile(prev => ({ ...prev, rate_type: e.target.value as 'hourly' | 'project' | 'negotiable' })); setProfileDirty(true); }}
+                                    className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] outline-none pb-1 transition-colors">
+                                    <option value="hourly">/hour</option>
+                                    <option value="project">/project</option>
+                                    <option value="negotiable">negotiable</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                );
             case 'profile-save':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
@@ -356,6 +421,23 @@ export default function ManagerPage() {
                                 className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-serif text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-serif outline-none pb-1 transition-colors" />
                             <input type="text" placeholder="Tags (comma-separated)" value={form.tags}
                                 onChange={e => setForm(prev => ({ ...prev, tags: e.target.value }))}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none pb-1 transition-colors" />
+                        </div>
+                    </div>
+                );
+            case 'form-speed':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? vibeRaw(index) : ACCENTS[3] }}>Speed</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${vibeRaw(index)}4D` : `${ACCENTS[3]}20` }} />
+                        </div>
+                        <div className="space-y-2">
+                            <input type="number" placeholder="Build time in hours (e.g. 6)" value={form.build_hours}
+                                onChange={e => setForm(prev => ({ ...prev, build_hours: e.target.value }))}
+                                className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none pb-1 transition-colors" />
+                            <input type="text" placeholder="AI tools (comma-separated: Cursor, Claude, Copilot…)" value={form.ai_tools}
+                                onChange={e => setForm(prev => ({ ...prev, ai_tools: e.target.value }))}
                                 className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] placeholder:font-mono outline-none pb-1 transition-colors" />
                         </div>
                     </div>

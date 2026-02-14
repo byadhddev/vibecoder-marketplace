@@ -26,6 +26,8 @@ export interface RegistryUser {
     name: string;
     avatar_url: string;
     showcase_count: number;
+    available_for_hire: boolean;
+    skills: string[];
 }
 
 export interface Registry {
@@ -94,9 +96,14 @@ export async function createProfile(
         website: '',
         location: '',
         social_links: {},
+        skills: [],
+        available_for_hire: false,
+        hourly_rate: 0,
+        rate_type: 'negotiable',
         showcase_count: 0,
         total_views: 0,
         total_clicks: 0,
+        total_earned: 0,
         plan: 'free',
         created_at: now,
         updated_at: now,
@@ -111,6 +118,7 @@ export async function createProfile(
             ...reg,
             users: [...reg.users.filter(u => u.username !== username), {
                 username, name, avatar_url: avatarUrl || '', showcase_count: 0,
+                available_for_hire: false, skills: [],
             }],
         }),
         token,
@@ -140,12 +148,17 @@ export async function updateProfile(
     const wrote = await writeJSON('profile.json', branch, updated, t, `Update profile for ${username}`, result.sha);
     if (!wrote) return null;
 
-    // Update registry name if changed
-    if (input.name) {
+    // Update registry if relevant fields changed
+    if (input.name || input.available_for_hire !== undefined || input.skills) {
         await updateRegistry(
             reg => ({
                 ...reg,
-                users: reg.users.map(u => u.username === username ? { ...u, name: input.name! } : u),
+                users: reg.users.map(u => u.username === username ? {
+                    ...u,
+                    ...(input.name ? { name: input.name } : {}),
+                    ...(input.available_for_hire !== undefined ? { available_for_hire: input.available_for_hire } : {}),
+                    ...(input.skills ? { skills: input.skills } : {}),
+                } : u),
             }),
             t,
             `Update registry for ${username}`,
@@ -264,6 +277,8 @@ export async function createShowcase(profileId: string, input: ShowcaseInput, to
         sort_order: input.sort_order ?? nextOrder,
         clicks_count: 0,
         views_count: 0,
+        build_hours: input.build_hours || 0,
+        ai_tools: input.ai_tools || [],
         created_at: now,
         updated_at: now,
     };
