@@ -404,6 +404,134 @@ export default function LandingPage() {
                 </section>
 
                 {/* ══════════════════════════════════════════════
+                   MEET THE VIBELOPER
+                   ══════════════════════════════════════════════ */}
+                <section className="mb-24 md:mb-36">
+                    <FadeIn>
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className={`text-xl font-normal font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#ebebeb]'}`} style={isVibe ? textStyle(1) : undefined}>#</span>
+                            <h2 className="text-2xl font-semibold tracking-tight text-[#37352f] font-serif">
+                                <span className={`transition-colors duration-300 ${isVibe ? '' : ''}`} style={textStyle(1)}>Meet the</span>{' '}
+                                <span className="line-through opacity-40">Developer</span>{' '}
+                                <span className={`italic transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`} style={isVibe ? textStyle(0) : undefined}>Vibeloper</span>
+                            </h2>
+                        </div>
+
+                        <div className="border border-[#ededeb] rounded-lg overflow-hidden grid grid-cols-2 md:grid-cols-6 bg-[#ededeb] gap-px">
+
+                            {/* Avatar */}
+                            <div className="col-span-1 aspect-square bg-[#242423] relative overflow-hidden">
+                                <img src="/founder-avatar.jpg" alt="Jagadesh" className={`absolute inset-0 w-full h-full object-cover transition-all duration-300 ${isVibe ? 'grayscale-0' : 'grayscale'}`} />
+                                {isVibe && <div className="absolute inset-0 border-2 border-[#D80018]/50 mix-blend-overlay" />}
+                            </div>
+
+                            {/* Name & Role */}
+                            <div className="col-span-1 md:col-span-2 px-4 md:px-6 py-4 flex flex-col justify-center transition-all duration-300" style={{ background: isVibe ? bg(1) : 'white' }}>
+                                <h4 className={`text-sm md:text-lg font-serif mb-0.5 leading-tight transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={textStyle(1)}>
+                                    <span className="flex flex-col md:block">
+                                        <span>Jagadesh</span>
+                                        <span className="md:inline hidden"> </span>
+                                        <span className="md:inline block"><span className="italic opacity-60 text-[11px] md:text-inherit">aka</span> adhd.dev</span>
+                                    </span>
+                                </h4>
+                                <p className="text-[9px] md:text-[10px] font-mono text-[#D80018] uppercase tracking-widest leading-none mt-1">Founder &amp; Vibeloper</p>
+                            </div>
+
+                            {/* Twitter/X */}
+                            <a href="https://twitter.com/byadhddev" target="_blank" rel="noopener noreferrer"
+                               className="col-span-1 flex items-center justify-center min-h-[70px] md:min-h-0 hover:bg-[#fbfbfa] transition-all duration-300 group/link"
+                               style={{ background: isVibe ? bg(0) : 'white' }}>
+                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isVibe ? '' : 'text-[#9b9a97] group-hover/link:text-[#D80018]'}`} style={isVibe ? { color: pal(0) } : undefined} fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                            </a>
+
+                            {/* GitHub */}
+                            <a href="https://github.com/byadhddev" target="_blank" rel="noopener noreferrer"
+                               className="col-span-1 flex items-center justify-center min-h-[70px] md:min-h-0 hover:bg-[#fbfbfa] transition-all duration-300 group/link"
+                               style={{ background: isVibe ? bg(1) : 'white' }}>
+                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isVibe ? '' : 'text-[#9b9a97] group-hover/link:text-[#D80018]'}`} style={isVibe ? { color: pal(1) } : undefined} fill="currentColor" viewBox="0 0 24 24">
+                                    <path fillRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" clipRule="evenodd"/>
+                                </svg>
+                            </a>
+
+                            {/* Portfolio */}
+                            <a href="https://byadhd.dev" target="_blank" rel="noopener noreferrer"
+                               className="col-span-2 md:col-span-1 flex items-center justify-center min-h-[60px] hover:bg-[#fbfbfa] transition-all duration-300 group/link"
+                               style={{ background: isVibe ? bg(0) : 'white' }}>
+                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isVibe ? '' : 'text-[#9b9a97] group-hover/link:text-[#D80018]'}`} style={isVibe ? { color: pal(0) } : undefined} fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                                </svg>
+                            </a>
+
+                            {/* Filler */}
+                            <div className={`hidden md:block col-span-1 transition-all duration-300 ${isVibe ? '' : 'bg-[#f0f0ef]'}`} style={isVibe ? { background: `${pal(1)}1A` } : undefined} />
+
+                            {/* Quote/Bio */}
+                            <div className="col-span-2 md:col-span-3 md:row-span-2 p-6 md:p-10 flex flex-col justify-center relative overflow-hidden transition-all duration-300" style={{ background: isVibe ? bg(0) : 'white' }}>
+                                <div className={`absolute top-0 right-0 w-48 h-48 blur-3xl rounded-full -mr-24 -mt-24 pointer-events-none transition-opacity duration-300 ${isVibe ? 'bg-[#D80018]/20 opacity-100' : 'bg-[#D80018]/5 opacity-40'}`} />
+                                <h3 className={`text-xl md:text-2xl font-serif mb-4 md:mb-6 leading-tight relative z-10 transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={textStyle(0)}>
+                                    &ldquo;Software shouldn&apos;t just work. <br />
+                                    It should <span className="italic">feel</span> like something.&rdquo;
+                                </h3>
+                                <p className="text-[13px] md:text-[14px] leading-relaxed text-[#37352f] opacity-80 font-medium font-serif relative z-10">
+                                    I build interactive digital matter. VibeCoder is the marketplace where builders like me find their next gig.
+                                </p>
+                            </div>
+
+                            {/* Focus Tag */}
+                            <div className="col-span-1 md:row-span-2 p-6 flex flex-col items-center justify-center text-center transition-all duration-300" style={{ background: isVibe ? bg(1) : 'white' }}>
+                                <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-[0.2em] mb-3">Focus</span>
+                                <span className={`text-[11px] font-bold uppercase tracking-widest leading-tight transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={textStyle(1)}>Physics<br />Driven UI</span>
+                            </div>
+
+                            {/* Note Label */}
+                            <div className="col-span-1 flex items-center justify-center p-4 transition-all duration-300" style={{ background: isVibe ? bg(0) : 'white' }}>
+                                <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold transition-all duration-300 ${isVibe ? '' : 'text-[#D80018]'}`} style={isVibe ? textStyle(0) : undefined}>Note</span>
+                            </div>
+
+                            {/* LinkedIn */}
+                            <a href="https://linkedin.com/in/jagadesh-ronanki" target="_blank" rel="noopener noreferrer"
+                               className="col-span-2 md:col-span-1 flex items-center justify-center min-h-[60px] hover:bg-[#fbfbfa] transition-all duration-300 group/link"
+                               style={{ background: isVibe ? bg(1) : 'white' }}>
+                                <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isVibe ? '' : 'text-[#9b9a97] group-hover/link:text-[#D80018]'}`} style={isVibe ? { color: pal(1) } : undefined} fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                            </a>
+
+                            {/* Signature */}
+                            <div className="col-span-2 p-8 flex items-center transition-all duration-300" style={{ background: isVibe ? bg(0) : 'white' }}>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-8 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? pal(0) : 'rgba(216,0,24,0.3)' }} />
+                                    <span className={`text-sm font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={textStyle(0)}>adhd.dev</span>
+                                </div>
+                            </div>
+
+                            {/* Philosophy Italic */}
+                            <div className="hidden md:flex col-span-2 p-8 items-center transition-all duration-300" style={{ background: isVibe ? bg(1) : 'white' }}>
+                                <p className={`text-[13px] leading-relaxed opacity-70 font-serif italic transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={textStyle(1)}>
+                                    Software stops being static and starts breathing.
+                                </p>
+                            </div>
+
+                            {/* Contact */}
+                            <a href="mailto:adhd.paws@gmail.com" className="col-span-2 p-8 flex flex-col justify-center group/mail hover:bg-white transition-all duration-300" style={{ background: isVibe ? bg(0) : '#fbfbfa' }}>
+                                <span className="text-[9px] font-mono text-[#9b9a97] uppercase tracking-widest mb-3">Direct Contact</span>
+                                <div className="flex items-center gap-3">
+                                    <svg className={`w-4 h-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#9b9a97] group-hover/mail:text-[#D80018]'}`} style={isVibe ? { color: pal(0) } : undefined} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                                    </svg>
+                                    <span className={`text-[12px] font-mono border-b transition-colors duration-300 ${isVibe ? '' : 'border-[#ededeb] text-[#37352f]'}`} style={isVibe ? { color: pal(0), borderColor: `${pal(0)}4D` } : undefined}>adhd.paws@gmail.com</span>
+                                </div>
+                            </a>
+
+                            {/* Filler bottom */}
+                            <div className={`hidden md:block col-span-2 transition-all duration-300 ${isVibe ? '' : 'bg-[#f0f0ef]'}`} style={isVibe ? { background: `${pal(0)}33` } : undefined} />
+                        </div>
+                    </FadeIn>
+                </section>
+
+                {/* ══════════════════════════════════════════════
                    PLATFORM FEATURES
                    ══════════════════════════════════════════════ */}
                 <section className="mb-24 md:mb-36">
