@@ -1,12 +1,112 @@
 @import "tailwindcss";
 
-@theme {
-    --color-brand-red: #D80018;
+/* =============================================================================
+   VIBECODER DESIGN SYSTEM
+   Aligned with Artode Minis (lab/)
+   ============================================================================= */
+
+:root {
+  /* Brand Accent */
+  --brand-accent: #D80018;
+
+  /* Neutral Palette - Stone */
+  --background: #ffffff;
+  --foreground: #1c1917;
+  --foreground-muted: #78716c;
+  --border: #e7e5e4;
+  --border-hover: #a8a29e;
+
+  /* Layout */
+  --content-max-width: 900px;
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    color: #37352f;
-    background: #ffffff;
-    -webkit-font-smoothing: antialiased;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-accent: var(--brand-accent);
+
+  /* Brand Colors */
+  --color-brand-red: #D80018;
+  --color-brand-dark: #0a0a0a;
+  --color-brand-paper: #ffffff;
+  --color-brand-gray: #f5f5f5;
+
+  /* Fonts */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
 }
+
+/* =============================================================================
+   BASE STYLES
+   ============================================================================= */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), ui-serif, Georgia, serif;
+}
+
+/* =============================================================================
+   SELECTION STATE
+   ============================================================================= */
+
+::selection {
+  background-color: var(--brand-accent);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: var(--brand-accent);
+  color: #ffffff;
+}
+
+/* =============================================================================
+   CUSTOM SCROLLBAR
+   ============================================================================= */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground-muted);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) transparent;
+}
+
+/* =============================================================================
+   UTILITY CLASSES
+   ============================================================================= */
+
+.reader-view {
+  max-width: var(--content-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.text-accent { color: var(--brand-accent); }
+.bg-accent { background-color: var(--brand-accent); }
+.border-accent { border-color: var(--brand-accent); }

@@ -8,75 +8,92 @@ interface HeaderProps {
     breadcrumbs?: ReactNode;
     rightContent?: ReactNode;
     className?: string;
+    showAuth?: boolean;
 }
 
-export function Header({ breadcrumbs, rightContent, className = '' }: HeaderProps) {
+function VibeLogo() {
+    return (
+        <Link href="/" className="flex items-center gap-2 hover:text-[#37352f] transition-colors font-medium text-[#9b9a97]">
+            <div className="w-3 h-3 bg-brand-red rounded-[2px]" />
+            <span>VibeCoder</span>
+        </Link>
+    );
+}
+
+export function Header({ breadcrumbs, rightContent, className = '', showAuth = true }: HeaderProps) {
     const { data: session, status } = useSession();
 
     return (
-        <header className={`flex items-center justify-between ${className}`}>
-            <div className="text-sm">
-                {breadcrumbs || (
-                    <div className="flex items-center gap-2 text-[#9b9a97]">
-                        <Link href="/" className="flex items-center gap-2 hover:text-[#37352f] transition-colors">
-                            <div className="w-3 h-3 bg-brand-red rounded-[2px]" />
-                            <span className="text-[#37352f] font-medium">VibeCoder</span>
-                        </Link>
-                    </div>
-                )}
+        <nav className={`flex items-center justify-between mb-12 text-sm ${className}`}>
+            <div className="flex items-center gap-3 text-[#9b9a97]">
+                {breadcrumbs || <VibeLogo />}
             </div>
-            <div className="flex items-center gap-3">
-                {rightContent}
-                {status === 'loading' ? (
-                    <div className="w-4 h-4 border border-[#ededeb] border-t-[#9b9a97] rounded-full animate-spin" />
-                ) : session?.user ? (
-                    <div className="flex items-center gap-2.5">
-                        <Link
-                            href="/explore"
-                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
-                        >
+
+            <div className="flex items-center text-[#9b9a97]">
+                {/* Nav links */}
+                <div className="hidden md:flex items-center gap-4 mr-4">
+                    {rightContent || (
+                        <Link href="/explore" className="hover:text-[#37352f] transition-colors">
                             Explore
                         </Link>
-                        <Link
-                            href="/manager"
-                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
-                        >
-                            Manager
-                        </Link>
-                        {session.user.image && (
-                            <Link href={`/m/${(session.user as { username?: string }).username || session.user.name || ''}`}>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={session.user.image}
-                                    alt=""
-                                    className="w-6 h-6 rounded-sm border border-[#ededeb]"
-                                />
-                            </Link>
+                    )}
+                </div>
+
+                {/* Auth section - border separated */}
+                {showAuth && (
+                    <div className="md:border-l md:border-[#ededeb] md:pl-4 ml-3">
+                        {status === 'loading' ? (
+                            <div className="w-4 h-4 border border-[#ededeb] border-t-[#9b9a97] rounded-full animate-spin" />
+                        ) : session?.user ? (
+                            <div className="flex items-center gap-3">
+                                <Link
+                                    href="/explore"
+                                    className="md:hidden text-xs hover:text-[#37352f] transition-colors"
+                                >
+                                    Explore
+                                </Link>
+                                <Link
+                                    href="/manager"
+                                    className="text-xs hover:text-[#37352f] transition-colors"
+                                >
+                                    Manager
+                                </Link>
+                                {session.user.image && (
+                                    <Link href={`/m/${(session.user as { username?: string }).username || session.user.name || ''}`}>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={session.user.image}
+                                            alt=""
+                                            className="w-6 h-6 rounded-sm border border-[#ededeb]"
+                                        />
+                                    </Link>
+                                )}
+                                <button
+                                    onClick={() => signOut()}
+                                    className="text-xs hover:text-brand-red transition-colors"
+                                >
+                                    Sign out
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3">
+                                <Link
+                                    href="/explore"
+                                    className="md:hidden text-xs hover:text-[#37352f] transition-colors"
+                                >
+                                    Explore
+                                </Link>
+                                <button
+                                    onClick={() => signIn('github')}
+                                    className="text-xs hover:text-[#37352f] transition-colors"
+                                >
+                                    Sign in
+                                </button>
+                            </div>
                         )}
-                        <button
-                            onClick={() => signOut()}
-                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-brand-red transition-colors"
-                        >
-                            Sign out
-                        </button>
-                    </div>
-                ) : (
-                    <div className="flex items-center gap-2.5">
-                        <Link
-                            href="/explore"
-                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
-                        >
-                            Explore
-                        </Link>
-                        <button
-                            onClick={() => signIn('github')}
-                            className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#9b9a97] hover:text-[#37352f] transition-colors"
-                        >
-                            Sign in
-                        </button>
                     </div>
                 )}
             </div>
-        </header>
+        </nav>
     );
 }
