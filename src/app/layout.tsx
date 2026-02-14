@@ -19,10 +19,24 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
     title: {
-        default: 'VibeCoder Marketplace',
+        default: 'VibeCoder Marketplace — Ship Fast. Get Found. Get Paid.',
         template: '%s | VibeCoder',
     },
-    description: 'Plug-and-play developer showcase marketplace. Show your work from anywhere.',
+    description: 'The marketplace for vibe coders who build with AI and founders who need it done. Browse live projects, see real speed, hire with confidence.',
+    keywords: ['vibe coding', 'AI developer', 'freelance', 'marketplace', 'hire developer', 'showcase', 'portfolio'],
+    openGraph: {
+        title: 'VibeCoder Marketplace',
+        description: 'The marketplace for vibe coders who build with AI and founders who need it done yesterday.',
+        type: 'website',
+        siteName: 'VibeCoder',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'VibeCoder Marketplace',
+        description: 'Ship Fast. Get Found. Get Paid.',
+    },
+    robots: { index: true, follow: true },
+    alternates: { canonical: '/' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
