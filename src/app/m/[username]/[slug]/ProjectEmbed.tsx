@@ -119,7 +119,7 @@ export function ProjectEmbed({ profile, showcase }: ProjectEmbedProps) {
             {/* Iframe */}
             <div className="flex-1 relative">
                 {!iframeLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#fafaf9]">
+                    <div className="absolute inset-0 flex items-center justify-center bg-vc-surface-raised">
                         <div className="flex flex-col items-center gap-3">
                             <div className="w-6 h-6 border-2 border-vc-border border-t-brand-red rounded-full animate-spin" />
                             <span className="text-[11px] font-mono text-vc-text-secondary uppercase tracking-wider">Loading project…</span>

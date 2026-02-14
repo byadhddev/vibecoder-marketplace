@@ -239,7 +239,7 @@ export default function ExploreClient({ initialData }: {
                 );
             case 'filler':
                 return (
-                    <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : '#f0f0ef' }} />
+                    <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : 'var(--vc-skeleton)' }} />
                 );
             case 'builder': {
                 const b = tile.builder!;

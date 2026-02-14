@@ -60,7 +60,7 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
             <div className="relative w-full max-w-lg mx-4 bg-vc-surface rounded-lg shadow-2xl border border-vc-border overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="flex items-center gap-3 px-4 py-3 border-b border-vc-border">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9b9a97" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input
                         ref={inputRef}
                         type="text"
@@ -75,7 +75,7 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
                 {results.length > 0 && (
                     <div className="max-h-[300px] overflow-y-auto py-1">
                         <button
-                            className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors ${selected === 0 ? 'bg-vc-surface-raised' : 'hover:bg-[#fafaf9]'}`}
+                            className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors ${selected === 0 ? 'bg-vc-surface-raised' : 'hover:bg-vc-surface-raised'}`}
                             onClick={() => navigate(`/search?q=${encodeURIComponent(query)}`)}
                         >
                             <span className="text-vc-text-secondary">View all results for &quot;{query}&quot;</span>
@@ -83,7 +83,7 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
                         {results.map((r, i) => (
                             <button
                                 key={r.url}
-                                className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-3 transition-colors ${selected === i + 1 ? 'bg-vc-surface-raised' : 'hover:bg-[#fafaf9]'}`}
+                                className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-3 transition-colors ${selected === i + 1 ? 'bg-vc-surface-raised' : 'hover:bg-vc-surface-raised'}`}
                                 onClick={() => navigate(r.url)}
                             >
                                 {r.avatar_url ? (

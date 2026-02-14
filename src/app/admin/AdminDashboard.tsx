@@ -146,7 +146,7 @@ export function AdminDashboard() {
                     {/* Builder rows */}
                     {builders.map((b, i) => (
                         <Link key={b.username} href={`/m/${b.username}`} className="contents">
-                            <div className="col-span-2 p-4 md:p-5 flex items-center gap-3 min-h-[70px] bg-vc-surface group hover:bg-[#fafaf9] transition-colors">
+                            <div className="col-span-2 p-4 md:p-5 flex items-center gap-3 min-h-[70px] bg-vc-surface group hover:bg-vc-surface-raised transition-colors">
                                 {b.avatar_url && (
                                     <Image src={b.avatar_url} alt="" width={28} height={28} className="rounded-sm" />
                                 )}

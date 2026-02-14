@@ -51,7 +51,7 @@ export function VibeloperCard({ profile, showcases, compact = false }: Vibeloper
                 {/* Gradient overlay at bottom */}
                 <div
                     className="absolute inset-x-0 bottom-0 h-20"
-                    style={{ background: `linear-gradient(to top, #242423, transparent)` }}
+                    style={{ background: 'linear-gradient(to top, var(--vc-dark), transparent)' }}
                 />
             </div>
 

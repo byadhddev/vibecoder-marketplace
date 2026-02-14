@@ -321,13 +321,13 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="text" placeholder="Your name" value={profile.name}
                                 onChange={e => updateProfile('name', e.target.value)}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-sm font-serif text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-sm font-serif text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Role (e.g. Frontend Engineer)" value={profile.role}
                                 onChange={e => updateProfile('role', e.target.value)}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Location" value={profile.location}
                                 onChange={e => updateProfile('location', e.target.value)}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -341,10 +341,10 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <textarea placeholder="Bio — tell the world what you build" value={profile.bio}
                                 onChange={e => updateProfile('bio', e.target.value)} rows={3}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-serif text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors resize-none" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-serif text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors resize-none" />
                             <input type="url" placeholder="Website URL" value={profile.website}
                                 onChange={e => updateProfile('website', e.target.value)}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -358,13 +358,13 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="text" placeholder="GitHub username" value={profile.social_links?.github || ''}
                                 onChange={e => updateSocial('github', e.target.value)}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Twitter / X handle" value={profile.social_links?.twitter || ''}
                                 onChange={e => updateSocial('twitter', e.target.value)}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             <input type="text" placeholder="LinkedIn username" value={profile.social_links?.linkedin || ''}
                                 onChange={e => updateSocial('linkedin', e.target.value)}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -378,11 +378,11 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="text" placeholder="Skills (comma-separated: React, Next.js, Python…)" value={(profile.skills || []).join(', ')}
                                 onChange={e => { setProfile(prev => ({ ...prev, skills: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })); setProfileDirty(true); }}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                             {(profile.skills || []).length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 mt-1">
                                     {(profile.skills || []).map(s => (
-                                        <span key={s} className="text-[9px] font-mono uppercase tracking-wider text-vc-text-secondary bg-[#f0f0f0] px-1.5 py-0.5 rounded">{s}</span>
+                                        <span key={s} className="text-[9px] font-mono uppercase tracking-wider text-vc-text-secondary bg-vc-surface-raised px-1.5 py-0.5 rounded">{s}</span>
                                     ))}
                                 </div>
                             )}
@@ -411,11 +411,11 @@ export default function ManagerPage() {
                             <div className="flex items-center gap-3">
                                 <input type="number" placeholder="Rate" value={profile.hourly_rate || ''}
                                     onChange={e => { setProfile(prev => ({ ...prev, hourly_rate: parseFloat(e.target.value) || 0 })); setProfileDirty(true); }}
-                                    className="w-full sm:w-20 bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
+                                    className="w-full sm:w-20 bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors" />
                                 <span className="text-[10px] font-mono text-vc-text-secondary">$</span>
                                 <select value={profile.rate_type || 'negotiable'}
                                     onChange={e => { setProfile(prev => ({ ...prev, rate_type: e.target.value as 'hourly' | 'project' | 'negotiable' })); setProfileDirty(true); }}
-                                    className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text outline-none py-2 transition-colors">
+                                    className="bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text outline-none py-2 transition-colors">
                                     <option value="hourly">/hour</option>
                                     <option value="project">/project</option>
                                     <option value="negotiable">negotiable</option>
@@ -450,10 +450,10 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="url" placeholder="Paste URL (GitHub, CodeSandbox, etc.)" value={form.url}
                                 onChange={e => setForm(prev => ({ ...prev, url: e.target.value }))} onBlur={() => fetchOG(form.url)}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-sm font-serif text-vc-text placeholder:text-vc-text-secondary placeholder:font-serif outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-sm font-serif text-vc-text placeholder:text-vc-text-secondary placeholder:font-serif outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Title" value={form.title}
                                 onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-sm font-serif text-vc-text placeholder:text-vc-text-secondary placeholder:font-serif outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-sm font-serif text-vc-text placeholder:text-vc-text-secondary placeholder:font-serif outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -467,10 +467,10 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="url" placeholder="Source code URL (GitHub, GitLab, etc.)" value={form.source_url}
                                 onChange={e => setForm(prev => ({ ...prev, source_url: e.target.value }))}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                             <input type="url" placeholder="Blog post / article URL" value={form.post_url}
                                 onChange={e => setForm(prev => ({ ...prev, post_url: e.target.value }))}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -484,10 +484,10 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="text" placeholder="Description" value={form.description}
                                 onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-serif text-vc-text placeholder:text-vc-text-secondary placeholder:font-serif outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-serif text-vc-text placeholder:text-vc-text-secondary placeholder:font-serif outline-none py-2 transition-colors" />
                             <input type="text" placeholder="Tags (comma-separated)" value={form.tags}
                                 onChange={e => setForm(prev => ({ ...prev, tags: e.target.value }))}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -501,10 +501,10 @@ export default function ManagerPage() {
                         <div className="space-y-2">
                             <input type="number" placeholder="Build time in hours (e.g. 6)" value={form.build_hours}
                                 onChange={e => setForm(prev => ({ ...prev, build_hours: e.target.value }))}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                             <input type="text" placeholder="AI tools (comma-separated: Cursor, Claude, Copilot…)" value={form.ai_tools}
                                 onChange={e => setForm(prev => ({ ...prev, ai_tools: e.target.value }))}
-                                className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
+                                className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary placeholder:font-mono outline-none py-2 transition-colors" />
                         </div>
                     </div>
                 );
@@ -662,17 +662,17 @@ export default function ManagerPage() {
                         <div className="grid grid-cols-2 gap-2">
                             <input type="number" placeholder="Amount ($)" value={earnForm.amount}
                                 onChange={e => setEarnForm(prev => ({ ...prev, amount: e.target.value }))}
-                                className={`bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
+                                className={`bg-transparent border-b focus:border-vc-text text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
                             <input type="text" placeholder="Client (optional)" value={earnForm.client_name}
                                 onChange={e => setEarnForm(prev => ({ ...prev, client_name: e.target.value }))}
-                                className={`bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
+                                className={`bg-transparent border-b focus:border-vc-text text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
                         </div>
                         <input type="text" placeholder="Note (optional)" value={earnForm.note}
                             onChange={e => setEarnForm(prev => ({ ...prev, note: e.target.value }))}
-                            className={`w-full bg-transparent border-b focus:border-[#37352f] text-[12px] font-serif outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
+                            className={`w-full bg-transparent border-b focus:border-vc-text text-[12px] font-serif outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
                         <input type="url" placeholder="Proof URL — invoice, screenshot (optional)" value={earnForm.proof_url}
                             onChange={e => setEarnForm(prev => ({ ...prev, proof_url: e.target.value }))}
-                            className={`w-full bg-transparent border-b focus:border-[#37352f] text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
+                            className={`w-full bg-transparent border-b focus:border-vc-text text-[12px] font-mono outline-none py-2 transition-colors ${isVibe ? `${vt} border-white/20` : 'text-vc-text border-vc-border placeholder:text-vc-text-secondary'}`} />
                         <button
                             onClick={handleLogEarning}
                             disabled={savingEarning || !earnForm.amount}
@@ -704,7 +704,7 @@ export default function ManagerPage() {
             <section className="flex-1">
                 {loading ? (
                     <div className="flex items-center justify-center py-32">
-                        <div className="w-6 h-6 border-2 border-vc-border border-t-[#37352f] rounded-full animate-spin" />
+                        <div className="w-6 h-6 border-2 border-vc-border border-t-vc-text rounded-full animate-spin" />
                     </div>
                 ) : (
                     <div className="space-y-4">

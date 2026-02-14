@@ -363,7 +363,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                             {skills.map(s => (
-                                <span key={s} className={`text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded transition-colors duration-300 ${isVibe ? '' : 'text-vc-text-secondary bg-[#f0f0f0]'}`}
+                                <span key={s} className={`text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded transition-colors duration-300 ${isVibe ? '' : 'text-vc-text-secondary bg-vc-surface-raised'}`}
                                     style={isVibe ? { color: palColor, backgroundColor: `${palColor}15` } : undefined}>
                                     {s}
                                 </span>
@@ -438,21 +438,21 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <input type="text" placeholder="Your name" value={contactForm.name}
                                 onChange={e => setContactForm(prev => ({ ...prev, name: e.target.value }))}
-                                className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
+                                className="bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                             <input type="email" placeholder="Email" value={contactForm.email}
                                 onChange={e => setContactForm(prev => ({ ...prev, email: e.target.value }))}
-                                className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
+                                className="bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                         </div>
                         <input type="text" placeholder="What do you need built?" value={contactForm.description}
                             onChange={e => setContactForm(prev => ({ ...prev, description: e.target.value }))}
-                            className="w-full bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-serif text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
+                            className="w-full bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-serif text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <input type="text" placeholder="Budget range" value={contactForm.budget}
                                 onChange={e => setContactForm(prev => ({ ...prev, budget: e.target.value }))}
-                                className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
+                                className="bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                             <input type="text" placeholder="Timeline" value={contactForm.timeline}
                                 onChange={e => setContactForm(prev => ({ ...prev, timeline: e.target.value }))}
-                                className="bg-transparent border-b border-vc-border focus:border-[#37352f] text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
+                                className="bg-transparent border-b border-vc-border focus:border-vc-text text-[12px] font-mono text-vc-text placeholder:text-vc-text-secondary outline-none py-2 transition-colors min-h-[44px]" />
                         </div>
                         <span className={`text-[8px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-vc-text-secondary'}`} style={isVibe ? dynTextStyle : undefined}>
                             ● This request will be public on GitHub for transparency
@@ -570,7 +570,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                 );
             case 'filler':
                 return (
-                    <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : '#f0f0ef' }} />
+                    <div className={`${tile.colSpan} min-h-[120px] transition-all duration-300`} style={{ backgroundColor: isVibe ? `${palColor}1A` : 'var(--vc-skeleton)' }} />
                 );
             case 'showcase': {
                 const s = tile.showcase!;
@@ -606,7 +606,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                             {(s.ai_tools || []).length > 0 && (
                                 <div className="flex items-center gap-1.5 mt-1.5">
                                     {(s.ai_tools || []).map(tool => (
-                                        <span key={tool} className="text-[8px] font-mono uppercase tracking-wider text-vc-text-secondary bg-[#f0f0f0] px-1.5 py-0.5 rounded">{tool}</span>
+                                        <span key={tool} className="text-[8px] font-mono uppercase tracking-wider text-vc-text-secondary bg-vc-surface-raised px-1.5 py-0.5 rounded">{tool}</span>
                                     ))}
                                 </div>
                             )}

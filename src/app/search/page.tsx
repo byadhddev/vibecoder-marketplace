@@ -104,7 +104,7 @@ function SearchPageContent() {
                             </div>
                             {builders.map((r, i) => (
                                 <Link key={r.url} href={r.url} className="contents">
-                                    <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[120px] bg-vc-surface group hover:bg-[#fafaf9] transition-colors">
+                                    <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[120px] bg-vc-surface group hover:bg-vc-surface-raised transition-colors">
                                         <div className="flex items-center gap-3">
                                             {r.avatar_url && (
                                                 <Image src={r.avatar_url} alt="" width={24} height={24} className="rounded-sm" />
@@ -134,7 +134,7 @@ function SearchPageContent() {
                             </div>
                             {showcases.map((r, i) => (
                                 <Link key={r.url} href={r.url} className="contents">
-                                    <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[100px] bg-vc-surface group hover:bg-[#fafaf9] transition-colors">
+                                    <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[100px] bg-vc-surface group hover:bg-vc-surface-raised transition-colors">
                                         <div className="flex items-center gap-3">
                                             {r.avatar_url && (
                                                 <Image src={r.avatar_url} alt="" width={20} height={20} className="rounded-sm opacity-60" />

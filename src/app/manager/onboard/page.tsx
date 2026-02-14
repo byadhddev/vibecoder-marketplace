@@ -124,7 +124,7 @@ export default function OnboardPage() {
                             <input
                                 value={name}
                                 onChange={e => setName(e.target.value)}
-                                className="w-full px-3 py-2.5 border border-vc-border text-sm font-mono text-vc-text outline-none focus:border-[#37352f] bg-vc-surface transition-colors"
+                                className="w-full px-3 py-2.5 border border-vc-border text-sm font-mono text-vc-text outline-none focus:border-vc-text bg-vc-surface transition-colors"
                                 placeholder="How you appear on the marketplace"
                             />
                         </div>
@@ -135,7 +135,7 @@ export default function OnboardPage() {
                             <input
                                 value={role}
                                 onChange={e => setRole(e.target.value)}
-                                className="w-full px-3 py-2.5 border border-vc-border text-sm font-mono text-vc-text outline-none focus:border-[#37352f] bg-vc-surface transition-colors"
+                                className="w-full px-3 py-2.5 border border-vc-border text-sm font-mono text-vc-text outline-none focus:border-vc-text bg-vc-surface transition-colors"
                                 placeholder="e.g. Full-Stack Vibe Coder"
                             />
                         </div>
@@ -158,7 +158,7 @@ export default function OnboardPage() {
                             value={skillInput}
                             onChange={e => setSkillInput(e.target.value)}
                             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addSkill(skillInput); } }}
-                            className="w-full px-3 py-2.5 border border-vc-border text-sm font-mono text-vc-text outline-none focus:border-[#37352f] bg-vc-surface transition-colors"
+                            className="w-full px-3 py-2.5 border border-vc-border text-sm font-mono text-vc-text outline-none focus:border-vc-text bg-vc-surface transition-colors"
                             placeholder="Type and press Enter"
                         />
                         <div className="flex flex-wrap gap-1">

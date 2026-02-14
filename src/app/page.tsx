@@ -69,7 +69,7 @@ function WaitlistInput({ count, variant = 'default', isVibe = false, vibeColor }
                     onChange={e => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
-                    className="flex-1 px-4 py-3 border border-[#e7e5e4] bg-vc-surface text-sm font-mono text-vc-text placeholder:text-[#c8c6c4] focus:outline-none focus:border-[#D80018] focus:ring-1 focus:ring-[#D80018]/20 transition-all duration-300"
+                    className="flex-1 px-4 py-3 border border-vc-border-subtle bg-vc-surface text-sm font-mono text-vc-text placeholder:text-[#c8c6c4] focus:outline-none focus:border-[#D80018] focus:ring-1 focus:ring-[#D80018]/20 transition-all duration-300"
                     disabled={state === 'loading'}
                 />
                 <button
@@ -162,12 +162,12 @@ export default function LandingPage() {
     function fText(index: number) { return isFounderVibe ? { color: pal(index) } : undefined; }
 
     return (
-        <div className="min-h-screen w-full bg-[#fbfbfa] text-vc-text relative">
+        <div className="min-h-screen w-full bg-vc-bg text-vc-text relative transition-colors">
             {/* Background grid pattern */}
             <div
                 className="fixed inset-0 pointer-events-none opacity-[0.4]"
                 style={{
-                    backgroundImage: 'linear-gradient(#e5e5e5 1px, transparent 1px), linear-gradient(90deg, #e5e5e5 1px, transparent 1px)',
+                    backgroundImage: 'linear-gradient(var(--vc-border) 1px, transparent 1px), linear-gradient(90deg, var(--vc-border) 1px, transparent 1px)',
                     backgroundSize: '24px 24px',
                 }}
             />
@@ -208,14 +208,14 @@ export default function LandingPage() {
                             The Marketplace for AI Builders
                         </span>
                         <h1
-                            className={`text-4xl sm:text-5xl md:text-7xl font-serif leading-[1.05] tracking-tight mb-6 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`}
+                            className={`text-4xl sm:text-5xl md:text-7xl font-serif leading-[1.05] tracking-tight mb-6 transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`}
                             style={textStyle(0)}
                         >
                             Where Vibe Coders<br />
                             <span className="italic">Meet Their Next Build</span>
                         </h1>
                         <p
-                            className={`text-base md:text-lg max-w-lg leading-relaxed mb-10 font-light transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`}
+                            className={`text-base md:text-lg max-w-lg leading-relaxed mb-10 font-light transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-vc-text-secondary'}`}
                             style={isVibe ? textStyle(2) : undefined}
                         >
                             A transparent marketplace connecting AI-native builders with founders who need them.
@@ -273,13 +273,13 @@ export default function LandingPage() {
                                         style={textStyle(0)}
                                     >For Builders</span>
                                     <h2
-                                        className={`text-2xl md:text-3xl font-serif leading-tight mb-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`}
+                                        className={`text-2xl md:text-3xl font-serif leading-tight mb-4 transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`}
                                         style={textStyle(0)}
                                     >
                                         Ship fast.<br />Get found.<br />Get paid.
                                     </h2>
                                     <p
-                                        className={`text-sm leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`}
+                                        className={`text-sm leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-vc-text-secondary'}`}
                                         style={isVibe ? textStyle(2) : undefined}
                                     >
                                         Your showcases are your storefront. Every project you build becomes proof of what you can do —
@@ -290,7 +290,7 @@ export default function LandingPage() {
                                     {['Showcase Portfolio', 'Set Your Rate', 'Get Hired', 'Earn Transparently'].map((tag, i) => (
                                         <span
                                             key={tag}
-                                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-[#e7e5e4] text-[#78716c]'}`}
+                                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-vc-border-subtle text-vc-text-secondary'}`}
                                             style={isVibe ? { color: pal(i % VIBE_COLORS.length) } : undefined}
                                         >
                                             {tag}
@@ -310,13 +310,13 @@ export default function LandingPage() {
                                         style={textStyle(1)}
                                     >For Seekers</span>
                                     <h2
-                                        className={`text-2xl md:text-3xl font-serif leading-tight mb-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`}
+                                        className={`text-2xl md:text-3xl font-serif leading-tight mb-4 transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`}
                                         style={textStyle(1)}
                                     >
                                         Proof,<br />not promises.
                                     </h2>
                                     <p
-                                        className={`text-sm leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`}
+                                        className={`text-sm leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-vc-text-secondary'}`}
                                         style={isVibe ? textStyle(3) : undefined}
                                     >
                                         Browse real projects, not PDF portfolios. See how fast they build, what tools they use,
@@ -327,7 +327,7 @@ export default function LandingPage() {
                                     {['Browse Builders', 'See Real Work', 'Transparent Hiring', 'Open Reviews'].map((tag, i) => (
                                         <span
                                             key={tag}
-                                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-[#e7e5e4] text-[#78716c]'}`}
+                                            className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 border transition-colors duration-300 ${isVibe ? 'border-current opacity-60' : 'border-vc-border-subtle text-vc-text-secondary'}`}
                                             style={isVibe ? { color: pal((i + 2) % VIBE_COLORS.length) } : undefined}
                                         >
                                             {tag}
@@ -364,10 +364,10 @@ export default function LandingPage() {
                                         style={isVibe ? textStyle(i) : undefined}
                                     >{item.step}</span>
                                     <h3
-                                        className={`text-base md:text-lg font-serif mb-2 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`}
+                                        className={`text-base md:text-lg font-serif mb-2 transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`}
                                         style={textStyle(i)}
                                     >{item.title}</h3>
-                                    <p className={`text-[13px] leading-relaxed flex-1 transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-[#78716c]'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{item.desc}</p>
+                                    <p className={`text-[13px] leading-relaxed flex-1 transition-colors duration-300 ${isVibe ? 'opacity-70' : 'text-vc-text-secondary'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{item.desc}</p>
                                     <span
                                         className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-4 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`}
                                         style={textStyle(i)}
@@ -416,7 +416,7 @@ export default function LandingPage() {
                 <section className="mb-24 md:mb-36">
                     <FadeIn>
                         <div className="flex items-center gap-3 mb-6">
-                            <span className={`text-xl font-normal font-mono transition-colors duration-300 ${isFounderVibe ? '' : 'text-[#ebebeb]'}`} style={isFounderVibe ? fText(1) : undefined}>#</span>
+                            <span className={`text-xl font-normal font-mono transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-muted'}`} style={isFounderVibe ? fText(1) : undefined}>#</span>
                             <h2 className="text-2xl font-semibold tracking-tight text-vc-text font-serif">
                                 <span className={`transition-colors duration-300`} style={fText(1)}>Meet the</span>{' '}
                                 <span className="line-through opacity-40">Developer</span>{' '}
@@ -451,7 +451,7 @@ export default function LandingPage() {
 
                             {/* Twitter/X */}
                             <a href="https://twitter.com/byadhddev" target="_blank" rel="noopener noreferrer"
-                               className="col-span-1 flex items-center justify-center min-h-[70px] md:min-h-0 hover:bg-[#fbfbfa] transition-all duration-300 group/link"
+                               className="col-span-1 flex items-center justify-center min-h-[70px] md:min-h-0 hover:bg-vc-surface-raised transition-all duration-300 group/link"
                                style={{ background: fBg(0) }}>
                                 <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(0) } : undefined} fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -460,7 +460,7 @@ export default function LandingPage() {
 
                             {/* GitHub */}
                             <a href="https://github.com/byadhddev" target="_blank" rel="noopener noreferrer"
-                               className="col-span-1 flex items-center justify-center min-h-[70px] md:min-h-0 hover:bg-[#fbfbfa] transition-all duration-300 group/link"
+                               className="col-span-1 flex items-center justify-center min-h-[70px] md:min-h-0 hover:bg-vc-surface-raised transition-all duration-300 group/link"
                                style={{ background: fBg(1) }}>
                                 <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(1) } : undefined} fill="currentColor" viewBox="0 0 24 24">
                                     <path fillRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" clipRule="evenodd"/>
@@ -469,7 +469,7 @@ export default function LandingPage() {
 
                             {/* Portfolio */}
                             <a href="https://byadhd.dev" target="_blank" rel="noopener noreferrer"
-                               className="col-span-2 md:col-span-1 flex items-center justify-center min-h-[60px] hover:bg-[#fbfbfa] transition-all duration-300 group/link"
+                               className="col-span-2 md:col-span-1 flex items-center justify-center min-h-[60px] hover:bg-vc-surface-raised transition-all duration-300 group/link"
                                style={{ background: fBg(0) }}>
                                 <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(0) } : undefined} fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
@@ -504,7 +504,7 @@ export default function LandingPage() {
 
                             {/* LinkedIn */}
                             <a href="https://linkedin.com/in/jagadesh-ronanki" target="_blank" rel="noopener noreferrer"
-                               className="col-span-2 md:col-span-1 flex items-center justify-center min-h-[60px] hover:bg-[#fbfbfa] transition-all duration-300 group/link"
+                               className="col-span-2 md:col-span-1 flex items-center justify-center min-h-[60px] hover:bg-vc-surface-raised transition-all duration-300 group/link"
                                style={{ background: fBg(1) }}>
                                 <svg className={`w-[22px] h-[22px] transition-colors duration-300 ${isFounderVibe ? '' : 'text-vc-text-secondary group-hover/link:text-[#D80018]'}`} style={isFounderVibe ? { color: pal(1) } : undefined} fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -566,7 +566,7 @@ export default function LandingPage() {
                             <FadeIn key={feature.title} className="contents" delay={i * 50}>
                                 <div className="col-span-1 p-5 md:p-6 flex flex-col min-h-[140px] transition-all duration-300" style={{ background: bg(i) }}>
                                     <span className={`text-lg mb-3 transition-colors duration-300 ${isVibe ? '' : 'text-[#D80018]'}`} style={textStyle(i)}>{feature.icon}</span>
-                                    <h4 className={`text-[13px] font-serif mb-1 transition-colors duration-300 ${isVibe ? '' : 'text-[#0a0a0a]'}`} style={textStyle(i)}>{feature.title}</h4>
+                                    <h4 className={`text-[13px] font-serif mb-1 transition-colors duration-300 ${isVibe ? '' : 'text-vc-text'}`} style={textStyle(i)}>{feature.title}</h4>
                                     <p className={`text-[11px] leading-relaxed transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-vc-text-secondary'}`} style={isVibe ? textStyle((i + 2) % 5) : undefined}>{feature.desc}</p>
                                 </div>
                             </FadeIn>
@@ -619,7 +619,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* ── Footer ───────────────────────────────── */}
-                <footer className="pt-8 border-t border-[#ebebeb] text-vc-text-secondary text-sm flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 pb-8">
+                <footer className="pt-8 border-t border-vc-border text-vc-text-secondary text-sm flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 pb-8">
                     <div className="italic font-serif flex items-center gap-2 shrink-0 whitespace-nowrap transition-colors duration-300" style={isVibe ? { color: pal(0) } : { color: 'var(--vc-text)' }}>
                         <div className={`w-2 h-2 transition-all duration-300 ${isVibe ? 'scale-110' : ''}`} style={{ backgroundColor: isVibe ? pal(0) : '#D80018' }} />
                         VibeCoder Marketplace
