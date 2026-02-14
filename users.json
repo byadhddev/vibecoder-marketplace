@@ -1,1 +1,13 @@
-{"users":[],"updated_at":"2026-02-14T20:55:23.000Z"}
+{
+  "users": [
+    {
+      "username": "victim0xrj-cpu",
+      "name": "victim0xrj-cpu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/259151573?v=4",
+      "showcase_count": 0,
+      "available_for_hire": false,
+      "skills": []
+    }
+  ],
+  "updated_at": "2026-02-14T21:12:27.056Z"
+}
