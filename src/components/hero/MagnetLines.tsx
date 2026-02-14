@@ -13,8 +13,8 @@ export interface MagnetLinesProps {
 
 export function MagnetLines(props: MagnetLinesProps) {
   const {
-    rows = 9, cols = 9, lineColor = '#37352f',
-    lineWidth = 1, lineLength = 15, baseAngle = 0,
+    rows = 30, cols = 20, lineColor = '#37352f',
+    lineWidth = 1, lineLength = 12, baseAngle = 0,
   } = props;
 
   const propsRef = useRef(props);
@@ -32,23 +32,29 @@ export function MagnetLines(props: MagnetLinesProps) {
     if (!ctx) return;
 
     let animationId: number;
-    const wander = { x: 0, y: 0, angle: 0, speed: 0.02 };
+    const wander = { x: 0, y: 0, angle: 0 };
 
     const resize = () => {
       const parent = canvas.parentElement;
-      if (parent) {
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = parent.clientWidth * dpr;
-        canvas.height = parent.clientHeight * dpr;
-        canvas.style.width = `${parent.clientWidth}px`;
-        canvas.style.height = `${parent.clientHeight}px`;
-        ctx.scale(dpr, dpr);
-      }
+      if (!parent) return;
+      const dpr = window.devicePixelRatio || 1;
+      const w = parent.clientWidth;
+      const h = parent.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
+    // Track mouse globally, translate to canvas-relative coords
     const onMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top, active: true };
+      mouseRef.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        active: true,
+      };
     };
 
     const onMouseLeave = () => {
@@ -57,14 +63,14 @@ export function MagnetLines(props: MagnetLinesProps) {
 
     const render = () => {
       const {
-        rows = 9, cols = 9, lineColor = '#37352f',
-        lineWidth = 1, lineLength = 15, baseAngle = 0,
+        rows = 30, cols = 20, lineColor = '#37352f',
+        lineWidth = 1, lineLength = 12, baseAngle = 0,
       } = propsRef.current;
 
       const width = canvas.width / (window.devicePixelRatio || 1);
       const height = canvas.height / (window.devicePixelRatio || 1);
 
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, width * 2, height * 2);
       ctx.strokeStyle = lineColor;
       ctx.lineWidth = lineWidth;
 
@@ -74,9 +80,9 @@ export function MagnetLines(props: MagnetLinesProps) {
         targetX = mouseRef.current.x;
         targetY = mouseRef.current.y;
       } else {
-        wander.angle += (Math.random() - 0.5) * 0.1;
-        wander.x += Math.cos(wander.angle) * 2;
-        wander.y += Math.sin(wander.angle) * 2;
+        wander.angle += (Math.random() - 0.5) * 0.08;
+        wander.x += Math.cos(wander.angle) * 1.5;
+        wander.y += Math.sin(wander.angle) * 1.5;
         if (wander.x < 0) wander.x = width;
         if (wander.x > width) wander.x = 0;
         if (wander.y < 0) wander.y = height;
@@ -86,26 +92,22 @@ export function MagnetLines(props: MagnetLinesProps) {
         targetX = wander.x;
         targetY = wander.y;
         if (targetX === 0 && targetY === 0) {
-          targetX = width / 2;
-          targetY = height / 2;
-          wander.x = width / 2;
-          wander.y = height / 2;
+          wander.x = targetX = width / 2;
+          wander.y = targetY = height / 2;
         }
       }
 
-      const cellWidth = width / cols;
-      const cellHeight = height / rows;
+      const cellW = width / cols;
+      const cellH = height / rows;
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          const centerX = c * cellWidth + cellWidth / 2;
-          const centerY = r * cellHeight + cellHeight / 2;
-          const dx = targetX - centerX;
-          const dy = targetY - centerY;
-          const angle = Math.atan2(dy, dx) + (baseAngle * Math.PI) / 180;
+          const cx = c * cellW + cellW / 2;
+          const cy = r * cellH + cellH / 2;
+          const angle = Math.atan2(targetY - cy, targetX - cx) + (baseAngle * Math.PI) / 180;
 
           ctx.save();
-          ctx.translate(centerX, centerY);
+          ctx.translate(cx, cy);
           ctx.rotate(angle);
           ctx.beginPath();
           ctx.moveTo(-lineLength / 2, 0);
@@ -119,18 +121,18 @@ export function MagnetLines(props: MagnetLinesProps) {
     };
 
     window.addEventListener('resize', resize);
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('mouseleave', onMouseLeave);
+    window.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseleave', onMouseLeave);
     resize();
     render();
 
     return () => {
       window.removeEventListener('resize', resize);
-      canvas.removeEventListener('mousemove', onMouseMove);
-      canvas.removeEventListener('mouseleave', onMouseLeave);
+      window.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseleave', onMouseLeave);
       cancelAnimationFrame(animationId);
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="w-full h-full block opacity-80" />;
+  return <canvas ref={canvasRef} className="w-full h-full block" />;
 }

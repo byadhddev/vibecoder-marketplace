@@ -183,14 +183,17 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen w-full bg-vc-bg text-vc-text relative transition-colors">
-            {/* Background grid pattern */}
-            <div
-                className="fixed inset-0 pointer-events-none opacity-[0.4]"
-                style={{
-                    backgroundImage: 'linear-gradient(var(--vc-border) 1px, transparent 1px), linear-gradient(90deg, var(--vc-border) 1px, transparent 1px)',
-                    backgroundSize: '24px 24px',
-                }}
-            />
+            {/* MagnetLines full-page background */}
+            <div className="fixed inset-0 pointer-events-none opacity-60 z-0">
+                <MagnetLines
+                    rows={40}
+                    cols={25}
+                    lineColor={isVibe ? pal(0) : 'var(--vc-text-muted)'}
+                    lineWidth={1}
+                    lineLength={10}
+                    baseAngle={0}
+                />
+            </div>
 
             <div className="relative mx-auto max-w-[900px] px-6 py-8 md:px-20 md:py-16 bg-vc-surface min-h-screen shadow-[0_0_50px_-12px_rgba(0,0,0,0.08)] border-x border-vc-border">
 
@@ -219,18 +222,7 @@ export default function LandingPage() {
                 {/* ══════════════════════════════════════════════
                    HERO — Kinetic living marketplace
                    ══════════════════════════════════════════════ */}
-                <section className="mb-24 md:mb-36 relative overflow-hidden">
-                    {/* MagnetLines canvas background */}
-                    <div className="absolute inset-0 pointer-events-auto z-0">
-                        <MagnetLines
-                            rows={12}
-                            cols={12}
-                            lineColor={isVibe ? pal(0) : 'var(--vc-text-muted)'}
-                            lineWidth={1}
-                            lineLength={18}
-                            baseAngle={0}
-                        />
-                    </div>
+                <section className="mb-24 md:mb-36 relative">
                     <FloatingParticles isVibe={isVibe} />
 
                     <div className="flex flex-col items-center text-center relative z-10">
