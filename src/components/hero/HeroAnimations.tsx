@@ -112,16 +112,18 @@ interface AvatarTile {
 }
 
 const BUILDERS: AvatarTile[] = [
-  { name: 'sarah.dev', avatar: '👩‍💻', role: 'React' },
-  { name: 'kai.ts', avatar: '🧑‍💻', role: 'Rust' },
-  { name: 'luna.rs', avatar: '👩‍🔬', role: 'ML' },
-  { name: 'alex.py', avatar: '🧑‍🎨', role: 'Design' },
-  { name: 'mira.go', avatar: '👩‍🚀', role: 'Backend' },
-  { name: 'dev.sol', avatar: '🧑‍🔧', role: 'Web3' },
-  { name: 'nova.ai', avatar: '👩‍💼', role: 'AI' },
-  { name: 'zed.cpp', avatar: '🧑‍⚕️', role: 'Systems' },
-  { name: 'rio.vue', avatar: '👨‍💻', role: 'Frontend' },
-  { name: 'ash.rb', avatar: '👩‍🎤', role: 'Full Stack' },
+  { name: 'sarah.dev', avatar: 'https://i.pravatar.cc/150?img=1', role: 'React' },
+  { name: 'kai.ts', avatar: 'https://i.pravatar.cc/150?img=3', role: 'Rust' },
+  { name: 'luna.rs', avatar: 'https://i.pravatar.cc/150?img=5', role: 'ML' },
+  { name: 'alex.py', avatar: 'https://i.pravatar.cc/150?img=8', role: 'Design' },
+  { name: 'mira.go', avatar: 'https://i.pravatar.cc/150?img=9', role: 'Backend' },
+  { name: 'dev.sol', avatar: 'https://i.pravatar.cc/150?img=11', role: 'Web3' },
+  { name: 'nova.ai', avatar: 'https://i.pravatar.cc/150?img=16', role: 'AI' },
+  { name: 'zed.cpp', avatar: 'https://i.pravatar.cc/150?img=12', role: 'Systems' },
+  { name: 'rio.vue', avatar: 'https://i.pravatar.cc/150?img=14', role: 'Frontend' },
+  { name: 'ash.rb', avatar: 'https://i.pravatar.cc/150?img=20', role: 'Full Stack' },
+  { name: 'zen.go', avatar: 'https://i.pravatar.cc/150?img=22', role: 'DevOps' },
+  { name: 'ivy.ml', avatar: 'https://i.pravatar.cc/150?img=25', role: 'Data' },
 ];
 
 type TileState = 'empty' | 'flying' | 'landed' | 'vibed';
@@ -237,53 +239,50 @@ export function LiveGrid({ isVibe }: { isVibe: boolean }) {
               <div className="w-1.5 h-1.5 rounded-full bg-vc-border transition-opacity duration-300" />
             )}
 
-            {/* Flying in — avatar slides in from bottom with scale */}
+            {/* Flying in — avatar image fills the tile */}
             {(isFlying || isLanded) && tile.builder && (
               <div
-                className="flex flex-col items-center gap-0.5 transition-all ease-out"
+                className="absolute inset-0 transition-all ease-out"
                 style={{
                   opacity: isFlying ? 0 : 1,
                   transform: isFlying
-                    ? 'translateY(20px) scale(0.5)'
-                    : isVibed
-                      ? 'translateY(0) scale(1)'
-                      : 'translateY(0) scale(0.9)',
+                    ? 'translateY(100%) scale(0.8)'
+                    : 'translateY(0) scale(1)',
                   transitionDuration: '0.4s',
                 }}
               >
-                {/* Avatar circle */}
-                <div
-                  className="text-lg md:text-xl leading-none transition-all duration-500"
-                  style={{
-                    filter: isVibed ? 'none' : 'grayscale(1)',
-                    transform: isVibed ? 'scale(1.1)' : 'scale(1)',
-                  }}
-                >
-                  {tile.builder.avatar}
-                </div>
+                {/* Full-bleed avatar image */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={tile.builder.avatar}
+                  alt={tile.builder.name}
+                  className="absolute inset-0 w-full h-full object-cover transition-all duration-500"
+                  style={{ filter: isVibed ? 'none' : 'grayscale(1)' }}
+                />
 
-                {/* Name */}
-                <span
-                  className="text-[7px] md:text-[8px] font-sans leading-none transition-all duration-500 truncate max-w-full px-1"
+                {/* Name + role overlay at bottom */}
+                <div
+                  className="absolute bottom-0 left-0 right-0 px-1 py-0.5 flex flex-col items-center transition-all duration-500"
                   style={{
-                    color: isVibed ? vibeColor : 'var(--vc-text-secondary)',
+                    background: isVibed
+                      ? `linear-gradient(transparent, ${vibeColor}90)`
+                      : 'linear-gradient(transparent, rgba(0,0,0,0.6))',
                     opacity: isLanded ? 1 : 0,
                   }}
                 >
-                  {tile.builder.name}
-                </span>
-
-                {/* Role tag — appears on vibe */}
-                <span
-                  className="text-[6px] md:text-[7px] font-sans uppercase tracking-wider leading-none transition-all duration-500"
-                  style={{
-                    color: isVibed ? vibeColor : 'transparent',
-                    opacity: isVibed ? 0.6 : 0,
-                    transform: isVibed ? 'translateY(0)' : 'translateY(4px)',
-                  }}
-                >
-                  {tile.builder.role}
-                </span>
+                  <span className="text-[7px] md:text-[8px] font-sans leading-tight text-white truncate max-w-full">
+                    {tile.builder.name}
+                  </span>
+                  <span
+                    className="text-[5px] md:text-[6px] font-sans uppercase tracking-wider leading-tight transition-all duration-500"
+                    style={{
+                      color: isVibed ? '#fff' : 'rgba(255,255,255,0.5)',
+                      opacity: isVibed ? 0.9 : 0.6,
+                    }}
+                  >
+                    {tile.builder.role}
+                  </span>
+                </div>
               </div>
             )}
 
