@@ -36,7 +36,7 @@ export interface Registry {
 }
 
 async function readRegistry(token?: string): Promise<{ data: Registry; sha: string }> {
-    const result = await readJSON<Registry>('users.json', REGISTRY_BRANCH, token || appToken(), 60);
+    const result = await readJSON<Registry>('users.json', REGISTRY_BRANCH(), token || appToken(), 60);
     if (result) return result;
     return { data: { users: [], updated_at: new Date().toISOString() }, sha: '' };
 }
@@ -54,7 +54,7 @@ async function updateRegistry(
 ): Promise<void> {
     const { data, sha } = await readRegistry(token);
     const updated = updater({ ...data, updated_at: new Date().toISOString() });
-    await writeJSON('users.json', REGISTRY_BRANCH, updated, token, message, sha || undefined);
+    await writeJSON('users.json', REGISTRY_BRANCH(), updated, token, message, sha || undefined);
 }
 
 // ─── Profiles ────────────────────────────────────────────────

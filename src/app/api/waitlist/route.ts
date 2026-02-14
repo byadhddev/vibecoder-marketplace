@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readJSON, writeJSON, branchExists, createOrphanBranch } from '@/lib/github/client';
 
-const WAITLIST_BRANCH = 'waitlist';
+const WAITLIST_BRANCH = `${process.env.GITHUB_DATA_ENV || 'prod'}/waitlist`;
 const WAITLIST_FILE = 'entries.json';
 
 function appToken(): string {

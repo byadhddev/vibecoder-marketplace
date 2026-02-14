@@ -225,10 +225,18 @@ export async function listFiles(
 
 // ─── Helpers ─────────────────────────────────────────────────
 
-/** User branch name convention */
-export function userBranch(username: string): string {
-    return `user/${username}`;
+// ─── Environment prefix for data isolation ───────────────────
+// GITHUB_DATA_ENV defaults to 'prod'. Set to 'dev' or 'ppe' per environment.
+function dataEnv(): string {
+    return process.env.GITHUB_DATA_ENV || 'prod';
 }
 
-/** Registry branch name */
-export const REGISTRY_BRANCH = 'registry';
+/** User branch name convention: {env}/user/{username} */
+export function userBranch(username: string): string {
+    return `${dataEnv()}/user/${username}`;
+}
+
+/** Registry branch name: {env}/registry */
+export function REGISTRY_BRANCH(): string {
+    return `${process.env.GITHUB_DATA_ENV || 'prod'}/registry`;
+}
