@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -244,8 +245,7 @@ export default function ExplorePage() {
                     <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] group transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex items-center gap-3">
                             {b.avatar_url && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={b.avatar_url} alt="" className="w-6 h-6 rounded-sm" />
+                                <Image src={b.avatar_url} alt="" width={24} height={24} className="rounded-sm" />
                             )}
                             <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] group-hover:text-brand-red'}`} style={isVibe ? { color: accent } : undefined}>
                                 {b.name}
@@ -284,8 +284,7 @@ export default function ExplorePage() {
                     <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[140px] md:min-h-[160px] group transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex items-center gap-3">
                             {s._user.avatar_url && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={s._user.avatar_url} alt="" className="w-5 h-5 rounded-sm" />
+                                <Image src={s._user.avatar_url} alt="" width={20} height={20} className="rounded-sm" />
                             )}
                             <span className="text-[10px] font-mono text-[#9b9a97]">{s._user.name}</span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${accent}4D` : `${accent}20` }} />

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getMarketplaceByUsername } from '@/lib/github/queries';
 import type { Metadata } from 'next';
@@ -23,5 +24,9 @@ export default async function EmbedPage({ params }: PageProps) {
     const { username } = await params;
     const data = await getMarketplaceByUsername(username);
     if (!data) notFound();
-    return <EmbedCard profile={data.profile} showcases={data.showcases} />;
+    return (
+        <Suspense fallback={<div className="w-[400px] h-[200px] animate-pulse bg-[#f5f5f5] rounded-lg" />}>
+            <EmbedCard profile={data.profile} showcases={data.showcases} />
+        </Suspense>
+    );
 }

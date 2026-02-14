@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -152,8 +153,7 @@ export default function LeaderboardPage() {
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : accent }}>#{rank}</span>
                             {b.avatar_url && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={b.avatar_url} alt="" className="w-6 h-6 rounded-sm" />
+                                <Image src={b.avatar_url} alt="" width={24} height={24} className="rounded-sm" />
                             )}
                             <span className={`text-sm font-serif transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f] group-hover:text-brand-red'}`} style={isVibe ? { color: accent } : undefined}>
                                 {b.name}

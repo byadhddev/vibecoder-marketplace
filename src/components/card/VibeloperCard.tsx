@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import type { Profile, Showcase } from '@/lib/db/types';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
@@ -37,11 +38,11 @@ export function VibeloperCard({ profile, showcases, compact = false }: Vibeloper
             {/* Avatar section */}
             <div className="relative" style={{ height: compact ? 140 : 180 }}>
                 {profile.avatar_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                         src={profile.avatar_url}
                         alt=""
-                        className="absolute inset-0 w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                         crossOrigin="anonymous"
                     />
                 ) : (

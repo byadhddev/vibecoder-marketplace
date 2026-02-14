@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -106,8 +107,7 @@ function SearchPageContent() {
                                     <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[120px] bg-white group hover:bg-[#fafaf9] transition-colors">
                                         <div className="flex items-center gap-3">
                                             {r.avatar_url && (
-                                                // eslint-disable-next-line @next/next/no-img-element
-                                                <img src={r.avatar_url} alt="" className="w-6 h-6 rounded-sm" />
+                                                <Image src={r.avatar_url} alt="" width={24} height={24} className="rounded-sm" />
                                             )}
                                             <span className="text-sm font-serif text-[#37352f] group-hover:text-brand-red transition-colors">{r.title}</span>
                                             <div className="flex-1 h-px" style={{ backgroundColor: `${ACCENTS[i % ACCENTS.length]}20` }} />
@@ -137,8 +137,7 @@ function SearchPageContent() {
                                     <div className="col-span-2 p-5 md:p-6 flex flex-col justify-between min-h-[100px] bg-white group hover:bg-[#fafaf9] transition-colors">
                                         <div className="flex items-center gap-3">
                                             {r.avatar_url && (
-                                                // eslint-disable-next-line @next/next/no-img-element
-                                                <img src={r.avatar_url} alt="" className="w-5 h-5 rounded-sm opacity-60" />
+                                                <Image src={r.avatar_url} alt="" width={20} height={20} className="rounded-sm opacity-60" />
                                             )}
                                             <span className="text-sm font-serif text-[#37352f] group-hover:text-brand-red transition-colors">{r.title}</span>
                                         </div>

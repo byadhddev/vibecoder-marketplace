@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -229,8 +230,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                 return (
                     <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-[#242423]`}>
                         {profile.avatar_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={profile.avatar_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                            <Image src={profile.avatar_url} alt="" fill className="object-cover" />
                         ) : (
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <span className={`text-[10px] font-mono uppercase tracking-[0.3em] font-bold ${isVibe ? '' : 'text-brand-red'}`} style={isVibe ? dynTextStyle : undefined}>Active</span>

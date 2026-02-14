@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -198,11 +199,11 @@ export default function HomePage() {
                 return (
                     <div className={`${tile.colSpan} aspect-square relative overflow-hidden bg-[#242423]`}>
                         {v.avatar_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
+                            <Image
                                 src={v.avatar_url}
                                 alt={v.name}
-                                className="absolute inset-0 w-full h-full object-cover"
+                                fill
+                                className="object-cover"
                             />
                         ) : (
                             <div

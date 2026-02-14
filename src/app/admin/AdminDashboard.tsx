@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PageShell } from '@/components/layout/PageShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -147,8 +148,7 @@ export function AdminDashboard() {
                         <Link key={b.username} href={`/m/${b.username}`} className="contents">
                             <div className="col-span-2 p-4 md:p-5 flex items-center gap-3 min-h-[70px] bg-white group hover:bg-[#fafaf9] transition-colors">
                                 {b.avatar_url && (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={b.avatar_url} alt="" className="w-7 h-7 rounded-sm" />
+                                    <Image src={b.avatar_url} alt="" width={28} height={28} className="rounded-sm" />
                                 )}
                                 <div className="flex-1 min-w-0">
                                     <span className="text-sm font-serif text-[#37352f] group-hover:text-brand-red transition-colors block truncate">{b.name}</span>
