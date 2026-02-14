@@ -19,7 +19,7 @@ interface VibeloperSummary {
     showcase_count: number;
 }
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'signature' | 'philosophy' | 'filler' | 'vibeloper' | 'cta-builder' | 'cta-seeker';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'signature' | 'philosophy' | 'filler' | 'vibeloper' | 'cta-builder' | 'cta-seeker' | 'community';
 
 interface Tile {
     id: string;
@@ -36,6 +36,7 @@ function buildTiles(vibelopers: VibeloperSummary[]): Tile[] {
         { id: 'counter', colSpan: 'col-span-1', variant: 'counter' },
         { id: 'cta-builder', colSpan: 'col-span-2 md:col-span-2', variant: 'cta-builder' },
         { id: 'cta-seeker', colSpan: 'col-span-2 md:col-span-2', variant: 'cta-seeker' },
+        { id: 'community', colSpan: 'col-span-2 md:col-span-2', variant: 'community' },
         { id: 'status', colSpan: 'col-span-1', variant: 'status' },
         { id: 'philosophy', colSpan: 'col-span-2 md:col-span-2', variant: 'philosophy' },
         { id: 'signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
@@ -167,6 +168,21 @@ export default function HomePage() {
                         <Link href="/explore" className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-3 transition-colors ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
                             Find a Builder →
                         </Link>
+                    </div>
+                );
+            case 'community':
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col justify-between min-h-[120px] transition-all duration-300`} style={{ background: isVibe ? dynBg : '#242423' }}>
+                        <span className={`text-[9px] font-mono uppercase tracking-[0.2em] mb-2 transition-colors duration-300 ${isVibe ? 'opacity-60' : 'text-white/40'}`} style={isVibe ? dynTextStyle : undefined}>Open & Transparent</span>
+                        <p className={`text-[13px] leading-relaxed font-serif transition-colors duration-300 ${isVibe ? '' : 'text-white/80'}`} style={isVibe ? dynTextStyle : undefined}>
+                            All hire requests are public GitHub Issues. Discussions are open. Everything is auditable.
+                        </p>
+                        <div className="flex items-center gap-4 mt-3">
+                            <Link href="/explore" className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-brand-red hover:text-white'}`} style={isVibe ? dynTextStyle : undefined}>
+                                Browse Requests →
+                            </Link>
+                            <span className={`text-[8px] font-mono uppercase tracking-wider transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-white/30'}`} style={isVibe ? dynTextStyle : undefined}>Powered by GitHub</span>
+                        </div>
                     </div>
                 );
             case 'filler':

@@ -12,7 +12,7 @@ import {
 } from '@/lib/vibe';
 import { extractColorsFromImage, type ExtractedColors } from '@/lib/colors';
 
-type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share' | 'skills' | 'hire' | 'contact-form' | 'rate' | 'earned';
+type TileVariant = 'artode' | 'title' | 'counter' | 'status' | 'socials' | 'signature' | 'philosophy' | 'filler' | 'showcase' | 'views' | 'clicks' | 'share' | 'skills' | 'hire' | 'contact-form' | 'rate' | 'earned' | 'reviews';
 
 interface Tile {
     id: string;
@@ -33,6 +33,7 @@ function buildTiles(showcases: Showcase[], username: string, profile: Profile): 
         { id: 'socials', colSpan: 'col-span-2 md:col-span-2', variant: 'socials' },
         { id: 'signature', colSpan: 'col-span-2 md:col-span-2', variant: 'signature' },
         { id: 'share', colSpan: 'col-span-2 md:col-span-2', variant: 'share' },
+        { id: 'reviews', colSpan: 'col-span-2 md:col-span-2', variant: 'reviews' },
         { id: 'philosophy', colSpan: 'col-span-2 md:col-span-2', variant: 'philosophy' },
     ];
     if ((profile.skills || []).length > 0) {
@@ -77,6 +78,9 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
     const [contactSending, setContactSending] = useState(false);
     const [contactSent, setContactSent] = useState(false);
     const [contactIssueUrl, setContactIssueUrl] = useState<string | null>(null);
+    const [feedbackCounts, setFeedbackCounts] = useState<Record<string, number>>({});
+    const [reviews, setReviews] = useState<{ stars: number; body: string; reviewer: string; html_url: string; created_at: string }[]>([]);
+    const [avgStars, setAvgStars] = useState(0);
     const isVibe = vibeLocked || hovered;
 
     const handleFeedback = async (showcaseSlug: string, showcaseTitle: string) => {
@@ -108,6 +112,24 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: profile.username, type: 'page_view' }),
         }).catch(() => {});
+    }, [profile.username]);
+
+    // Fetch feedback counts for showcases
+    useEffect(() => {
+        fetch(`/api/marketplace/feedback?builder=${encodeURIComponent(profile.username)}`)
+            .then(r => r.ok ? r.json() : { feedback: [] })
+            .then(d => {
+                setFeedbackCounts({ _total: d.feedback?.length || 0 });
+            })
+            .catch(() => {});
+        // Fetch reviews
+        fetch(`/api/marketplace/reviews?builder=${encodeURIComponent(profile.username)}`)
+            .then(r => r.ok ? r.json() : { reviews: [], avg_stars: 0 })
+            .then(d => {
+                setReviews(d.reviews || []);
+                setAvgStars(d.avg_stars || 0);
+            })
+            .catch(() => {});
     }, [profile.username]);
 
     useEffect(() => {
@@ -414,6 +436,59 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                     </div>
                 );
             }
+            case 'reviews': {
+                const handleLeaveReview = async () => {
+                    const starsStr = window.prompt('Rate this builder (1-5 stars):');
+                    if (!starsStr) return;
+                    const stars = parseInt(starsStr, 10);
+                    if (isNaN(stars) || stars < 1 || stars > 5) { alert('Enter a number between 1 and 5'); return; }
+                    const body = window.prompt('Write your review:');
+                    if (!body) return;
+                    try {
+                        const res = await fetch('/api/marketplace/reviews', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ builder_username: profile.username, stars, body }),
+                        });
+                        const data = await res.json();
+                        if (data.html_url) window.open(data.html_url, '_blank', 'noopener,noreferrer');
+                        else if (!res.ok) alert(data.error || 'Sign in to leave a review');
+                    } catch { alert('Failed to submit review'); }
+                };
+                return (
+                    <div className={`${tile.colSpan} p-5 md:p-6 flex flex-col gap-2 min-h-[100px] transition-all duration-300`} style={{ background: bg }}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : ACCENTS[0] }}>Reviews</span>
+                            <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${ACCENTS[0]}20` }} />
+                            {avgStars > 0 && (
+                                <span className={`text-[10px] font-mono transition-colors duration-300 ${isVibe ? '' : 'text-[#37352f]'}`} style={isVibe ? dynTextStyle : undefined}>
+                                    {'⭐'.repeat(Math.round(avgStars))} {avgStars}
+                                </span>
+                            )}
+                        </div>
+                        {reviews.length > 0 ? (
+                            <div className="flex flex-col gap-1.5">
+                                {reviews.slice(0, 3).map(r => (
+                                    <a key={r.html_url} href={r.html_url} target="_blank" rel="noopener noreferrer"
+                                        className={`text-[11px] font-serif italic transition-colors truncate ${isVibe ? 'opacity-60' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                        style={isVibe ? dynTextStyle : undefined}>
+                                        {'⭐'.repeat(r.stars)} &ldquo;{r.body.replace(/## Review.*\n\n/, '').slice(0, 80)}{r.body.length > 80 ? '…' : ''}&rdquo; — @{r.reviewer}
+                                    </a>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className={`text-[11px] font-serif italic transition-colors ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>
+                                No reviews yet. Be the first.
+                            </p>
+                        )}
+                        <button onClick={handleLeaveReview}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] self-start transition-colors ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`}
+                            style={isVibe ? dynTextStyle : undefined}>
+                            Leave Review →
+                        </button>
+                    </div>
+                );
+            }
             case 'earned':
                 return (
                     <div className={`${tile.colSpan} flex flex-col items-center justify-center p-6 min-h-[120px] transition-all duration-300`} style={{ background: bg }}>
@@ -443,6 +518,9 @@ export function MarketplaceGrid({ profile, showcases }: MarketplaceGridProps) {
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${accent}20` }} />
                             {s.build_hours > 0 && (
                                 <span className="text-[8px] font-mono text-brand-red uppercase tracking-wider">⚡ {s.build_hours}h</span>
+                            )}
+                            {(feedbackCounts._total || 0) > 0 && (
+                                <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider">💬 {feedbackCounts._total}</span>
                             )}
                             {s.tags.length > 0 && (
                                 <span className="text-[8px] font-mono text-[#9b9a97] uppercase tracking-wider">{s.tags[0]}</span>

@@ -426,64 +426,11 @@ export async function incrementProfileViews(username: string): Promise<void> {
     ).catch(() => {});
 }
 
-// ─── Contact Requests ────────────────────────────────────────
+// ─── Contact Requests (DEPRECATED — now using GitHub Issues, see lib/github/issues.ts) ──
 
-interface ContactRequest {
-    id: string;
-    name: string;
-    email: string;
-    description: string;
-    budget: string;
-    timeline: string;
-    status: 'new' | 'read' | 'archived';
-    created_at: string;
-}
-
-interface ContactStore {
-    requests: ContactRequest[];
-}
-
-export async function submitContactRequest(
-    toUsername: string,
-    data: { name: string; email: string; description: string; budget: string; timeline: string },
-): Promise<boolean> {
-    const token = appToken();
-    const branch = userBranch(toUsername);
-
-    const existing = await readJSON<ContactStore>('requests.json', branch, token);
-    const store: ContactStore = existing ? existing.data : { requests: [] };
-    const sha = existing?.sha;
-
-    const request: ContactRequest = {
-        id: `req_${Date.now()}`,
-        ...data,
-        status: 'new',
-        created_at: new Date().toISOString(),
-    };
-
-    store.requests.unshift(request);
-
-    const wrote = await writeJSON('requests.json', branch, store, token, `New contact request from ${data.name}`, sha);
-    return !!wrote;
-}
-
-export async function getContactRequests(username: string, token?: string): Promise<ContactRequest[]> {
-    const t = token || appToken();
-    const branch = userBranch(username);
-    const result = await readJSON<ContactStore>('requests.json', branch, t);
-    return result ? result.data.requests : [];
-}
-
-export async function updateContactRequestStatus(username: string, requestId: string, status: 'read' | 'archived', token?: string): Promise<boolean> {
-    const t = token || appToken();
-    const branch = userBranch(username);
-    const existing = await readJSON<ContactStore>('requests.json', branch, t);
-    if (!existing) return false;
-
-    const store = { ...existing.data, requests: existing.data.requests.map(r => r.id === requestId ? { ...r, status } : r) };
-    const wrote = await writeJSON('requests.json', branch, store, t, `Update request ${requestId}`, existing.sha);
-    return !!wrote;
-}
+// Old JSON-based contact request code removed.
+// All hire requests are now public GitHub Issues on the data repo.
+// See: createHireRequest, getHireRequests, updateHireRequestStatus in issues.ts
 
 // ─── Earnings ────────────────────────────────────────────────
 
