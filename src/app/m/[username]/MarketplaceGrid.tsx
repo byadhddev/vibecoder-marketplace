@@ -315,11 +315,18 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                         </div>
                         <div className="flex flex-wrap items-center gap-3">
                             <button
-                                onClick={() => copyToClipboard(() => getFullUrl(profilePath), 'link')}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
+                                onClick={() => {
+                                    const url = getFullUrl(profilePath);
+                                    if (typeof navigator !== 'undefined' && navigator.share) {
+                                        navigator.share({ title: `${profile.name} — VibeCoder`, url }).catch(() => {});
+                                    } else {
+                                        copyToClipboard(() => url, 'link');
+                                    }
+                                }}
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] transition-colors min-h-[44px] sm:min-h-0 ${isVibe ? '' : 'text-[#9b9a97] hover:text-[#37352f]'}`}
                                 style={isVibe ? dynTextStyle : undefined}
                             >
-                                {copied === 'link' ? 'Copied ✓' : 'Copy Link'}
+                                {copied === 'link' ? 'Copied ✓' : 'Share'}
                             </button>
                             <button
                                 onClick={() => copyToClipboard(() => `<iframe src="${getFullUrl(embedPath)}" width="400" height="400" frameborder="0"></iframe>`, 'embed')}
@@ -428,24 +435,24 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                             <span className="text-[10px] font-mono transition-colors duration-300" style={{ color: isVibe ? palColor : ACCENTS[0] }}>Contact</span>
                             <div className="flex-1 h-px transition-colors duration-300" style={{ backgroundColor: isVibe ? `${palColor}4D` : `${ACCENTS[0]}20` }} />
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <input type="text" placeholder="Your name" value={contactForm.name}
                                 onChange={e => setContactForm(prev => ({ ...prev, name: e.target.value }))}
-                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
                             <input type="email" placeholder="Email" value={contactForm.email}
                                 onChange={e => setContactForm(prev => ({ ...prev, email: e.target.value }))}
-                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
                         </div>
                         <input type="text" placeholder="What do you need built?" value={contactForm.description}
                             onChange={e => setContactForm(prev => ({ ...prev, description: e.target.value }))}
-                            className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-serif text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
-                        <div className="grid grid-cols-2 gap-2">
+                            className="w-full bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-serif text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <input type="text" placeholder="Budget range" value={contactForm.budget}
                                 onChange={e => setContactForm(prev => ({ ...prev, budget: e.target.value }))}
-                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
                             <input type="text" placeholder="Timeline" value={contactForm.timeline}
                                 onChange={e => setContactForm(prev => ({ ...prev, timeline: e.target.value }))}
-                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none pb-1 transition-colors" />
+                                className="bg-transparent border-b border-[#ededeb] focus:border-[#37352f] text-[12px] font-mono text-[#37352f] placeholder:text-[#9b9a97] outline-none py-2 transition-colors min-h-[44px]" />
                         </div>
                         <span className={`text-[8px] font-mono transition-colors duration-300 ${isVibe ? 'opacity-40' : 'text-[#9b9a97]'}`} style={isVibe ? dynTextStyle : undefined}>
                             ● This request will be public on GitHub for transparency
@@ -453,7 +460,7 @@ export function MarketplaceGrid({ profile, showcases, hasVerifiedEarnings }: Mar
                         <button
                             onClick={handleContactSubmit}
                             disabled={contactSending || !contactForm.name || !contactForm.email || !contactForm.description}
-                            className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-1 self-start transition-colors disabled:opacity-30 ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`}
+                            className={`text-[9px] font-mono uppercase tracking-[0.15em] mt-1 self-start transition-colors disabled:opacity-30 py-2 px-3 min-h-[44px] sm:min-h-0 sm:py-0 sm:px-0 ${isVibe ? '' : 'text-brand-red hover:text-[#37352f]'}`}
                             style={isVibe ? dynTextStyle : undefined}
                         >
                             {contactSending ? 'Sending…' : 'Send Request →'}

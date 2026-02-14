@@ -174,35 +174,35 @@ export default function ExplorePage() {
                     <div className={`${tile.colSpan} p-4 md:p-5 flex flex-col gap-2 min-h-[60px] transition-all duration-300`} style={{ background: bg }}>
                         <div className="flex flex-wrap items-center gap-2">
                             <button onClick={() => setViewMode('showcases')}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${viewMode === 'showcases' ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 min-h-[36px] transition-colors ${viewMode === 'showcases' ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
                                 Showcases
                             </button>
                             <button onClick={() => setViewMode('builders')}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${viewMode === 'builders' ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 min-h-[36px] transition-colors ${viewMode === 'builders' ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
                                 Builders
                             </button>
                             <div className="w-px h-3 bg-[#ededeb]" />
                             <button onClick={() => setAvailableOnly(!availableOnly)}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${availableOnly ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 min-h-[36px] transition-colors ${availableOnly ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
                                 {availableOnly ? '● Available' : 'Available'}
                             </button>
                         </div>
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-none">
                             <button onClick={() => { setActiveTag(null); setActiveSkill(null); }}
-                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${!activeTag && !activeSkill ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 whitespace-nowrap transition-colors ${!activeTag && !activeSkill ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
                                 All
                             </button>
                             {viewMode === 'showcases' ? (
                                 allTags.slice(0, 12).map(tag => (
                                     <button key={tag} onClick={() => { setActiveTag(tag); setActiveSkill(null); }}
-                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${activeTag === tag ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 whitespace-nowrap transition-colors ${activeTag === tag ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
                                         {tag}
                                     </button>
                                 ))
                             ) : (
                                 allSkills.slice(0, 12).map(skill => (
                                     <button key={skill} onClick={() => { setActiveSkill(skill); setActiveTag(null); }}
-                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 transition-colors ${activeSkill === skill ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
+                                        className={`text-[9px] font-mono uppercase tracking-[0.15em] px-2 py-1 whitespace-nowrap transition-colors ${activeSkill === skill ? 'text-brand-red font-bold' : 'text-[#9b9a97] hover:text-[#37352f]'}`}>
                                         {skill}
                                     </button>
                                 ))
